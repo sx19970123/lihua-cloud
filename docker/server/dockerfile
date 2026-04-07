@@ -1,0 +1,5 @@
+FROM openjdk:21
+LABEL author=yukino
+COPY ./lihua-admin-exec.jar /app/lihua-admin-exec.jar
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app/lihua-admin-exec.jar"]
