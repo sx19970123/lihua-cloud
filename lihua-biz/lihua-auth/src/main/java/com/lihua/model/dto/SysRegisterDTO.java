@@ -1,4 +1,4 @@
-package model.dto;
+package com.lihua.model.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

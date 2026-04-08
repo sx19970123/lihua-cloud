@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import model.dto.SysRegisterDTO;
+import com.lihua.model.dto.SysRegisterDTO;
 import org.springframework.web.bind.annotation.*;
 
 
