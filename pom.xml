@@ -59,6 +59,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+<!--            基础依赖=============================================-->
 <!--            公共模块 -->
             <dependency>
                 <groupId>com.lihua</groupId>
@@ -156,4 +157,24 @@
         <module>lihua-base</module>
         <module>lihua-biz</module>
     </modules>
+
+<!--    通用打包配置-->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -27,112 +27,34 @@
 
     <dependencies>
         <!--        服务注册发现-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+<!--        </dependency>-->
         <!--        配置中心-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
+<!--        </dependency>-->
 
-        <!--        持久化模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-mybatis</artifactId>
-        </dependency>
         <!--        公共模块-->
         <dependency>
             <groupId>com.lihua</groupId>
             <artifactId>lihua-common</artifactId>
-        </dependency>
-        <!--        websocket模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-websocket</artifactId>
-        </dependency>
-        <!--        web模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-web</artifactId>
-        </dependency>
-        <!--        字典模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-dict</artifactId>
-        </dependency>
-        <!--        数据脱敏模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-sensitive</artifactId>
         </dependency>
         <!--        日志模块-->
         <dependency>
             <groupId>com.lihua</groupId>
             <artifactId>lihua-log</artifactId>
         </dependency>
-        <!--        ip模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-ip</artifactId>
-        </dependency>
-        <!--        excel模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-excel</artifactId>
-        </dependency>
-        <!--        doc 模块-->
+        <!--        接口文档-->
         <dependency>
             <groupId>com.lihua</groupId>
             <artifactId>lihua-doc</artifactId>
         </dependency>
-        <!--        安全模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-security</artifactId>
-        </dependency>
-        <!--        lombok-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <!--         web-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>4.0.5</version>
-                <configuration>
-                    <classifier>exec</classifier>
-                    <finalName>${project.artifactId}</finalName>
-                    <mainClass>com.lihua.com.lihua.LiHuaAuthApplication</mainClass>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.15.0</version>
-                <configuration>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-        </plugins>
         <!--        指定打包后包含的文件-->
         <resources>
             <resource>
@@ -144,9 +66,6 @@
                     <include>**/*.txt</include>
                     <include>META-INF/services/*</include>
                     <include>META-INF/spring/*</include>
-                    <include>captcha-images/**</include>
-                    <include>captcha-font/**</include>
-                    <include>ip2region/**</include>
                 </includes>
             </resource>
             <resource>

@@ -29,6 +29,11 @@
             <artifactId>java-jwt</artifactId>
             <version>${jwt.version}</version>
         </dependency>
+        <!--        参数校验-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
         <!--        缓存模块-->
         <dependency>
             <groupId>com.lihua</groupId>

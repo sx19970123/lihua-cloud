@@ -1,6 +1,6 @@
 package com.lihua.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+//import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.utils.date.DateUtils;
 //import com.lihua.entity.SysUser;

@@ -39,13 +39,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 LoginUserManager.verifyLoginUserCache();
             }
         }
-
-        try {
-            filterChain.doFilter(request,response);
-        } finally {
-            SecurityContextHolder.clearContext();
-        }
-
+        filterChain.doFilter(request,response);
     }
 
 }
