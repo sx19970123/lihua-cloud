@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.lihua</groupId>
-        <artifactId>lihua</artifactId>
+        <artifactId>lihua-cloud</artifactId>
         <version>2.0.2</version>
     </parent>
 
@@ -22,6 +22,7 @@
         <module>lihua-monitor</module>
         <module>lihua-system</module>
         <module>lihua-auth</module>
+        <module>lihua-file</module>
     </modules>
 
     <dependencies>

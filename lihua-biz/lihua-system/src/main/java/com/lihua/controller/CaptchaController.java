@@ -1,10 +1,10 @@
 package com.lihua.controller;
 
-import cloud.tianai.captcha.application.ImageCaptchaApplication;
-import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
-import cloud.tianai.captcha.common.response.ApiResponse;
-import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
-import com.lihua.captcha.enums.CaptchaTypeEnum;
+//import cloud.tianai.captcha.application.ImageCaptchaApplication;
+//import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
+//import cloud.tianai.captcha.common.response.ApiResponse;
+//import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
+//import com.lihua.captcha.enums.CaptchaTypeEnum;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,31 +22,31 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequestMapping("captcha")
 public class CaptchaController extends ApiResponseController {
 
-    @Resource
-    private ImageCaptchaApplication imageCaptchaApplication;
+//    @Resource
+//    private ImageCaptchaApplication imageCaptchaApplication;
 
-    @Operation(summary = "获取验证码")
-    @PostMapping("get")
-    public ApiResponse<ImageCaptchaVO> getCaptcha() {
-        // 随机获取验证码类型
-        return imageCaptchaApplication.generateCaptcha(CaptchaTypeEnum.randomType());
-    }
+//    @Operation(summary = "获取验证码")
+//    @PostMapping("get")
+//    public ApiResponse<ImageCaptchaVO> getCaptcha() {
+//        // 随机获取验证码类型
+//        return imageCaptchaApplication.generateCaptcha(CaptchaTypeEnum.randomType());
+//    }
 
-    @Operation(summary = "验证码校验")
-    @PostMapping("check")
-    public ApiResponse<?> checkCaptcha(@RequestBody Data data) {
-        ApiResponse<?> response = imageCaptchaApplication.matching(data.getId(), data.getData());
-        if (response.isSuccess()) {
-            return ApiResponse.ofSuccess(Collections.singletonMap("id", data.getId()));
-        }
-        return response;
-    }
+//    @Operation(summary = "验证码校验")
+//    @PostMapping("check")
+//    public ApiResponse<?> checkCaptcha(@RequestBody Data data) {
+//        ApiResponse<?> response = imageCaptchaApplication.matching(data.getId(), data.getData());
+//        if (response.isSuccess()) {
+//            return ApiResponse.ofSuccess(Collections.singletonMap("id", data.getId()));
+//        }
+//        return response;
+//    }
 
     // 验证码接收内部类
-    @lombok.Data
-    public static class Data {
-        private String  id;
-        private ImageCaptchaTrack data;
-    }
+//    @lombok.Data
+//    public static class Data {
+//        private String  id;
+//        private ImageCaptchaTrack data;
+//    }
 
 }

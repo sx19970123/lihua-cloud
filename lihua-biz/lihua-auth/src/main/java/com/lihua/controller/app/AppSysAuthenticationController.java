@@ -8,19 +8,19 @@ import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import com.lihua.common.utils.tree.TreeUtils;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
-import com.lihua.model.dto.SysRegisterDTO;
-import com.lihua.model.dto.SysSettingDTO;
+//import com.lihua.model.dto.SysSettingDTO;
 import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.model.AuthInfo;
 import com.lihua.security.model.CurrentDept;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUser;
 import com.lihua.service.SysAuthenticationService;
-import com.lihua.service.SysSettingService;
+//import com.lihua.service.SysSettingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import model.dto.SysRegisterDTO;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -35,8 +35,8 @@ public class AppSysAuthenticationController extends ApiResponseController {
     @Resource
     private SysAuthenticationService sysAuthenticationService;
 
-    @Resource
-    private SysSettingService sysSettingService;
+//    @Resource
+//    private SysSettingService sysSettingService;
 
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
@@ -142,9 +142,9 @@ public class AppSysAuthenticationController extends ApiResponseController {
 
     // 校验验证码
     private boolean checkCaptcha(String captchaVerification) {
-        if (!sysSettingService.enableCaptcha()) {
-            return true;
-        }
+//        if (!sysSettingService.enableCaptcha()) {
+//            return true;
+//        }
 
         if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {
             return ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(captchaVerification);
