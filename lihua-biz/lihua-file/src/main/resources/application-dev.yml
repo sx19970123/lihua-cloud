@@ -4,8 +4,7 @@ token:
   tokenExpireTime: 60
   # 令牌刷新阈值（分钟）距令牌过期15分钟内时，有新请求时对令牌进行刷新
   refreshThreshold: 15
-
-# 附件配置
+ # 附件配置
 attachment:
   # 附件下载生成链接过期时间（分钟）
   fileDownloadExpireTime: 30
@@ -82,8 +81,8 @@ logging:
     com.lihua: debug
     org.springframework: info
 
-# oss
-# 需要attachment配置中uploadFileModel为【ALIYUN-OSS】，同配置项 uploadFilePath 为桶下目录
+ # oss
+ # 需要attachment配置中uploadFileModel为【ALIYUN-OSS】，同配置项 uploadFilePath 为桶下目录
 aliyun:
   oss:
     endpoint:
