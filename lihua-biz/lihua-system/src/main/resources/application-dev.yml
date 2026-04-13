@@ -11,7 +11,7 @@ spring:
         server-addr: 127.0.0.1:8848
       # 配置中心
       config:
-        namespace: ${spring.profiles.active}
+        namespace: dev
         file-extension: yaml
         import-check:
           enabled: true

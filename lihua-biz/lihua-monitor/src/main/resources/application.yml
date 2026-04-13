@@ -11,10 +11,6 @@ spring:
     virtual:
       # 开启虚拟线程
       enabled: true
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
 
   banner:
     location: classpath:banner.txt

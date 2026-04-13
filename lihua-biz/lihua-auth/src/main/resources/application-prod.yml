@@ -1,52 +1,20 @@
- # 系统配置
-token:
-  # 令牌过期时间（分钟）
-  tokenExpireTime: 1440
-  # 令牌刷新阈值（分钟）距令牌过期15分钟内时，有新请求时对令牌进行刷新
-  refreshThreshold: 15
-
-# 处理因linux系统临时文件清理导致文件上传报错
 server:
-  tomcat:
-    basedir: ${BASE_FILE_PATH}temp
+  port: ${SERVER_PORT}
 
-# 数据源配置
 spring:
-  # redisson配置，官方文档：https://redisson.pro/docs/integration-with-spring/#spring-boot-starter
-  redis:
-    redisson:
-      config: |
-        singleServerConfig:
-          address: "redis://${REDIS_HOST}:${REDIS_PORT}"
-          password: ${REDIS_PASSWORD}
-          database: 0
-          # 命令超时时间
-          timeout: 3000
-          # 连接超时时间
-          connectTimeout: 10000
-          # 连接池最大连接数
-          connectionPoolSize: 64
-          # 最小空闲连接数
-          connectionMinimumIdleSize: 10
-        # 自定义序列化器
-        codec: !<com.lihua.cache.config.TypedRedissonJsonCodec> {}
-
-# 日志配置
-logging:
-  file:
-    name: ${BASE_FILE_PATH}logs/lihua.log
-  level:
-    com.lihua: debug
-    org.springframework: info
-
- # spring doc 接口文档
-springdoc:
-  api-docs:
-    enabled: false
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: false
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-    display-request-duration: true
+  cloud:
+    nacos:
+      username: ${NACOS_USERNAME}
+      password: ${NACOS_PASSWORD}
+      # 服务发现
+      discovery:
+        server-addr: ${NACOS_ADDR}
+      # 配置中心
+      config:
+        namespace: ${spring.profiles.active}
+        file-extension: yaml
+        import-check:
+          enabled: true
+  config:
+    import:
+      - nacos:${spring.application.name}.yaml?group=${spring.application.name}

@@ -1,5 +1,4 @@
 server:
-  port: 8082
   forward-headers-strategy: framework
 spring:
   application:
@@ -12,11 +11,6 @@ spring:
     virtual:
       # 开启虚拟线程
       enabled: true
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
-
   banner:
     location: classpath:banner.txt
     charset: UTF-8
@@ -29,13 +23,6 @@ spring:
   # 如在 controller 中返回 String，则需要全局搜索：JsonUtils.toJsonIgnoreNulls(response(resultCodeEnum, msg, data)); JsonUtils.toJsonIgnoreNulls 修改为 JsonUtils.toJson
   jackson:
     default-property-inclusion: non_null
-
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        username: nacos
-        password: 123456
 
   # 滑块验证码配置， 详细请看 cloud.tianai.captcha.autoconfiguration.ImageCaptchaProperties 类
 captcha:

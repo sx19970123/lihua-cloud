@@ -1,43 +1,20 @@
- # 系统配置
-token:
-  # 令牌过期时间（分钟）
-  tokenExpireTime: 60
-  # 令牌刷新阈值（分钟）距令牌过期15分钟内时，有新请求时对令牌进行刷新
-  refreshThreshold: 15
+server:
+  port: 8082
 
 spring:
-  redis:
-    redisson:
-      config: |
-        singleServerConfig:
-          address: "redis://127.0.0.1:6379"
-          database: 0
-          # 命令超时时间
-          timeout: 3000
-          # 连接超时时间
-          connectTimeout: 10000
-          # 连接池最大连接数
-          connectionPoolSize: 64
-          # 最小空闲连接数
-          connectionMinimumIdleSize: 10
-        # 自定义序列化器
-        codec: !<com.lihua.cache.config.TypedRedissonJsonCodec> {}
-# 日志配置
-logging:
-  file:
-    name: /Users/yukino/my-project/data/lihua/logs/lihua.log
-  level:
-    com.lihua: debug
-    org.springframework: info
-
- # spring doc 接口文档
-springdoc:
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-    display-request-duration: true
+  cloud:
+    nacos:
+      username: nacos
+      password: 123456
+      # 服务发现
+      discovery:
+        server-addr: 127.0.0.1:8848
+      # 配置中心
+      config:
+        namespace: dev
+        file-extension: yaml
+        import-check:
+          enabled: true
+  config:
+    import:
+      - nacos:${spring.application.name}.yaml?group=${spring.application.name}

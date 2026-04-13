@@ -17,4 +17,4 @@ spring:
           enabled: true
   config:
     import:
-      - nacos:${spring.application.name}.yaml?group=system
+      - nacos:${spring.application.name}.yaml?group=${spring.application.name}
