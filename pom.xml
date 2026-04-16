@@ -150,13 +150,20 @@
                 <artifactId>lihua-base-attachment</artifactId>
                 <version>${project.version}</version>
             </dependency>
+<!--            远程调用依赖=============================================-->
+<!--            system业务模块远程调用 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-client-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>lihua-base</module>
         <module>lihua-biz</module>
-        <module>lihua-api</module>
+        <module>lihua-client</module>
     </modules>
 
 <!--    通用打包配置-->
