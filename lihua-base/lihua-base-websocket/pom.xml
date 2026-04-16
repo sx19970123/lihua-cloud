@@ -9,7 +9,7 @@
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-web</artifactId>
+    <artifactId>lihua-base-websocket</artifactId>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
@@ -18,15 +18,15 @@
     </properties>
 
     <dependencies>
-        <!--        公共模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-common</artifactId>
-        </dependency>
-        <!--        参数校验-->
+        <!--         websocket-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!--         缓存模块-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-cache</artifactId>
         </dependency>
     </dependencies>
 

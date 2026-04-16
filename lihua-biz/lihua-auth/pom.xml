@@ -21,7 +21,7 @@
         <!--        验证码-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-captcha</artifactId>
+            <artifactId>lihua-base-captcha</artifactId>
         </dependency>
     </dependencies>
 

@@ -21,12 +21,12 @@
         <!--        附件-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-attachment</artifactId>
+            <artifactId>lihua-base-attachment</artifactId>
         </dependency>
         <!--            orm持久化-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-mybatis</artifactId>
+            <artifactId>lihua-base-mybatis</artifactId>
         </dependency>
     </dependencies>
 

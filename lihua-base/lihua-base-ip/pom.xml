@@ -9,32 +9,41 @@
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-excel</artifactId>
+    <artifactId>lihua-base-ip</artifactId>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
-        <!--        excel 导入导出工具-->
-        <dependency>
-            <groupId>org.apache.fesod</groupId>
-            <artifactId>fesod-sheet</artifactId>
-            <version>${fesod.version}</version>
-        </dependency>
-
         <!--        公共模块-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-common</artifactId>
+            <artifactId>lihua-base-common</artifactId>
         </dependency>
-
-        <!--        字典模块-->
+        <!--        缓存模块-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-dict</artifactId>
+            <artifactId>lihua-base-cache</artifactId>
+        </dependency>
+        <!--        ip归属地-->
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>${ip2region.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <!--        将ip2region下文件打入包中-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>ip2region/**</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>

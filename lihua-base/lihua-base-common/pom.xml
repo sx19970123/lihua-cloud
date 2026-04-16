@@ -9,29 +9,24 @@
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-sensitive</artifactId>
+    <artifactId>lihua-base-common</artifactId>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
-        <!--        安全模块-->
+        <!--         web-->
         <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-security</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
-        <!--        持久化模块-->
+        <!--        lombok-->
         <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-mybatis</artifactId>
-        </dependency>
-        <!--        公共模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-common</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
-
 </project>

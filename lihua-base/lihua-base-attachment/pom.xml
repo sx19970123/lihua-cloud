@@ -9,34 +9,24 @@
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-job</artifactId>
+    <artifactId>lihua-base-attachment</artifactId>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
-        <!-- 核心依赖 -->
+        <!--    阿里云oss    -->
         <dependency>
-            <groupId>com.aizuda</groupId>
-            <artifactId>snail-job-client-starter</artifactId>
-            <version>${snail-job.version}</version>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>${oss.version}</version>
         </dependency>
 
-        <!-- 重试模块(若不需要可以不引入) -->
         <dependency>
-            <groupId>com.aizuda</groupId>
-            <artifactId>snail-job-client-retry-core</artifactId>
-            <version>${snail-job.version}</version>
-        </dependency>
-
-        <!-- 定时任务(若不需要可以不引入) -->
-        <dependency>
-            <groupId>com.aizuda</groupId>
-            <artifactId>snail-job-client-job-core</artifactId>
-            <version>${snail-job.version}</version>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-common</artifactId>
         </dependency>
     </dependencies>
 </project>

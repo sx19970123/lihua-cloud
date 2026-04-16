@@ -9,7 +9,7 @@
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-doc</artifactId>
+    <artifactId>lihua-base-excel</artifactId>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
@@ -18,12 +18,23 @@
     </properties>
 
     <dependencies>
-        <!--        spring doc-->
+        <!--        excel 导入导出工具-->
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${spring-doc.version}</version>
+            <groupId>org.apache.fesod</groupId>
+            <artifactId>fesod-sheet</artifactId>
+            <version>${fesod.version}</version>
+        </dependency>
+
+        <!--        公共模块-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-common</artifactId>
+        </dependency>
+
+        <!--        字典模块-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-dict</artifactId>
         </dependency>
     </dependencies>
-
 </project>
