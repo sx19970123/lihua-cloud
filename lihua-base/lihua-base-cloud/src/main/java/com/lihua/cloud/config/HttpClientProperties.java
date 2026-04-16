@@ -12,11 +12,6 @@ import java.time.Duration;
 public class HttpClientProperties {
 
     /**
-     * 连接超时时间
-     */
-    private Duration connectTimeout;
-
-    /**
      * 访问超时时间
      */
     private Duration readTimeout;
