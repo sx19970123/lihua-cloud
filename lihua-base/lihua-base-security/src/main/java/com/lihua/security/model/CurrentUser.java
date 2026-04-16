@@ -2,7 +2,6 @@ package com.lihua.security.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -79,9 +78,4 @@ public class CurrentUser implements Serializable {
      * 1：自助注册
      */
     private String registerType;
-
-    /**
-     * 验证码
-     */
-    private String captchaVerification;
 }

@@ -27,6 +27,7 @@
         <module>lihua-base-sensitive</module>
         <module>lihua-base-web</module>
         <module>lihua-base-websocket</module>
+        <module>lihua-base-cloud</module>
     </modules>
 
     <properties>
