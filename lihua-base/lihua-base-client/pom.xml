@@ -9,7 +9,7 @@
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-base-cloud</artifactId>
+    <artifactId>lihua-base-client</artifactId>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
@@ -27,11 +27,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-        </dependency>
-        <!--        WebClient-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <!--        安全模块-->
         <dependency>

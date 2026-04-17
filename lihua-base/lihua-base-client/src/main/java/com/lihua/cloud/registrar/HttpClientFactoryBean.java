@@ -46,7 +46,7 @@ public class HttpClientFactoryBean<T> implements FactoryBean<T> {
         httpRequestFactory.setReadTimeout(readTimeout == -1 ? httpClientProperties.getReadTimeout() : Duration.ofSeconds(readTimeout));
 
         if (!StringUtils.hasText(annotation.value())) {
-            throw new IllegalStateException(type.getName() + "服务名称为空");
+            throw new IllegalStateException(type.getName() + " 服务名称为空");
         }
 
         RestClient client = restClientBuilder

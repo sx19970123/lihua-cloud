@@ -14,5 +14,5 @@ public class HttpClientProperties {
     /**
      * 访问超时时间
      */
-    private Duration readTimeout;
+    private Duration readTimeout =  Duration.ofSeconds(10);
 }

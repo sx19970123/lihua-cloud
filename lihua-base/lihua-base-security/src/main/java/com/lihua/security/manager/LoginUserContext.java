@@ -156,7 +156,12 @@ public class LoginUserContext implements Serializable {
      * 获取请求上下文
      */
     public static RequestContext getRequestContext() {
-         return (RequestContext) getAuthentication().getDetails();
+        Object details = getAuthentication().getDetails();
+        if (details instanceof RequestContext) {
+            return (RequestContext) details;
+        }
+
+        return null;
     }
 
     /**
