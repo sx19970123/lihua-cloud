@@ -5,7 +5,7 @@ import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
 import com.lihua.captcha.enums.CaptchaTypeEnum;
-import com.lihua.client.system.SysLogClient;
+import com.lihua.client.system.api.SysLogClient;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import io.swagger.v3.oas.annotations.Operation;
