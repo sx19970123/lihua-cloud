@@ -1,5 +1,6 @@
 package com.lihua.log.handle;
 
+import com.lihua.api.facade.SysLogClientFacade;
 import com.lihua.common.model.bridge.log.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
@@ -15,7 +16,6 @@ import jakarta.annotation.Resource;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
@@ -37,7 +37,7 @@ public class HandleRecodeLog {
     private static final Pattern DATA_PATTERN = Pattern.compile("\"data\":\"([^\"]*?)\"");
 
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private SysLogClientFacade sysLogClientFacade;
 
     /**
      * 通过传入参数整理组合为Log对象存入数据库
@@ -142,8 +142,13 @@ public class HandleRecodeLog {
 
         logModel.setCreateTime(DateUtils.now());
         logModel.setDelFlag("0");
-        // 使用publishEvent进行事件推送，由sysLogService进行处理保存
-        applicationEventPublisher.publishEvent(logModel);
+
+        // 远程调用保存日志
+        if ("LOGIN".equals(type.getCode())) {
+            sysLogClientFacade.insertLogin(logModel);
+        } else {
+            sysLogClientFacade.insertOperate(logModel);
+        }
     }
 
     /**

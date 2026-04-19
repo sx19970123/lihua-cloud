@@ -1,6 +1,6 @@
-package com.lihua.cloud.annotation;
+package com.lihua.api.annotation;
 
-import com.lihua.cloud.enums.SchemeEnum;
+import com.lihua.api.enums.SchemeEnum;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

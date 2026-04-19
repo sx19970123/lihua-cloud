@@ -1,7 +1,7 @@
-package com.lihua.cloud.registrar;
+package com.lihua.api.registrar;
 
-import com.lihua.cloud.annotation.HttpClient;
-import com.lihua.cloud.config.HttpClientProperties;
+import com.lihua.api.annotation.HttpClient;
+import com.lihua.api.config.HttpClientProperties;
 import jakarta.annotation.Resource;
 import lombok.Setter;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;

@@ -1,6 +1,6 @@
-package com.lihua.cloud.config;
+package com.lihua.api.config;
 
-import com.lihua.cloud.annotation.EnableHttpClients;
+import com.lihua.api.annotation.EnableHttpClients;
 import com.lihua.security.enums.TokenEnum;
 import com.lihua.security.manager.LoginUserContext;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;

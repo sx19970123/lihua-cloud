@@ -1,6 +1,7 @@
 package com.lihua.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.lihua.common.model.bridge.log.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import com.lihua.excel.utils.ExcelUtils;
@@ -17,7 +18,6 @@ import jakarta.validation.constraints.NotEmpty;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +48,13 @@ public class SysLogController extends ApiResponseController {
     }
 
     // 操作日志------------------------------------------------------------
+    @Operation(summary = "操作日志-保存日志信息")
+    @PostMapping("operate/insert")
+    public ApiResponseModel<String> insertOperate(@RequestBody LogModel logModel) {
+        sysOperateLogService.insert(logModel);
+        return success();
+    }
+
     @Operation(summary = "操作日志-分页查询")
     @PostMapping("operate/page")
     public ApiResponseModel<IPage<? extends SysLogVO>> queryOperatePage(@RequestBody @Validated(MaxPageSizeLimit.class) SysLogDTO sysLogDTO) {
@@ -86,8 +93,13 @@ public class SysLogController extends ApiResponseController {
         ExcelUtils.export(sysLogVOS, SysLogVO.class);
     }
 
-
     // 登录日志------------------------------------------------------------
+    @Operation(summary = "操作日志-保存日志信息")
+    @PostMapping("login/insert")
+    public ApiResponseModel<String> insertLogin(@RequestBody LogModel logModel) {
+        sysLoginLogService.insert(logModel);
+        return success();
+    }
 
     @Operation(summary = "登录日志-分页查询")
     @PostMapping("login/page")

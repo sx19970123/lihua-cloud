@@ -5,8 +5,6 @@ import cloud.tianai.captcha.application.vo.ImageCaptchaVO;
 import cloud.tianai.captcha.common.response.ApiResponse;
 import cloud.tianai.captcha.validator.common.model.dto.ImageCaptchaTrack;
 import com.lihua.captcha.enums.CaptchaTypeEnum;
-import com.lihua.client.system.api.SysLogClient;
-import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,16 +23,9 @@ public class CaptchaController extends ApiResponseController {
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
 
-    @Resource
-    private SysLogClient sysLogClient;
-
     @Operation(summary = "获取验证码")
     @PostMapping("get")
     public ApiResponse<ImageCaptchaVO> getCaptcha() {
-        ApiResponseModel<Object> objectApiResponseModel = sysLogClient.querySysLog("1");
-
-        System.out.println(objectApiResponseModel);
-
         // 随机获取验证码类型
         return imageCaptchaApplication.generateCaptcha(CaptchaTypeEnum.randomType());
     }

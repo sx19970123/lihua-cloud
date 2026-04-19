@@ -26,7 +26,7 @@
         <!--        system服务远程调用-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-client-system</artifactId>
+            <artifactId>lihua-api-system</artifactId>
         </dependency>
     </dependencies>
 

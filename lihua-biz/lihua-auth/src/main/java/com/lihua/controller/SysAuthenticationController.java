@@ -155,9 +155,9 @@ public class SysAuthenticationController extends ApiResponseController {
 //            return true;
 //        }
 
-        if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {
-            return ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(captchaVerification);
-        }
+//        if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {
+//            return ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(captchaVerification);
+//        }
         return false;
     }
 }

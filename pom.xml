@@ -156,11 +156,17 @@
                 <artifactId>lihua-base-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
+<!--            流控模块-->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-resilience</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 <!--            远程调用依赖=============================================-->
 <!--            system业务模块远程调用 -->
             <dependency>
                 <groupId>com.lihua</groupId>
-                <artifactId>lihua-client-system</artifactId>
+                <artifactId>lihua-api-system</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -169,7 +175,7 @@
     <modules>
         <module>lihua-base</module>
         <module>lihua-biz</module>
-        <module>lihua-client</module>
+        <module>lihua-api</module>
     </modules>
 
 <!--    通用打包配置-->

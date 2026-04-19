@@ -51,7 +51,9 @@ public class SecurityConfig {
                         "/system/setting/GrayModelSetting",             // 灰色模式设置
                         "/system/checkUserName/**",                     // 检查用户名
                         "/system/setting/base/**",                      // 基础设置
-                        "/system/register/**"                           // 注册
+                        "/system/register/**",                          // 注册
+                        "/system/log/login/insert",                     // 登录日志记录
+                        "/system/log/operate/insert"                    // 操作日志记录
                 ).permitAll()
                 // app接口配置
                 .requestMatchers(

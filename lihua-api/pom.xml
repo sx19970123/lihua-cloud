@@ -5,37 +5,32 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.lihua</groupId>
-        <artifactId>lihua-base</artifactId>
+        <artifactId>lihua-cloud</artifactId>
         <version>2.0.2</version>
     </parent>
 
-    <artifactId>lihua-base-log</artifactId>
+    <artifactId>lihua-api</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>lihua-api-system</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
-        <!--        aop-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aspectj</artifactId>
-        </dependency>
-        <!--        api远程调用-->
+<!--        远程调用模块-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-api-system</artifactId>
+            <artifactId>lihua-base-client</artifactId>
         </dependency>
-        <!--        公共模块-->
+<!--        流控模块-->
         <dependency>
             <groupId>com.lihua</groupId>
-            <artifactId>lihua-base-common</artifactId>
-        </dependency>
-        <!--        安全模块-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-base-security</artifactId>
+            <artifactId>lihua-base-resilience</artifactId>
         </dependency>
     </dependencies>
 

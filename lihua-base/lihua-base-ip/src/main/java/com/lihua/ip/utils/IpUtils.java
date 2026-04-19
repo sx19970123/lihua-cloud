@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
+
 public class IpUtils {
 
     /**
@@ -13,7 +15,7 @@ public class IpUtils {
      * @return ip地址
      */
     public static String getIpAddress() {
-        return getIpAddress(WebUtils.getCurrentRequest());
+        return getIpAddress(Objects.requireNonNull(WebUtils.getCurrentRequest()));
     }
 
     /**
