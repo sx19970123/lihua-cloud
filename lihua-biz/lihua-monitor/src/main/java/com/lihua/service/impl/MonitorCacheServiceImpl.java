@@ -1,7 +1,7 @@
 package com.lihua.service.impl;
 
+import com.lihua.api.facade.SysSettingClientFacade;
 import com.lihua.common.exception.ServiceException;
-import com.lihua.common.model.bridge.setting.CacheBlackIp;
 import com.lihua.common.utils.json.JsonUtils;
 import com.lihua.model.CacheMonitor;
 import com.lihua.cache.manager.RedisCacheManager;
@@ -9,9 +9,7 @@ import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.service.MonitorCacheService;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ public class MonitorCacheServiceImpl implements MonitorCacheService {
     private RedisCacheManager redisCacheManager;
 
     @Resource
-    private ApplicationEventPublisher applicationEventPublisher;
+    private SysSettingClientFacade sysSettingClientFacade;
 
 
     @Override
@@ -95,7 +93,7 @@ public class MonitorCacheServiceImpl implements MonitorCacheService {
         Set<String> keys = cacheKeys(keyPrefix);
         redisCacheManager.delete(keys);
 
-        // 重新刷新黑名单
-        applicationEventPublisher.publishEvent(new CacheBlackIp());
+        // 远程调用重新刷新黑名单
+        sysSettingClientFacade.cacheIpBlack();
     }
 }

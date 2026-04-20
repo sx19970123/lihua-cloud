@@ -23,11 +23,6 @@
             <artifactId>oshi-core</artifactId>
             <version>${oshi.version}</version>
         </dependency>
-        <!--        system服务远程调用-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-api-system</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

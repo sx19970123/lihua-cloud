@@ -23,11 +23,6 @@
             <groupId>com.lihua</groupId>
             <artifactId>lihua-base-captcha</artifactId>
         </dependency>
-        <!--        system服务远程调用-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-api-system</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

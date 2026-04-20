@@ -58,4 +58,11 @@ public class SysSettingController extends ApiResponseController {
     public ApiResponseModel<Boolean> enableSignUp() {
         return success(sysSettingService.enableSignUp());
     }
+
+    @Operation(summary = "缓存ip黑名单")
+    @PostMapping("cacheIpBlack")
+    public ApiResponseModel<String> cacheIpBlack() {
+        sysSettingService.cacheIpBlackList();
+        return success();
+    }
 }

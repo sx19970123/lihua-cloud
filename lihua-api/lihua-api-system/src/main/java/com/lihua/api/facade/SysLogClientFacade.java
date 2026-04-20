@@ -17,7 +17,7 @@ public class SysLogClientFacade {
     /**
      * 保存操作日志
      */
-    @CircuitBreaker(name = "syslog")
+    @CircuitBreaker(name = "sysLog")
     public ApiResponseModel<String> insertOperate(@RequestBody LogModel logModel) {
         return sysLogClient.insertOperate(logModel);
     }
@@ -25,7 +25,7 @@ public class SysLogClientFacade {
     /**
      * 保存登录日志
      */
-    @CircuitBreaker(name = "syslog")
+    @CircuitBreaker(name = "sysLog")
     public ApiResponseModel<String> insertLogin(@RequestBody LogModel logModel) {
         return sysLogClient.insertLogin(logModel);
     }

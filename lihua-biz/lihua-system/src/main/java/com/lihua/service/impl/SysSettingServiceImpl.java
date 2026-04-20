@@ -45,7 +45,7 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
         redisCacheManager.removeMapItem(REDIS_SETTING_KEY, sysSetting.getSettingKey());
         // 修改黑名单相关配置时，重新缓存ip黑名单
         if (SysSettingEnum.RESTRICT_ACCESS_IP.getKey().equals(sysSetting.getSettingKey())) {
-            cacheIpBlackList(null);
+            cacheIpBlackList();
         }
         return sysSetting.getSettingKey();
     }
@@ -164,9 +164,8 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
         return passwordSetting.getDefaultPassword();
     }
 
-    // 缓存ip黑名单
-    @EventListener
-    public void cacheIpBlackList(CacheBlackIp cacheBlackIp) {
+    @Override
+    public void cacheIpBlackList() {
         // 清除本地缓存
         redisPublisher.send(RedisTopicEnum.INVALIDATE_LOCAL_CACHE.getValue(), IP_BLACKLIST_KEY);
 

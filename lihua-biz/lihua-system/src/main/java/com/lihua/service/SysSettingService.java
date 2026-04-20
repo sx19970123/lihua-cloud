@@ -50,4 +50,9 @@ public interface SysSettingService {
      * 获取默认密码
      */
     String getDefaultPassword();
+
+    /**
+     * 刷新ip黑名单
+     */
+    void cacheIpBlackList();
 }
