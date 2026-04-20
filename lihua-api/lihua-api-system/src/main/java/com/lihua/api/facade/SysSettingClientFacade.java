@@ -6,6 +6,9 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
+/**
+ * 系统设置相关远程调用
+ */
 @Component
 public class SysSettingClientFacade {
 
@@ -18,6 +21,14 @@ public class SysSettingClientFacade {
     @CircuitBreaker(name = "sysSetting")
     public ApiResponseModel<String> cacheIpBlack() {
         return sysSettingClient.cacheIpBlack();
+    }
+
+    /**
+     * 是否启用验证码
+     */
+    @CircuitBreaker(name = "sysSetting")
+    public ApiResponseModel<Boolean> enableCaptcha() {
+        return sysSettingClient.enableCaptcha();
     }
 
 }

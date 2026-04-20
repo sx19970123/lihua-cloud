@@ -8,6 +8,9 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * 系统日志相关远程调用
+ */
 @Component
 public class SysLogClientFacade {
 

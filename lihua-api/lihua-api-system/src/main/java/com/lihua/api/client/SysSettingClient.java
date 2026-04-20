@@ -2,6 +2,7 @@ package com.lihua.api.client;
 
 import com.lihua.api.annotation.HttpClient;
 import com.lihua.common.model.response.ApiResponseModel;
+import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -14,5 +15,11 @@ public interface SysSettingClient {
      */
     @PostExchange("cacheIpBlack")
     ApiResponseModel<String> cacheIpBlack();
+
+    /**
+     * 获取是否启用验证码
+     */
+    @GetExchange("base/enableCaptcha")
+    ApiResponseModel<Boolean> enableCaptcha();
 
 }

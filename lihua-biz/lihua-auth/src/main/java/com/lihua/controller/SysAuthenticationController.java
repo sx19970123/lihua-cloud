@@ -2,6 +2,7 @@ package com.lihua.controller;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
+import com.lihua.api.facade.SysSettingClientFacade;
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
@@ -12,7 +13,6 @@ import com.lihua.model.dto.SysLoginUserDTO;
 import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.model.*;
 import com.lihua.service.SysAuthenticationService;
-//import com.lihua.service.SysSettingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -33,8 +33,8 @@ public class SysAuthenticationController extends ApiResponseController {
     @Resource
     private SysAuthenticationService sysAuthenticationService;
 
-//    @Resource
-//    private SysSettingService sysSettingService;
+    @Resource
+    private SysSettingClientFacade sysSettingClientFacade;
 
     @Resource
     private ImageCaptchaApplication imageCaptchaApplication;
@@ -151,13 +151,16 @@ public class SysAuthenticationController extends ApiResponseController {
 
     // 校验验证码
     private boolean checkCaptcha(String captchaVerification) {
-//        if (!sysSettingService.enableCaptcha()) {
-//            return true;
-//        }
+        ApiResponseModel<Boolean> enableCaptchaResp = sysSettingClientFacade.enableCaptcha();
 
-//        if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {
-//            return ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(captchaVerification);
-//        }
+        if (200 == enableCaptchaResp.getCode()) {
+            return enableCaptchaResp.getData();
+        }
+
+        if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {
+            return ((SecondaryVerificationApplication) imageCaptchaApplication).secondaryVerification(captchaVerification);
+        }
+
         return false;
     }
 }
