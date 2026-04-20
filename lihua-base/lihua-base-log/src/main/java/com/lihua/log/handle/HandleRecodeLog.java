@@ -1,7 +1,7 @@
 package com.lihua.log.handle;
 
-import com.lihua.api.facade.SysLogClientFacade;
-import com.lihua.api.model.LogModel;
+import com.lihua.client.facade.SysLogClientFacade;
+import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.common.utils.json.JsonUtils;

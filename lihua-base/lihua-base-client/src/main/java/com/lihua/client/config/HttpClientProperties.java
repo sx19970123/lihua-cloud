@@ -1,4 +1,4 @@
-package com.lihua.api.config;
+package com.lihua.client.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

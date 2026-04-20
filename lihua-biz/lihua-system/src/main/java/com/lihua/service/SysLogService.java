@@ -1,7 +1,7 @@
 package com.lihua.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lihua.api.model.LogModel;
+import com.lihua.client.model.LogModel;
 import com.lihua.model.dto.SysLogDTO;
 import com.lihua.model.vo.SysLogVO;
 

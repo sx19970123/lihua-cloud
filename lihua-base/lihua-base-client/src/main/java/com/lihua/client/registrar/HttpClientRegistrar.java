@@ -1,7 +1,7 @@
-package com.lihua.api.registrar;
+package com.lihua.client.registrar;
 
-import com.lihua.api.annotation.EnableHttpClients;
-import com.lihua.api.annotation.HttpClient;
+import com.lihua.client.annotation.EnableHttpClients;
+import com.lihua.client.annotation.HttpClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;

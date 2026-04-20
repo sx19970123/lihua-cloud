@@ -1,7 +1,7 @@
 package com.lihua.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lihua.api.model.LogModel;
+import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import com.lihua.excel.utils.ExcelUtils;
@@ -11,6 +11,7 @@ import com.lihua.model.dto.SysLogDTO;
 import com.lihua.model.vo.SysLogVO;
 import com.lihua.mybatis.model.validation.MaxPageSizeLimit;
 import com.lihua.service.SysLogService;
+import com.lihua.web.annotation.InternalOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -50,6 +51,7 @@ public class SysLogController extends ApiResponseController {
     // 操作日志------------------------------------------------------------
     @Operation(summary = "操作日志-保存日志信息")
     @PostMapping("operate/insert")
+    @InternalOnly
     public ApiResponseModel<String> insertOperate(@RequestBody LogModel logModel) {
         sysOperateLogService.insert(logModel);
         return success();
@@ -96,6 +98,7 @@ public class SysLogController extends ApiResponseController {
     // 登录日志------------------------------------------------------------
     @Operation(summary = "操作日志-保存日志信息")
     @PostMapping("login/insert")
+    @InternalOnly
     public ApiResponseModel<String> insertLogin(@RequestBody LogModel logModel) {
         sysLoginLogService.insert(logModel);
         return success();

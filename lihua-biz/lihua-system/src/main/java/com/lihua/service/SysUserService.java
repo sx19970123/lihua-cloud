@@ -5,6 +5,8 @@ import com.lihua.entity.SysUser;
 import com.lihua.model.dto.ResetPasswordDTO;
 import com.lihua.model.dto.SysUserDTO;
 import com.lihua.model.vo.SysUserVO;
+import com.lihua.security.model.CurrentUser;
+import com.lihua.security.model.LoginUserSession;
 
 import java.util.List;
 
@@ -67,4 +69,10 @@ public interface SysUserService {
      * 重置密码
      */
     String resetPassword(ResetPasswordDTO resetPasswordDTO);
+
+    /**
+     * 根据username查询用户信息
+     * 用于登录接口
+     */
+    CurrentUser queryUserByUsername(String username);
 }

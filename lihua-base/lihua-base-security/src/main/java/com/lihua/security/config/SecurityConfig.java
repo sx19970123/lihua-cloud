@@ -51,10 +51,15 @@ public class SecurityConfig {
                         "/system/setting/GrayModelSetting",             // 灰色模式设置
                         "/system/checkUserName/**",                     // 检查用户名
                         "/system/setting/base/**",                      // 基础设置
-                        "/system/register/**",                          // 注册
-                        "/system/log/login/insert",                     // 登录日志记录
-                        "/system/log/operate/insert"                    // 操作日志记录
+                        "/system/register/**"                           // 注册
                 ).permitAll()
+                // 远程调用接口
+                .requestMatchers(
+                        "/system/log/login/insert",                     // 登录日志记录
+                        "/system/log/operate/insert",                   // 操作日志记录
+                        "/system/user/queryUserByUsername/**"           // 用户登录远程调用
+                )
+                .permitAll()
                 // app接口配置
                 .requestMatchers(
                         "/app/system/login",                                // 登录
@@ -72,8 +77,10 @@ public class SecurityConfig {
                         "/swagger-ui/**",                               // spring-doc
                         "/v3/api-docs/**",                              // spring-doc
                         "/error"                                        // 当出现404等异常时spring内部会转发到/error，需要将其放过，否则会响应401
-                ).permitAll()
-                .anyRequest().authenticated());
+                )
+                .permitAll()
+                .anyRequest()
+                .authenticated());
 
         // 关闭csrf拦截
         http.csrf(AbstractHttpConfigurer::disable);

@@ -1,6 +1,9 @@
-package com.lihua.api.config;
+package com.lihua.client.config;
 
-import com.lihua.api.annotation.EnableHttpClients;
+import com.lihua.client.annotation.EnableHttpClients;
+import com.lihua.common.enums.SignEnum;
+import com.lihua.common.utils.crypt.HmacUtils;
+import com.lihua.common.utils.date.DateUtils;
 import com.lihua.security.enums.TokenEnum;
 import com.lihua.security.manager.LoginUserContext;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -28,6 +31,16 @@ public class RestClientConfig {
                 if (StringUtils.hasText(token)) {
                     request.getHeaders().add(TokenEnum.TOKEN_KEY.getValue(), token);
                 }
+
+                // 生成签名
+                long timeMillis = DateUtils.nowTimeStamp();
+                String sign = HmacUtils.hmacSha256(SignEnum.SIGN_SECRET.getValue(), String.format("%s:%s:%s",
+                        request.getMethod().name(),
+                        request.getURI().getPath(),
+                        timeMillis));
+                request.getHeaders().add(SignEnum.SIGN_KEY.getValue(), sign);
+                request.getHeaders().add("Timestamp", String.valueOf(timeMillis));
+
                 return execution.execute(request, body);
             });
     }

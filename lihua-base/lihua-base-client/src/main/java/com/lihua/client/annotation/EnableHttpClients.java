@@ -1,6 +1,6 @@
-package com.lihua.api.annotation;
+package com.lihua.client.annotation;
 
-import com.lihua.api.registrar.HttpClientRegistrar;
+import com.lihua.client.registrar.HttpClientRegistrar;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;

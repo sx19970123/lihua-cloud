@@ -13,7 +13,10 @@ import com.lihua.model.dto.ResetPasswordDTO;
 import com.lihua.model.dto.SysUserDTO;
 import com.lihua.model.vo.SysUserVO;
 import com.lihua.mybatis.model.validation.MaxPageSizeLimit;
+import com.lihua.security.model.CurrentUser;
+import com.lihua.security.model.LoginUserSession;
 import com.lihua.service.SysUserService;
+import com.lihua.web.annotation.InternalOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -119,6 +122,13 @@ public class SysUserController extends ApiResponseController {
         List<SysUser> sysUserList = ExcelUtils.excelImport(file.getInputStream(), SysUser.class);
         sysUserService.importExcel(sysUserList);
         return success();
+    }
+
+    @Operation(summary = "根据用户名查询用户信息（仅内部服务远程调用）")
+    @GetMapping("queryUserByUsername/{username}")
+    @InternalOnly
+    public ApiResponseModel<CurrentUser> queryUserByUsername(@PathVariable("username") String username) {
+        return success(sysUserService.queryUserByUsername(username));
     }
 
 }

@@ -1,14 +1,14 @@
-package com.lihua.api.client;
+package com.lihua.client.client;
 
-import com.lihua.api.annotation.HttpClient;
-import com.lihua.api.model.LogModel;
+import com.lihua.client.annotation.HttpClient;
+import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 @HttpClient("lihua-system")
-@HttpExchange("/system/log")
+@HttpExchange("system/log")
 public interface SysLogClient {
 
     /**

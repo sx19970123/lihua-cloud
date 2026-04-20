@@ -2,7 +2,7 @@ package com.lihua.controller.app;
 
 import cloud.tianai.captcha.application.ImageCaptchaApplication;
 import cloud.tianai.captcha.spring.plugins.secondary.SecondaryVerificationApplication;
-import com.lihua.api.facade.SysSettingClientFacade;
+import com.lihua.client.facade.SysSettingClientFacade;
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;

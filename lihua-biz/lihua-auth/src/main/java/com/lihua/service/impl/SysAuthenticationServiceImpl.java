@@ -14,6 +14,7 @@ import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.manager.LoginUserManager;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
+import com.lihua.security.utils.SecurityUtils;
 import com.lihua.service.SysAuthenticationService;
 //import com.lihua.service.SysProfileService;
 //import com.lihua.service.SysSettingService;
@@ -98,6 +99,7 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     public String cacheLoginUserInfo(LoginUserSession loginUserSession, boolean isReload) {
         // 当前用户是否为管理员
         boolean isAdmin = isAdmin(loginUserSession.getUser().getId());
+
         // 执行各个模块的缓存设置
 //        cacheLoginUserStrategyList
 //                .stream()

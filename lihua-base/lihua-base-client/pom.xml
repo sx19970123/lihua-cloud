@@ -33,5 +33,10 @@
             <groupId>com.lihua</groupId>
             <artifactId>lihua-base-security</artifactId>
         </dependency>
+        <!--        公共模块-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-common</artifactId>
+        </dependency>
     </dependencies>
 </project>
