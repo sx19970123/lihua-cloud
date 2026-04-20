@@ -1,7 +1,7 @@
 package com.lihua.api.client;
 
 import com.lihua.api.annotation.HttpClient;
-import com.lihua.common.model.bridge.log.LogModel;
+import com.lihua.api.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;

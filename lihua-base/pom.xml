@@ -28,7 +28,6 @@
         <module>lihua-base-web</module>
         <module>lihua-base-websocket</module>
         <module>lihua-base-client</module>
-        <module>lihua-base-resilience</module>
     </modules>
 
     <properties>

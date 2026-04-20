@@ -3,7 +3,7 @@ package com.lihua.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lihua.common.model.bridge.log.LogModel;
+import com.lihua.api.model.LogModel;
 import com.lihua.entity.SysLoginLog;
 import com.lihua.mapper.SysLoginLogMapper;
 import com.lihua.model.dto.SysLogDTO;

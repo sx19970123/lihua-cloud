@@ -1,4 +1,4 @@
-package com.lihua.common.model.bridge.log;
+package com.lihua.api.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
