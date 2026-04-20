@@ -3,7 +3,6 @@ package com.lihua.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lihua.cache.enums.RedisTopicEnum;
 import com.lihua.cache.publisher.RedisPublisher;
-import com.lihua.common.model.bridge.setting.CacheBlackIp;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.common.utils.json.JsonUtils;
 import com.lihua.entity.SysSetting;
@@ -14,7 +13,6 @@ import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.service.SysSettingService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
