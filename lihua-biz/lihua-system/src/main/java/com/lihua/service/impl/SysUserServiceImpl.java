@@ -20,8 +20,6 @@ import com.lihua.model.dto.SysUserDeptDTO;
 import com.lihua.model.vo.SysPostVO;
 import com.lihua.model.vo.SysUserVO;
 import com.lihua.security.manager.LoginUserContext;
-import com.lihua.security.model.CurrentUser;
-import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.SecurityUtils;
 import com.lihua.sensitive.annotation.ApplySensitive;
 import com.lihua.service.*;
@@ -30,7 +28,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -292,11 +289,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>  imp
                         .set(SysUser::getUpdateTime, now);
         sysUserMapper.update(updateWrapper);
         return resetPasswordDTO.getUserId();
-    }
-
-    @Override
-    public CurrentUser queryUserByUsername(String username) {
-        return sysUserMapper.loginSelect(username);
     }
 
 

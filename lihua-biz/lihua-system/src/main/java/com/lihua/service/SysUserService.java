@@ -70,9 +70,4 @@ public interface SysUserService {
      */
     String resetPassword(ResetPasswordDTO resetPasswordDTO);
 
-    /**
-     * 根据username查询用户信息
-     * 用于登录接口
-     */
-    CurrentUser queryUserByUsername(String username);
 }

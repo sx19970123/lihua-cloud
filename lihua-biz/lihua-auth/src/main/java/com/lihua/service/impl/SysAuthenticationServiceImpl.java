@@ -1,10 +1,11 @@
 package com.lihua.service.impl;
 
 //import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.lihua.client.facade.SysUserClientFacade;
 import com.lihua.common.exception.ServiceException;
+import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
 //import com.lihua.entity.SysUser;
-//import com.lihua.mapper.SysRoleMapper;
 //import com.lihua.mapper.SysUserMapper;
 //import com.lihua.model.dto.SysSettingDTO;
 import com.lihua.cache.manager.RedisCacheManager;
@@ -41,9 +42,9 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
 
     @Resource
     private AuthenticationManager authenticationManager;
-//
-//    @Resource
-//    private SysRoleMapper sysRoleMapper;
+
+    @Resource
+    private SysUserClientFacade sysUserClientFacade;
 //
 //    @Resource
 //    private SysSettingService sysSettingService;
@@ -97,15 +98,17 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
 
     @Override
     public String cacheLoginUserInfo(LoginUserSession loginUserSession, boolean isReload) {
-        // 当前用户是否为管理员
-        boolean isAdmin = isAdmin(loginUserSession.getUser().getId());
+        // 远程调用获取用户信息
+        ApiResponseModel<LoginUserSession> loginUserSessionApiResponseModel = sysUserClientFacade.queryLoginUserSession(loginUserSession);
+        if (loginUserSessionApiResponseModel == null || loginUserSessionApiResponseModel.getCode() != 200) {
+            return null;
+        }
 
-        // 执行各个模块的缓存设置
-//        cacheLoginUserStrategyList
-//                .stream()
-//                // 根据 isReload 标识判断是否执行 CacheUserStrategyImpl，否则登录时会查询两次
-//                .filter(strategy -> isReload || !(strategy instanceof CacheUserStrategyImpl))
-//                .forEach(strategy -> strategy.cacheLoginUser(loginUserSession, isAdmin));
+        loginUserSession = loginUserSessionApiResponseModel.getData();
+        if (loginUserSession == null) {
+            return null;
+        }
+
         // 设置redis缓存
         return LoginUserManager.setLoginUserCache(loginUserSession);
     }
@@ -199,14 +202,4 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
         redisCacheManager.setCacheObject(RedisKeyPrefixEnum.ONCE_TOKEN_REDIS_PREFIX.getValue() + uuid, LoginUserContext.getUserId(), Duration.ofMinutes(1));
         return uuid;
     }
-
-    /**
-     * 判断当前登录用户是否为超级管理员
-     */
-    private boolean isAdmin(String userId) {
-//        List<String> roleCodes = sysRoleMapper.selectCodeByUserId(userId);
-//        return roleCodes.contains("ROLE_admin");
-        return false;
-    }
-
 }
