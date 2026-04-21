@@ -22,19 +22,13 @@ public class PostUpdatePasswordStrategyImpl implements PostLoginCheckStrategy {
     @Resource
     private SysSettingService sysSettingService;
 
-    @Resource
-    private SysProfileService sysProfileService;
-
     final String COMPONENT_NAME = "PostLoginCheckResetPassword";
 
     @Override
     public String check(LoginUserSession loginUserSession) {
 
-        // 获取当前登录用户密码
-        String password = sysProfileService.getPassword();
-
         // 用户密码与默认密码相同
-        if (SecurityUtils.matchesPassword(sysSettingService.getDefaultPassword(), password)) {
+        if (SecurityUtils.matchesPassword(sysSettingService.getDefaultPassword(), loginUserSession.getPassword())) {
             return COMPONENT_NAME;
         }
 
