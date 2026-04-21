@@ -28,6 +28,14 @@ public class SysSettingClientFacade {
     }
 
     /**
+     * 查询同账号最大登录数
+     */
+    @CircuitBreaker(name = "sysSetting")
+    public ApiResponseModel<Integer> getMaxConcurrentLogins() {
+        return sysSettingClient.getMaxConcurrentLogins();
+    }
+
+    /**
      * 是否启用验证码
      */
     @CircuitBreaker(name = "sysSetting", fallbackMethod = "captchaFallback")

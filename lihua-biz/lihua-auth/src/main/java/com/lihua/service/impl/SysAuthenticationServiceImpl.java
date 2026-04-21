@@ -1,13 +1,10 @@
 package com.lihua.service.impl;
 
-//import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.lihua.client.facade.SysUserClientFacade;
+import com.lihua.client.facade.SysSettingClientFacade;
+import com.lihua.client.facade.SysUserAuthClientFacade;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
-//import com.lihua.entity.SysUser;
-//import com.lihua.mapper.SysUserMapper;
-//import com.lihua.model.dto.SysSettingDTO;
 import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.model.dto.SysLoginUserDTO;
@@ -15,14 +12,7 @@ import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.manager.LoginUserManager;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
-import com.lihua.security.utils.SecurityUtils;
 import com.lihua.service.SysAuthenticationService;
-//import com.lihua.service.SysProfileService;
-//import com.lihua.service.SysSettingService;
-//import com.lihua.strategy.cacheloginuser.CacheLoginUserStrategy;
-//import com.lihua.strategy.cacheloginuser.CacheUserStrategyImpl;
-//import com.lihua.strategy.checkloginsetting.CheckLoginSettingStrategy;
-//import com.lihua.strategy.saveuserregister.SaveRegisterUserAssociatedStrategy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -44,28 +33,19 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     private AuthenticationManager authenticationManager;
 
     @Resource
-    private SysUserClientFacade sysUserClientFacade;
+    private SysUserAuthClientFacade sysUserAuthClientFacade;
+
+    @Resource
+    private SysSettingClientFacade sysSettingClientFacade;
 //
 //    @Resource
 //    private SysSettingService sysSettingService;
-//
-//    @Resource
-//    private SysProfileService sysProfileService;
 //
 //    @Resource
 //    private SysUserMapper sysUserMapper;
 
     @Resource
     private RedisCacheManager redisCacheManager;
-
-//    @Resource
-//    private List<CacheLoginUserStrategy> cacheLoginUserStrategyList;
-//
-//    @Resource
-//    private List<SaveRegisterUserAssociatedStrategy> saveRegisterUserAssociatedStrategieList;
-//
-//    @Resource
-//    private List<CheckLoginSettingStrategy> checkLoginSettingStrategyList;
 
 
     @Override
@@ -74,32 +54,10 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
         return (LoginUserSession) authenticate.getPrincipal();
     }
 
-
     @Override
-    public List<String> checkLoginSetting(LoginUserSession loginUserSession) {
-        // 需要进行登录后设置的组件名集合
-        List<String> loginSettingComponentNameList = new ArrayList<>();
-
-        // 将密码设置到LoginUser对象中
-//        String password = sysProfileService.getPassword();
-//        loginUserSession.getUser().setPassword(password);
-
-        // 循环检查是否需要进行登录后配置
-//        checkLoginSettingStrategyList.forEach(strategy -> {
-//            String componentName = strategy.checkSetting(loginUserSession);
-//            if (StringUtils.hasText(componentName)) {
-//                loginSettingComponentNameList.add(componentName);
-//            }
-//        });
-
-        return loginSettingComponentNameList;
-    }
-
-
-    @Override
-    public String cacheLoginUserInfo(LoginUserSession loginUserSession, boolean isReload) {
+    public String cacheLoginUserInfo(LoginUserSession loginUserSession) {
         // 远程调用获取用户信息
-        ApiResponseModel<LoginUserSession> loginUserSessionApiResponseModel = sysUserClientFacade.queryLoginUserSession(loginUserSession);
+        ApiResponseModel<LoginUserSession> loginUserSessionApiResponseModel = sysUserAuthClientFacade.queryLoginUserProfile(loginUserSession);
         if (loginUserSessionApiResponseModel == null || loginUserSessionApiResponseModel.getCode() != 200) {
             return null;
         }
@@ -115,7 +73,7 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
 
     @Override
     public String cacheAndCreateToken(LoginUserSession loginUserSession) {
-        String redisKey = cacheLoginUserInfo(loginUserSession, false);
+        String redisKey = cacheLoginUserInfo(loginUserSession);
         return JwtUtils.create(redisKey);
     }
 
@@ -167,11 +125,16 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     @Override
     public void checkSameAccount(String token) {
         // 获取最大登录用户配置信息，-1为未配置
-//        int limitSize = sysSettingService.getMaxConcurrentLogins();
-//
-//        if (limitSize == -1) {
-//            return;
-//        }
+        ApiResponseModel<Integer> maxConcurrentLogins = sysSettingClientFacade.getMaxConcurrentLogins();
+        if (maxConcurrentLogins == null || maxConcurrentLogins.getCode() != 200) {
+            return;
+        }
+
+        Integer limitSize = maxConcurrentLogins.getData();
+
+        if (limitSize == null || limitSize == -1) {
+            return;
+        }
 
         // 获取用户id
         String userId = LoginUserManager.getUserIdByCacheKey(JwtUtils.decode(token));
@@ -183,17 +146,16 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
         // 获取所有用户登录 key
         Set<String> keys = redisCacheManager.keys(RedisKeyPrefixEnum.LOGIN_USER_REDIS_PREFIX.getValue() + userId);
 
-//        int count = keys.size() - limitSize;
-//        if (count < 0) {
-//            return;
-//        }
+        int count = keys.size() - limitSize;
+        if (count < 0) {
+            return;
+        }
 
         // 根据用户登录时间，先登录的被踢下线
-//        keys.stream()
-//            .sorted(Comparator.comparingLong(LoginUserManager::getLoginTimestampByCacheKey))
-//            .limit(count)
-//            .forEach(key -> redisCacheManager.delete(key));
-
+        keys.stream()
+            .sorted(Comparator.comparingLong(LoginUserManager::getLoginTimestampByCacheKey))
+            .limit(count)
+            .forEach(key -> redisCacheManager.delete(key));
     }
 
     @Override

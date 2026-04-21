@@ -14,7 +14,6 @@ import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -60,8 +59,15 @@ public class LoginUserManager {
     public static void verifyLoginUserCache() {
         LoginUserSession loginUserSession = LoginUserContext.getLoginUser();
         if (DateUtils.differenceMinute(DateUtils.now(), loginUserSession.getExpirationTime()) < TOKEN_PROPERTIES.getRefreshThreshold()) {
-            REDIS_CACHE_MANAGER.setExpire(loginUserSession.getCacheKey(), Duration.ofMinutes(TOKEN_PROPERTIES.getTokenExpireTime()));
+            refreshToken();
         }
+    }
+
+    /**
+     * 刷新token时间
+     */
+    public static void refreshToken() {
+        REDIS_CACHE_MANAGER.setExpire(LoginUserContext.getLoginUser().getCacheKey(), Duration.ofMinutes(TOKEN_PROPERTIES.getTokenExpireTime()));
     }
 
     /**

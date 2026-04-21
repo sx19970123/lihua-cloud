@@ -6,6 +6,7 @@ import com.lihua.entity.SysSetting;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
 import com.lihua.service.SysSettingService;
+import com.lihua.web.annotation.InternalOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -61,8 +62,16 @@ public class SysSettingController extends ApiResponseController {
 
     @Operation(summary = "缓存ip黑名单")
     @PostMapping("cacheIpBlack")
+    @InternalOnly
     public ApiResponseModel<String> cacheIpBlack() {
         sysSettingService.cacheIpBlackList();
         return success();
+    }
+
+    @Operation(summary = "获取最大同时登录数量")
+    @GetMapping("getMaxConcurrentLogins")
+    @InternalOnly
+    public ApiResponseModel<Integer> getMaxConcurrentLogins() {
+        return success(sysSettingService.getMaxConcurrentLogins());
     }
 }

@@ -1,6 +1,7 @@
 package com.lihua.service;
 
 import com.lihua.security.model.CurrentUser;
+import com.lihua.security.model.LoginUserSession;
 
 public interface SysUserAuthService {
 
@@ -8,6 +9,10 @@ public interface SysUserAuthService {
      * 根据username查询用户信息
      * 用于登录接口
      */
-    CurrentUser queryUserByUsername(String username);
+    CurrentUser loginSelect(String username);
 
+    /**
+     * 查询登录用户全部信息
+     */
+    LoginUserSession queryLoginUserProfile(LoginUserSession loginUserSession);
 }

@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/system/log/login/insert",                     // 登录日志记录
                         "/system/log/operate/insert",                   // 操作日志记录
-                        "/system/user/queryUserByUsername/**"           // 用户登录远程调用
+                        "/system/user/auth/**"                          // 用户登录远程调用
                 )
                 .permitAll()
                 // app接口配置

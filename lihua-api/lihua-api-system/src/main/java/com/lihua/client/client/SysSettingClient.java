@@ -17,6 +17,12 @@ public interface SysSettingClient {
     ApiResponseModel<String> cacheIpBlack();
 
     /**
+     * 查询同账号最大登录数
+     */
+    @GetExchange("getMaxConcurrentLogins")
+    ApiResponseModel<Integer> getMaxConcurrentLogins();
+
+    /**
      * 获取是否启用验证码
      */
     @GetExchange("base/enableCaptcha")

@@ -10,18 +10,18 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 
 @HttpClient("lihua-system")
-@HttpExchange("system/user")
-public interface SysUserClient {
+@HttpExchange("system/user/auth")
+public interface SysUserAuthClient {
 
     /**
-     * 根据用户名查询用户信息
+     * 查询登录的用户信息
      */
-    @GetExchange("queryUserByUsername/{username}")
-    ApiResponseModel<CurrentUser> loadUserByUsername(@PathVariable("username") String username);
+    @GetExchange("loginSelect/{username}")
+    ApiResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username);
 
     /**
      * 查询登录用户信息
      */
-    @GetExchange("queryLoginUserSession")
-    ApiResponseModel<LoginUserSession> queryLoginUserSession(@RequestBody LoginUserSession  loginUserSession);
+    @GetExchange("queryLoginUserProfile")
+    ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession  loginUserSession);
 }

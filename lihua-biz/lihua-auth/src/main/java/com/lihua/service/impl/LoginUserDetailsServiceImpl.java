@@ -1,6 +1,6 @@
 package com.lihua.service.impl;
 
-import com.lihua.client.facade.SysUserClientFacade;
+import com.lihua.client.facade.SysUserAuthClientFacade;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.security.config.TokenProperties;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class LoginUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
-    private SysUserClientFacade sysUserClientFacade;
+    private SysUserAuthClientFacade sysUserAuthClientFacade;
 
     @Resource
     private TokenProperties tokenProperties;
@@ -26,7 +26,7 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
     public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
 
         // 远程调用获取用户信息
-        ApiResponseModel<CurrentUser> currentUserApiResponseModel = sysUserClientFacade.loadUserByUsername(username);
+        ApiResponseModel<CurrentUser> currentUserApiResponseModel = sysUserAuthClientFacade.loginSelect(username);
 
         if (currentUserApiResponseModel == null || 200 != currentUserApiResponseModel.getCode()) {
             throw new UsernameNotFoundException("获取用户信息失败");
