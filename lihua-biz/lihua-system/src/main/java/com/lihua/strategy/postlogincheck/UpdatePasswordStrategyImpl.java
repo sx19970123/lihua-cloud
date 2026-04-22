@@ -4,7 +4,6 @@ import com.lihua.common.utils.date.DateUtils;
 import com.lihua.model.dto.SysSettingDTO;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.SecurityUtils;
-import com.lihua.service.SysProfileService;
 import com.lihua.service.SysSettingService;
 import jakarta.annotation.Resource;
 import org.springframework.core.annotation.Order;
@@ -17,12 +16,12 @@ import java.time.LocalDateTime;
  */
 @Component
 @Order(1)
-public class PostUpdatePasswordStrategyImpl implements PostLoginCheckStrategy {
+public class UpdatePasswordStrategyImpl implements PostLoginCheckStrategy {
 
     @Resource
     private SysSettingService sysSettingService;
 
-    final String COMPONENT_NAME = "PostLoginCheckResetPassword";
+    final String COMPONENT_NAME = "UserSetupResetPassword";
 
     @Override
     public String check(LoginUserSession loginUserSession) {
