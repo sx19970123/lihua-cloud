@@ -170,6 +170,7 @@
         <module>lihua-base</module>
         <module>lihua-biz</module>
         <module>lihua-api</module>
+        <module>lihua-gateway</module>
     </modules>
 
 <!--    通用打包配置-->
