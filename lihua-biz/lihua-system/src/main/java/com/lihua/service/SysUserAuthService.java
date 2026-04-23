@@ -1,5 +1,6 @@
 package com.lihua.service;
 
+import com.lihua.client.model.RegisterUserModel;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 
@@ -15,4 +16,9 @@ public interface SysUserAuthService {
      * 查询登录用户全部信息
      */
     LoginUserSession queryLoginUserProfile(LoginUserSession loginUserSession);
+
+    /**
+     * 用户注册
+     */
+    String register(RegisterUserModel registerUserModel);
 }

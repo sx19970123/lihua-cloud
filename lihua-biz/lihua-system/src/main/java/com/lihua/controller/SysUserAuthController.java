@@ -1,5 +1,6 @@
 package com.lihua.controller;
 
+import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import com.lihua.security.model.CurrentUser;
@@ -31,6 +32,13 @@ public class SysUserAuthController extends ApiResponseController {
     @InternalOnly
     public ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession) {
         return success(sysUserAuthService.queryLoginUserProfile(loginUserSession));
+    }
+
+    @Operation(summary = "用户注册")
+    @GetMapping("register")
+    @InternalOnly
+    ApiResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel) {
+        return success(sysUserAuthService.register(registerUserModel));
     }
 
 }

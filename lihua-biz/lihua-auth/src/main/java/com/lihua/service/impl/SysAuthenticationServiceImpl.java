@@ -2,6 +2,7 @@ package com.lihua.service.impl;
 
 import com.lihua.client.facade.SysSettingClientFacade;
 import com.lihua.client.facade.SysUserAuthClientFacade;
+import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
@@ -12,6 +13,7 @@ import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.manager.LoginUserManager;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
+import com.lihua.security.utils.SecurityUtils;
 import com.lihua.service.SysAuthenticationService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +21,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -37,12 +37,6 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
 
     @Resource
     private SysSettingClientFacade sysSettingClientFacade;
-//
-//    @Resource
-//    private SysSettingService sysSettingService;
-//
-//    @Resource
-//    private SysUserMapper sysUserMapper;
 
     @Resource
     private RedisCacheManager redisCacheManager;
@@ -57,14 +51,14 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     @Override
     public String cacheLoginUserInfo(LoginUserSession loginUserSession) {
         // 远程调用获取用户信息
-        ApiResponseModel<LoginUserSession> loginUserSessionApiResponseModel = sysUserAuthClientFacade.queryLoginUserProfile(loginUserSession);
-        if (loginUserSessionApiResponseModel == null || loginUserSessionApiResponseModel.getCode() != 200) {
-            return null;
+        ApiResponseModel<LoginUserSession> responseModel = sysUserAuthClientFacade.queryLoginUserProfile(loginUserSession);
+        if (200 != responseModel.getCode()) {
+            throw new ServiceException(responseModel.getMsg());
         }
 
-        loginUserSession = loginUserSessionApiResponseModel.getData();
+        loginUserSession = responseModel.getData();
         if (loginUserSession == null) {
-            return null;
+            throw new ServiceException("获取信息为空");
         }
 
         // 设置redis缓存
@@ -78,59 +72,27 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     }
 
     @Override
-    public boolean checkUserName(String username) {
-//        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.lambda().eq(SysUser::getUsername, username);
-//        return !sysUserMapper.exists(queryWrapper);
-        return false;
-    }
-
-    @Override
-    @Transactional
-    public String register(String username, String password) {
-
-//        SysSettingDTO.SignInSetting signInSetting = sysSettingService.getSignInSetting();
-//
-//        if (signInSetting == null || !signInSetting.isEnable()) {
-//            throw new ServiceException("用户注册未开放");
-//        }
-
-        // 校验用户名
-        boolean checked = checkUserName(username);
-        if (!checked) {
-            throw new ServiceException("该用户名已存在");
-        }
-
-        LocalDateTime now = DateUtils.now();
-
-        // 用户基本信息
-//        SysUser sysUser = new SysUser();
-//        sysUser.setUsername(username);
-//        sysUser.setPassword(SecurityUtils.encryptPassword(password));
-//        sysUser.setStatus("0");
-//        sysUser.setRegisterType("1");
-//        sysUser.setPasswordUpdateTime(now);
-
-        // 保存用户基本信息
-//        sysUserMapper.insert(sysUser);
-
-        // 通过用户注册配置类保存相关关联表数据
-//        saveRegisterUserAssociatedStrategieList.forEach(strategy -> strategy.saveRegisterUserAssociated(sysUser.getId(), signInSetting));
-
-//        return sysUser.getId();
-
-        return null;
+    public ApiResponseModel<String> register(String username, String password) {
+        RegisterUserModel registerUserModel = new RegisterUserModel();
+        registerUserModel
+                .setUsername(username)
+                .setPassword(SecurityUtils.encryptPassword(password))
+                .setStatus("0")
+                .setRegisterType("1")
+                .setPasswordUpdateTime(DateUtils.now());
+        // 远程调用注册
+        return sysUserAuthClientFacade.register(registerUserModel);
     }
 
     @Override
     public void checkSameAccount(String token) {
         // 获取最大登录用户配置信息，-1为未配置
-        ApiResponseModel<Integer> maxConcurrentLogins = sysSettingClientFacade.getMaxConcurrentLogins();
-        if (maxConcurrentLogins == null || maxConcurrentLogins.getCode() != 200) {
-            return;
+        ApiResponseModel<Integer> responseModel = sysSettingClientFacade.getMaxConcurrentLogins();
+        if (200 != responseModel.getCode()) {
+            throw new ServiceException(responseModel.getMsg());
         }
 
-        Integer limitSize = maxConcurrentLogins.getData();
+        Integer limitSize = responseModel.getData();
 
         if (limitSize == null || limitSize == -1) {
             return;

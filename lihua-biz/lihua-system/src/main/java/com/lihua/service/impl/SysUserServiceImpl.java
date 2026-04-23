@@ -11,8 +11,6 @@ import com.lihua.common.utils.collection.CollectionUtils;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.entity.*;
 import com.lihua.excel.exception.ExcelImportException;
-import com.lihua.mapper.SysDeptMapper;
-import com.lihua.mapper.SysRoleMapper;
 import com.lihua.mapper.SysUserMapper;
 import com.lihua.model.dto.ResetPasswordDTO;
 import com.lihua.model.dto.SysUserDTO;
@@ -47,15 +45,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>  imp
 
     @Resource
     private SysUserDeptService sysUserDeptService;
-
-    @Resource
-    private SysPostService sysPostService;
-
-    @Resource
-    private SysRoleMapper sysRoleMapper;
-
-    @Resource
-    private SysDeptMapper sysDeptMapper;
 
     @Resource
     private SysSettingService sysSettingService;
@@ -121,6 +110,27 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>  imp
             sysUserVO.setDefaultDeptId(!list.isEmpty() ? list.get(0) : null);
         }
         return sysUserVO;
+    }
+
+    @Override
+    public boolean checkUserName(String username) {
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysUser::getUsername, username);
+        return !sysUserMapper.exists(queryWrapper);
+    }
+
+    @Override
+    public boolean checkPhoneNumber(String phoneNumber) {
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysUser::getPhoneNumber, phoneNumber);
+        return !sysUserMapper.exists(queryWrapper);
+    }
+
+    @Override
+    public boolean checkEmail(String email) {
+        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SysUser::getEmail, email);
+        return !sysUserMapper.exists(queryWrapper);
     }
 
     @Override

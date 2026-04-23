@@ -26,13 +26,13 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
     public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
 
         // 远程调用获取用户信息
-        ApiResponseModel<CurrentUser> currentUserApiResponseModel = sysUserAuthClientFacade.loginSelect(username);
+        ApiResponseModel<CurrentUser> responseModel = sysUserAuthClientFacade.loginSelect(username);
 
-        if (currentUserApiResponseModel == null || 200 != currentUserApiResponseModel.getCode()) {
-            throw new UsernameNotFoundException("获取用户信息失败");
+        if (200 != responseModel.getCode()) {
+            throw new UsernameNotFoundException(responseModel.getMsg());
         }
 
-        CurrentUser data = currentUserApiResponseModel.getData();
+        CurrentUser data = responseModel.getData();
         if (data == null) {
             throw new UsernameNotFoundException("用户名未找到");
         }

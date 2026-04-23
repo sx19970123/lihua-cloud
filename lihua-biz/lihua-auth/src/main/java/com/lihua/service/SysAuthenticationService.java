@@ -1,9 +1,8 @@
 package com.lihua.service;
 
+import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.model.dto.SysLoginUserDTO;
 import com.lihua.security.model.LoginUserSession;
-
-import java.util.List;
 
 public interface SysAuthenticationService {
 
@@ -27,14 +26,9 @@ public interface SysAuthenticationService {
     String cacheAndCreateToken(LoginUserSession loginUserSession);
 
     /**
-     * 检查用户名是否重复
-     */
-    boolean checkUserName(String username);
-
-    /**
      * 用户注册
      */
-    String register(String username, String password);
+    ApiResponseModel<String> register(String username, String password);
 
     /**
      * 检查是否配置了同账号最大同时登录数，超出数量后首先登录的用户会被踢下线

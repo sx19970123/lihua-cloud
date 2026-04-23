@@ -72,15 +72,6 @@ public class SysAuthenticationController extends ApiResponseController {
     }
 
     /**
-     * 检查用户名是否重复
-     */
-    @Operation(summary = "检查用户名是否重复")
-    @PostMapping("checkUserName/{username}")
-    public ApiResponseModel<Boolean> checkUserName(@PathVariable("username") String username) {
-        return success(sysAuthenticationService.checkUserName(username));
-    }
-
-    /**
      * 用户注册
      */
     @Operation(summary = "用户注册")
@@ -110,7 +101,7 @@ public class SysAuthenticationController extends ApiResponseController {
         }
 
         // 注册
-        return success(sysAuthenticationService.register(sysRegisterDTO.getUsername(), password));
+        return sysAuthenticationService.register(sysRegisterDTO.getUsername(), password);
     }
 
     @Operation(summary = "获取一次性令牌")
@@ -121,10 +112,10 @@ public class SysAuthenticationController extends ApiResponseController {
 
     // 校验验证码
     private boolean checkCaptcha(String captchaVerification) {
-        ApiResponseModel<Boolean> enableCaptchaResp = sysSettingClientFacade.enableCaptcha();
+        ApiResponseModel<Boolean> responseModel = sysSettingClientFacade.enableCaptcha();
 
-        if (200 == enableCaptchaResp.getCode()) {
-            return enableCaptchaResp.getData();
+        if (200 == responseModel.getCode()) {
+            return responseModel.getData();
         }
 
         if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {

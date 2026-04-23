@@ -1,10 +1,12 @@
 package com.lihua.client.client;
 
 import com.lihua.client.annotation.HttpClient;
+import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -23,5 +25,11 @@ public interface SysUserAuthClient {
      * 查询登录用户信息
      */
     @GetExchange("queryLoginUserProfile")
-    ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession  loginUserSession);
+    ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession);
+
+    /**
+     * 用户注册
+     */
+    @PostMapping("register")
+    ApiResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel);
 }
