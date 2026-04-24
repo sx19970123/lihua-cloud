@@ -48,6 +48,24 @@ public class SysUserController extends ApiResponseController {
         return success(sysUserService.queryById(id));
     }
 
+    @Operation(summary = "检查用户名是否重复")
+    @GetMapping("checkUserName/{username}")
+    public ApiResponseModel<Boolean> checkUserName(@PathVariable("username") String username) {
+        return success(sysUserService.checkUserName(username));
+    }
+
+    @Operation(summary = "检查手机号码是否重复")
+    @GetMapping("checkPhoneNumber/{phoneNumber}")
+    public ApiResponseModel<Boolean> checkPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
+        return success(sysUserService.checkPhoneNumber(phoneNumber));
+    }
+
+    @Operation(summary = "检查邮箱是否重复")
+    @GetMapping("checkEmail/{email}")
+    public ApiResponseModel<Boolean> checkEmail(@PathVariable("email") String email) {
+        return success(sysUserService.checkEmail(email));
+    }
+
     @Operation(summary = "保存用户数据")
     @PreAuthorize("hasRole('ROLE_admin')")
     @PostMapping

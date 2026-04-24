@@ -19,7 +19,7 @@ public interface SysSettingClient {
     /**
      * 查询同账号最大登录数
      */
-    @GetExchange("getMaxConcurrentLogins")
+    @GetExchange("base/getMaxConcurrentLogins")
     ApiResponseModel<Integer> getMaxConcurrentLogins();
 
     /**

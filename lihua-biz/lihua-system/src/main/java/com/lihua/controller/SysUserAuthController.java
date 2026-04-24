@@ -35,7 +35,7 @@ public class SysUserAuthController extends ApiResponseController {
     }
 
     @Operation(summary = "用户注册")
-    @GetMapping("register")
+    @PostMapping("register")
     @InternalOnly
     ApiResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel) {
         return success(sysUserAuthService.register(registerUserModel));

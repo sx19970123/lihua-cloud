@@ -45,13 +45,12 @@ public class SecurityConfig {
                 .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                 // 后台接口配置
                 .requestMatchers(
-                        "/system/login",                                // 登录
-                        "/system/publicKey/**",                         // 获取公钥
-                        "/system/attachment/storage/download/**",       // 附件下载
-                        "/system/setting/GrayModelSetting",             // 灰色模式设置
-                        "/system/checkUserName/**",                     // 检查用户名
-                        "/system/setting/base/**",                      // 基础设置
-                        "/system/register/**"                           // 注册
+                        "/system/auth/login",                            // 登录
+                        "/system/auth/register/**",                      // 注册
+                        "/system/user/checkUserName/**",                 // 检查用户名
+                        "/system/attachment/storage/download/**",        // 附件下载
+                        "/system/setting/GrayModelSetting",              // 灰色模式设置
+                        "/system/setting/base/**"                        // 基础设置
                 ).permitAll()
                 // 远程调用接口
                 .requestMatchers(
@@ -62,12 +61,11 @@ public class SecurityConfig {
                 .permitAll()
                 // app接口配置
                 .requestMatchers(
-                        "/app/system/login",                                // 登录
-                        "/app/system/publicKey/**",                         // 获取公钥
+                        "/app/system/auth/login",                           // 登录
+                        "/app/system/auth/register/**",                     // 注册
+                        "/app/system/user/checkUserName/**",                // 检查用户名
                         "/app/system/attachment/storage/download/**",       // 附件下载
-                        "/app/system/checkUserName/**",                     // 检查用户名
-                        "/app/system/setting/base/**",                      // 基础设置
-                        "/app/system/register/**"                           // 注册
+                        "/app/system/setting/base/**"                       // 基础设置
                 ).permitAll()
                 // 系统其他接口配置
                 .requestMatchers(
@@ -77,10 +75,8 @@ public class SecurityConfig {
                         "/swagger-ui/**",                               // spring-doc
                         "/v3/api-docs/**",                              // spring-doc
                         "/error"                                        // 当出现404等异常时spring内部会转发到/error，需要将其放过，否则会响应401
-                )
-                .permitAll()
-                .anyRequest()
-                .authenticated());
+                ).permitAll()
+                .anyRequest().authenticated());
 
         // 关闭csrf拦截
         http.csrf(AbstractHttpConfigurer::disable);

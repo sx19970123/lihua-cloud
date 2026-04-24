@@ -170,6 +170,7 @@
         <module>lihua-base</module>
         <module>lihua-biz</module>
         <module>lihua-api</module>
+        <module>lihua-auth</module>
         <module>lihua-gateway</module>
     </modules>
 

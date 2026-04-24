@@ -60,6 +60,13 @@ public class SysSettingController extends ApiResponseController {
         return success(sysSettingService.enableSignUp());
     }
 
+    @Operation(summary = "获取最大同时登录数量")
+    @GetMapping("base/getMaxConcurrentLogins")
+    @InternalOnly
+    public ApiResponseModel<Integer> getMaxConcurrentLogins() {
+        return success(sysSettingService.getMaxConcurrentLogins());
+    }
+
     @Operation(summary = "缓存ip黑名单")
     @PostMapping("cacheIpBlack")
     @InternalOnly
@@ -68,10 +75,4 @@ public class SysSettingController extends ApiResponseController {
         return success();
     }
 
-    @Operation(summary = "获取最大同时登录数量")
-    @GetMapping("getMaxConcurrentLogins")
-    @InternalOnly
-    public ApiResponseModel<Integer> getMaxConcurrentLogins() {
-        return success(sysSettingService.getMaxConcurrentLogins());
-    }
 }

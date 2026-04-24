@@ -21,7 +21,6 @@
     <modules>
         <module>lihua-monitor</module>
         <module>lihua-system</module>
-        <module>lihua-auth</module>
         <module>lihua-file</module>
     </modules>
 

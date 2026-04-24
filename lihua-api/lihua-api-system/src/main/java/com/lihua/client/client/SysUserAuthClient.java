@@ -6,10 +6,10 @@ import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
+import org.springframework.web.service.annotation.PostExchange;
 
 @HttpClient("lihua-system")
 @HttpExchange("system/user/auth")
@@ -30,6 +30,6 @@ public interface SysUserAuthClient {
     /**
      * 用户注册
      */
-    @PostMapping("register")
+    @PostExchange("register")
     ApiResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel);
 }
