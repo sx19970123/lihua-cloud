@@ -18,15 +18,20 @@
     </properties>
 
     <dependencies>
-        <!--        公共模块-->
+        <!--         web-->
         <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-base-common</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <!--        参数校验-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <!--        公共模块-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-common</artifactId>
         </dependency>
     </dependencies>
 

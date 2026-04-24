@@ -4,7 +4,7 @@ import com.lihua.client.annotation.EnableHttpClients;
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
-import com.lihua.security.enums.TokenEnum;
+import com.lihua.common.enums.TokenEnum;
 import com.lihua.security.manager.LoginUserContext;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
