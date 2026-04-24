@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync(proxyTargetClass = true)
 @EnableAspectJAutoProxy(exposeProxy = true)
 @SpringBootApplication
-@ComponentScan({"com.lihua.gateway.**"})
+@ComponentScan({"com.lihua.**"})
 public class LiHuaGatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(LiHuaGatewayApplication.class, args);

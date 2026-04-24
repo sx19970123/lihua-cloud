@@ -4,7 +4,7 @@ import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.model.response.response.StrResponse;
 import com.lihua.common.utils.crypt.HmacUtils;
-import com.lihua.common.utils.web.WebUtils;
+import com.lihua.web.utils.WebUtils;
 import com.lihua.web.annotation.InternalOnly;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
