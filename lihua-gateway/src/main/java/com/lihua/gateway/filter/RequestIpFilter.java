@@ -3,9 +3,7 @@ package com.lihua.gateway.filter;
 import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.cache.manager.LocalCacheManager;
 import com.lihua.cache.manager.RedisCacheManager;
-import com.lihua.common.enums.ResultCodeEnum;
-import com.lihua.common.model.response.response.StrResponse;
-import com.lihua.gateway.utils.WebUtils;
+import com.lihua.gateway.exception.GatewayIpIllegalException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
@@ -71,9 +69,9 @@ public class RequestIpFilter implements GlobalFilter {
                 regex = "^" + regex + "$";
                 return Pattern.compile(regex);
             });
-            // 匹配到的黑名单ip写入响应结果
+            // 匹配到的黑名单ip抛出异常
             if (pattern.matcher(currentIp).matches()) {
-                return WebUtils.renderJson(StrResponse.error(ResultCodeEnum.IP_ILLEGAL_ERROR), response);
+                throw new GatewayIpIllegalException();
             }
         }
 

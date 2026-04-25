@@ -1,10 +1,8 @@
 package com.lihua.gateway.filter;
 
-import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.enums.TokenEnum;
-import com.lihua.common.model.response.response.StrResponse;
+import com.lihua.gateway.exception.GatewayTokenIllegalException;
 import com.lihua.gateway.utils.JwtUtils;
-import com.lihua.gateway.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -37,7 +35,7 @@ public class RequestTokenFilter implements GlobalFilter {
             JwtUtils.verify(token.replace(TokenEnum.TOKEN_PREFIX.getValue(), ""));
         } catch (Exception e) {
             log.error("非法Token {}", e.getMessage(), e);
-            return WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "非法令牌"), exchange.getResponse());
+            throw new GatewayTokenIllegalException();
         }
 
         return chain.filter(exchange);
