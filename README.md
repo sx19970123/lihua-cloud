@@ -70,13 +70,13 @@
 
 ``` bash
 lihua-cloud/
-├── lihua-app/  			# app 客户端
-├── lihua-cloud/     	# spring cloud 服务端
-├── lihua-vue/        # web 客户端
-├── res        				# 项目静态资源（数据库脚本、nacos配置、docker部署componse）
-├── .gitignore       
-├── LICENSE  
-└── README.md             
+├── lihua-app/              # app 客户端
+├── lihua-cloud/            # spring cloud 服务端
+├── lihua-vue/              # web 客户端
+├── res/                    # 项目静态资源（数据库脚本、nacos配置、docker部署compose）
+├── .gitignore
+├── LICENSE
+└── README.md        
 ```
 
 
