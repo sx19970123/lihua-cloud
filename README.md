@@ -43,11 +43,22 @@
 
 - Java 21+
 - Spring Boot 4
-- Spring Cloud Alibaba 2025.1
 - Vue 3
 - MySQL 8+
 - Redis
 - Node.js 22+
+
+
+
+## ☁️ 微服务技术选型
+
+- 微服务：Spring Cloud Alibaba 2025.1
+- 服务发现：Nacos
+- 注册中心：Nacos
+- 远程调用：HttpExchange
+- 负载均衡：Loadbalancer
+- 熔断降级：Resilience4j
+- 网关：Gateway
 
 
 
