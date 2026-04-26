@@ -18,3 +18,4 @@ spring:
  config:
    import:
      - nacos:${spring.application.name}.yaml?group=${spring.application.name}
+     - nacos:lihua-common.yaml?group=lihua-common

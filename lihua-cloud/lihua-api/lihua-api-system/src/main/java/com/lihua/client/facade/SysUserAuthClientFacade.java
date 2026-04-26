@@ -20,7 +20,7 @@ public class SysUserAuthClientFacade {
     private SysUserAuthClient sysUserAuthClient;
 
     /**
-     * 根据用户名获取用户信息
+     * 登录
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "loginFallback")
     public ApiResponseModel<CurrentUser> loginSelect(String username) {
@@ -30,7 +30,7 @@ public class SysUserAuthClientFacade {
     /**
      * 获取登录用户全部信息
      */
-    @CircuitBreaker(name = "sysUser", fallbackMethod = "loginFallback")
+    @CircuitBreaker(name = "sysUser", fallbackMethod = "queryLoginUserProfileFallback")
     public ApiResponseModel<LoginUserSession> queryLoginUserProfile(LoginUserSession loginUserSession) {
         return sysUserAuthClient.queryLoginUserProfile(loginUserSession);
     }
@@ -38,13 +38,23 @@ public class SysUserAuthClientFacade {
     /**
      * 用户注册
      */
-    @CircuitBreaker(name = "sysUser", fallbackMethod = "loginFallback")
+    @CircuitBreaker(name = "sysUser", fallbackMethod = "registerFallback")
     public ApiResponseModel<String> register(RegisterUserModel registerUserModel) {
         return sysUserAuthClient.register(registerUserModel);
     }
 
     public ApiResponseModel<CurrentUser> loginFallback(String username, Throwable throwable) {
-        log.error("远程调用异常", throwable);
+        log.error("远程调用异常, 请求参数{}", username, throwable);
+        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
+    }
+
+    public ApiResponseModel<LoginUserSession> queryLoginUserProfileFallback(LoginUserSession loginUserSession, Throwable throwable) {
+        log.error("远程调用异常, 请求参数{}", loginUserSession, throwable);
+        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
+    }
+
+    public ApiResponseModel<CurrentUser> registerFallback(RegisterUserModel registerUserModel, Throwable throwable) {
+        log.error("远程调用异常, 请求参数{}", registerUserModel, throwable);
         return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 }

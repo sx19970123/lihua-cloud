@@ -140,7 +140,7 @@ public class LoginUserContext implements Serializable {
         try {
             return getLoginUser().getUser();
         } catch (Exception e) {
-            log.error("获取当前登录用户失败，返回空用户");
+            log.warn("获取当前登录用户失败，返回空用户");
             return new CurrentUser();
         }
     }

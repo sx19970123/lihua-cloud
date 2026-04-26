@@ -1,8 +1,8 @@
 package com.lihua.gateway.filter;
 
-import com.lihua.cache.enums.RedisKeyPrefixEnum;
-import com.lihua.cache.manager.LocalCacheManager;
-import com.lihua.cache.manager.RedisCacheManager;
+//import com.lihua.cache.enums.RedisKeyPrefixEnum;
+//import com.lihua.cache.manager.LocalCacheManager;
+//import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.gateway.exception.GatewayIpIllegalException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +25,15 @@ import java.util.regex.Pattern;
 /**
  * 请求ip过滤器
  */
-@Component
+//@Component
 @Slf4j
 public class RequestIpFilter implements GlobalFilter {
 
-    @Resource
-    private RedisCacheManager redisCacheManager;
-
-    @Resource
-    private LocalCacheManager localCacheManager;
+//    @Resource
+//    private RedisCacheManager redisCacheManager;
+//
+//    @Resource
+//    private LocalCacheManager localCacheManager;
 
     // ip匹配缓存
     private final Map<String, Pattern> patternCache = new ConcurrentHashMap<>();
@@ -41,42 +41,43 @@ public class RequestIpFilter implements GlobalFilter {
     @NullMarked
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return ipMatch(exchange.getRequest(), exchange.getResponse()).switchIfEmpty(chain.filter(exchange));
+        // return ipMatch(exchange.getRequest(), exchange.getResponse()).switchIfEmpty(chain.filter(exchange));
+        return Mono.empty();
     }
 
     // 匹配ip
-    private Mono<Void> ipMatch(ServerHttpRequest request, ServerHttpResponse response) {
-        // 获取ip黑名单数据
-        String key = RedisKeyPrefixEnum.SYSTEM_IP_BLACKLIST_REDIS_PREFIX.getValue();
-        List<String> prohibitIpList = localCacheManager.getWithFallback(key, new TypeReference<>() {}, () -> redisCacheManager.getCacheList(key, String.class));
-        if (prohibitIpList == null || prohibitIpList.isEmpty()) {
-            return Mono.empty();
-        }
-
-        // 获取当前ip
-        String currentIp = getIpAddress(request);
-        if (currentIp == null) {
-            return Mono.empty();
-        }
-
-        for (String ipRule : prohibitIpList) {
-            // 匹配并缓存黑名单ip
-            Pattern pattern = patternCache.computeIfAbsent(ipRule, rule -> {
-                String regex = rule
-                        .replace(".", "\\.")
-                        .replace("*", ".*")
-                        .replace("?", ".");
-                regex = "^" + regex + "$";
-                return Pattern.compile(regex);
-            });
-            // 匹配到的黑名单ip抛出异常
-            if (pattern.matcher(currentIp).matches()) {
-                throw new GatewayIpIllegalException();
-            }
-        }
-
-        return Mono.empty();
-    }
+//    private Mono<Void> ipMatch(ServerHttpRequest request, ServerHttpResponse response) {
+//        // 获取ip黑名单数据
+//        String key = RedisKeyPrefixEnum.SYSTEM_IP_BLACKLIST_REDIS_PREFIX.getValue();
+//        List<String> prohibitIpList = localCacheManager.getWithFallback(key, new TypeReference<>() {}, () -> redisCacheManager.getCacheList(key, String.class));
+//        if (prohibitIpList == null || prohibitIpList.isEmpty()) {
+//            return Mono.empty();
+//        }
+//
+//        // 获取当前ip
+//        String currentIp = getIpAddress(request);
+//        if (currentIp == null) {
+//            return Mono.empty();
+//        }
+//
+//        for (String ipRule : prohibitIpList) {
+//            // 匹配并缓存黑名单ip
+//            Pattern pattern = patternCache.computeIfAbsent(ipRule, rule -> {
+//                String regex = rule
+//                        .replace(".", "\\.")
+//                        .replace("*", ".*")
+//                        .replace("?", ".");
+//                regex = "^" + regex + "$";
+//                return Pattern.compile(regex);
+//            });
+//            // 匹配到的黑名单ip抛出异常
+//            if (pattern.matcher(currentIp).matches() || true) {
+//                throw new GatewayIpIllegalException();
+//            }
+//        }
+//
+//        return Mono.empty();
+//    }
 
     // 获取当前请求ip
     private String getIpAddress(ServerHttpRequest request) {
