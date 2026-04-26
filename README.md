@@ -10,7 +10,9 @@
 
 > 为完整体验功能，请自行注册账号
 
-👉 体验地址： https://lihua.xyz
+👉 web体验地址： https://lihua.xyz
+
+👉 安卓apk下载：[狸花猫 APP 下载](https://gitee.com/yukino_git/lihua-app/releases/download/1.0.0/狸花猫APP.apk)
 
 
 
@@ -61,7 +63,7 @@
 
 **狸花猫** 是一套完整的 RBAC 权限管理系统，适用于中后台管理系统快速开发。
 
-### ✨ 核心功能
+### ✨ Web端核心功能
 
 #### 🔑 权限系统（RBAC）
 - 用户管理
@@ -109,6 +111,33 @@
 - 缓存监控
 - 服务监控
 - 定时任务
+
+### ✨ App端核心功能
+
+#### 🔐 注册登录
+
+- Web 端统一控制注册开关
+
+#### 🧠 验证码
+
+- 集成 tianai 验证码
+- Web 端统一配置启用状态
+
+#### 👤 个人中心
+
+- 头像、昵称等基础信息与后端保持一致
+
+#### 🛡️ 权限体系
+
+- 支持角色、权限、部门标识，`user store` 可直接获取
+
+#### 🔔 通知公告
+
+- WebSocket 实时消息推送，App 支持原生通知提醒
+
+#### 🌗 暗色模式
+
+- App支持手动切换，微信小程序可跟随系统
 
 
 
@@ -165,7 +194,7 @@
 
 
 
-## APP端系统截图
+## 📱APP端系统截图
 
 <div style="display:flex; flex-wrap:wrap; gap:8px;">
 	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1917.png" width="32%" />
