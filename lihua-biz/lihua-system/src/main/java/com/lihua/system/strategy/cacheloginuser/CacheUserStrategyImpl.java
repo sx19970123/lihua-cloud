@@ -1,0 +1,23 @@
+package com.lihua.system.strategy.cacheloginuser;
+
+import com.lihua.system.mapper.SysUserMapper;
+import com.lihua.security.model.CurrentUser;
+import com.lihua.security.model.LoginUserSession;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CacheUserStrategyImpl implements CacheLoginUserStrategy {
+
+    @Resource
+    private SysUserMapper sysUserMapper;
+
+    @Override
+    public void cacheLoginUser(LoginUserSession loginUserSession, boolean isAdmin) {
+        CurrentUser user = loginUserSession.getUser();
+        // 查询user
+        user = sysUserMapper.queryProfile(user.getUsername());
+        // 重新设置user
+        loginUserSession.setUser(user);
+    }
+}
