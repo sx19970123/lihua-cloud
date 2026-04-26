@@ -1,6 +1,6 @@
 # 狸花猫后台管理系统（微服务版）
 
-> 一个基于 **Spring Boot + Vue** 的现代化 RBAC 权限管理系统
+> 一个基于 **Spring Cloud + Vue + UniApp** 的现代化 RBAC 权限管理系统
 
 [![Gitee Stars](https://gitee.com/yukino_git/lihua/badge/star.svg?theme=dark)](https://gitee.com/yukino_git/lihua/stargazers)[![GitHub Stars](https://img.shields.io/github/stars/sx19970123/lihua)](https://github.com/sx19970123/lihua)<a href="https://gitcode.com/weixin_44118742/lihua" target="_blank"><img src="https://gitcode.com/weixin_44118742/lihua/star/badge.svg" alt="AtomGit Star"/></a>
 
@@ -37,7 +37,7 @@
 
 
 
-## 🛠 技术栈
+## 🛠 主要技术栈
 
 - Java 21+
 - Spring Boot 4
@@ -67,7 +67,7 @@
 - 用户管理
 - 角色管理
 - 菜单权限控制
-- 多部门支持（支持默认部门）
+- 多部门支持
 
 #### 🏢 组织架构
 - 部门管理
@@ -80,8 +80,14 @@
 - 前端 `dict-tag` 自动标签展示
 
 #### 📢 通知公告
-- Vditor 富文本编辑
-- SSE 实时消息推送
+- tinymce 富文本编辑
+- websocket 实时消息推送
+
+#### 📎 附件管理
+
+- 支持附件上传、文件秒传、分片上传、断点续传
+- attachment-upload 组件开箱即用
+- 支持本地和阿里云OSS，支持灵活适配其他对象存储服务
 
 #### 👤 个人中心
 - 个性化主题配置
@@ -90,7 +96,7 @@
 #### ⚙ 系统配置
 - 默认密码设置
 - 密码定期修改
-- 登录限制（单点登录）
+- 登录限制
 - 注册开关
 - 验证码开关
 - IP 黑名单
@@ -106,12 +112,14 @@
 
 
 
-## 📸 系统截图
+## 📸 WEB端系统截图
 
 ### 首页
 ![首页](https://gitee.com/yukino_git/lihua-assets/raw/master/web/首页.jpg)
 
 ![暗色模式](https://gitee.com/yukino_git/lihua-assets/raw/master/web/首页-暗色.jpg)
+
+![锁屏](https://gitee.com/yukino_git/lihua-assets/raw/master/web/锁屏.png)
 
 ### 登录与注册
 ![登录页](https://gitee.com/yukino_git/lihua-assets/raw/master/web/登录页.jpg)
@@ -139,6 +147,9 @@
 
 ![通知公告](https://gitee.com/yukino_git/lihua-assets/raw/master/web/通知公告.jpg)
 
+![附件管理](https://gitee.com/yukino_git/lihua-assets/raw/master/web/附件管理.png)
+
+### 系统监控
 ![在线用户](https://gitee.com/yukino_git/lihua-assets/raw/master/web/在线用户.jpg)
 
 ![操作日志](https://gitee.com/yukino_git/lihua-assets/raw/master/web/操作日志.jpg)
@@ -149,4 +160,19 @@
 
 ![服务监控](https://gitee.com/yukino_git/lihua-assets/raw/master/web/服务监控.jpg)
 
+### 系统设置
 ![设置页](https://gitee.com/yukino_git/lihua-assets/raw/master/web/设置页.jpg)
+
+
+
+## APP端系统截图
+
+<div style="display:flex; flex-wrap:wrap; gap:8px;">
+	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1917.png" width="32%" />
+	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1918.png" width="32%" />
+	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1919.png" width="32%" />
+	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1916.png" width="32%" />
+	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1925.png" width="32%" />
+	<img src="https://gitee.com/yukino_git/lihua-assets/raw/master/app/IMG_1926.png" width="32%" />
+</div>
+
