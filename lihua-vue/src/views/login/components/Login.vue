@@ -66,23 +66,27 @@
 </template>
 
 <script setup lang="ts">
-import TianaiCaptcha from "@/components/tianai-captcha/index.vue";
-import {inject, onMounted, reactive, type Ref, ref, useTemplateRef} from "vue";
-import token from "@/utils/Token.ts"
-import {init} from "@/utils/AppInit.ts";
-import {getLoginSetting, login} from "@/api/system/login/Login.ts";
-import type {Rule} from "ant-design-vue/es/form";
-import {message} from "ant-design-vue";
+import TianaiCaptcha from "@/components/tianai-captcha/index.vue"
+import {inject, onMounted, reactive, type Ref, ref, useTemplateRef} from "vue"
+import token from "@/helpers/token.ts"
+import remember from "@/helpers/remember.ts"
+import userSetup from "@/helpers/user-setup.ts"
+import {initApp} from "@/app-init.ts"
+import {login} from "@/api/system/authentication/authentication.ts"
+import type {Rule} from "ant-design-vue/es/form"
+import {message} from "ant-design-vue"
 import {useRouter} from 'vue-router'
-import {useSettingStore} from "@/stores/setting.ts";
+import {useSettingStore} from "@/stores/setting.ts"
+import {queryPostLoginCheckData} from "@/api/system/profile/profile.ts"
+
 // 系统设置
 const settingStore = useSettingStore();
 
-const emit = defineEmits(["changeComponent","showLoginSetting"])
+const emit = defineEmits(["changeComponent","startUserSetup"])
 
 const router = useRouter()
 const loginLoading = ref<boolean>()
-const rememberMe = ref<boolean>(token.enableRememberMe())
+const rememberMe = ref<boolean>(remember.enableRememberMe())
 const verifyRef = useTemplateRef<InstanceType<typeof TianaiCaptcha>>("tianaiCaptchaRef")
 const registerUsername = inject<Ref<string|undefined>>("registerUsername")
 const usernameTip = ref<boolean>(false)
@@ -100,7 +104,7 @@ const loginForm = reactive<LoginFormType>({
 // 启用记住账号后赋值账号密码
 const initRememberMe = () => {
   if (rememberMe.value) {
-    const usernamePassword = token.getUsernamePassword()
+    const usernamePassword = remember.getUsernamePassword()
     loginForm.username = usernamePassword.username
     loginForm.password = usernamePassword.password
   }
@@ -122,7 +126,7 @@ const checkRegister = () => {
     loginForm.username = registerUsername.value
     loginForm.password = ""
     rememberMe.value = false
-    token.forgetMe()
+    remember.forgetMe()
 
     // 开启关闭自动带入用户名提示
     setTimeout(() => usernameTip.value = true, 900)
@@ -144,39 +148,38 @@ const userLogin = async (captchaVerification: string) => {
     // 登录
     const resp = await login(loginForm.username, loginForm.password, captchaVerification);
     if (resp.code !== 200) {
-      message.error(resp.msg)
       return
     }
     // 设置token
     token.setToken(resp.data);
     // 记住我设置
     if (rememberMe.value) {
-      token.rememberMe(loginForm.username, loginForm.password)
+      remember.rememberMe(loginForm.username, loginForm.password)
     } else {
-      token.forgetMe()
+      remember.forgetMe()
     }
 
     // 清除注册用户名
     clearRegisterUsername()
 
-    // 检查是否需要登录后设置
-    const loginSettingResp = await getLoginSetting()
-    if (loginSettingResp.code === 200) {
-      // 登录后设置返回data为空，表示无需进行额外设置，进入首页
-      if (loginSettingResp.data.length === 0) {
+    // 登录后用户数据校验
+    const loginCheckResp = await queryPostLoginCheckData()
+    if (loginCheckResp.code === 200) {
+      const checkItem = loginCheckResp.data
+      if (checkItem.length === 0) {
+        userSetup.clearData()
         message.success("登录成功")
         await router.push("/index");
       } else {
-        await init()
-        // 开始登录后配置
-        emit("showLoginSetting", loginSettingResp.data)
+        await initApp()
+        userSetup.setData(checkItem)
+        emit("startUserSetup", checkItem)
       }
-    } else {
-      message.error(loginSettingResp.msg)
     }
-
+  } catch (e) {
+    token.removeToken()
+    console.error(e)
   } finally {
-    token.removeLoginSettingResult()
     loginLoading.value = false
   }
 }

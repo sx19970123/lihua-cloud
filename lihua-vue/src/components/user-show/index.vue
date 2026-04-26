@@ -19,9 +19,10 @@
 <script setup lang="ts">
 import UserAvatar from '@/components/user-avatar/index.vue'
 import {useUserStore} from "@/stores/user.ts";
-import type {AvatarType} from "@/api/system/profile/type/SysProfile.ts";
+import type {AvatarType} from "@/api/system/profile/type/sys-profile.ts";
 import {ref} from "vue";
-import {publicAttachmentDownload} from "@/api/system/attachment/AttachmentStorage.ts";
+import {publicAttachmentDownload} from "@/api/system/attachment/attachment-storage.ts";
+import {attachmentUrl, getTemporaryPath} from "@/utils/attachment-url.ts";
 
 const userStore = useUserStore();
 
@@ -36,8 +37,8 @@ try {
     avatar.value = JSON.parse(props.avatarJson)
     // 处理图片类型头像
     if (avatar.value.value && avatar.value.type === 'image') {
-      publicAttachmentDownload(avatar.value.value).then((resp:Blob) => {
-        avatar.value.url = URL.createObjectURL(resp)
+      getTemporaryPath(attachmentUrl(avatar.value.value)).then(path => {
+        avatar.value.url = path
       })
     }
   } else {

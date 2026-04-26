@@ -3,43 +3,32 @@ import NProgress from "nprogress"
 import 'nprogress/nprogress.css'
 import {useUserStore} from "@/stores/user"
 import {useThemeStore} from "@/stores/theme";
-import token from "@/utils/Token.ts"
-import Token from "@/utils/Token.ts"
-import {init} from "@/utils/AppInit.ts";
-import {hasRouteRole} from "@/utils/Auth.ts";
-import {closeConnect, connect} from "@/utils/WebSocket.ts";
-import {message} from "ant-design-vue";
-import {getLoginSetting} from "@/api/system/login/Login.ts";
-
-const { getToken } = token
+import token from "@/helpers/token.ts"
+import userSetup from "@/helpers/user-setup.ts"
+import {initApp} from "@/app-init.ts";
+import {hasRouteRole} from "@/helpers/auth.ts";
+import {closeConnect, connect} from "@/utils/web-socket.ts";
 
 // 路由前置守卫
 router.beforeEach(async (to, from, next) => {
     NProgress.start()
     const userStore = useUserStore()
     const themeStore = useThemeStore()
-    const hasToken = getToken()
+    const hasToken = token.getToken()
     if (hasToken) {
         try {
             // 判断是否已拉取用户信息
             if (!userStore.userInfo.id) {
                 // 拉取登录用户数据，并初始化 store
-                await init();
+                await initApp();
+                // 检查登录后信息是否完善
+                const data = userSetup.getData()
+                if (data && data.length > 0) {
+                    to.name === "Login" ? next() : next("/login")
+                    return
+                }
                 // 连接到websocket
                 await connect()
-                // 检查登录设置
-                if (to.fullPath === '/login' || !Token.getLoginSettingResult()) {
-                    const loginSettingResp = await getLoginSetting()
-                    if (loginSettingResp.code === 200) {
-                        const data = loginSettingResp.data
-                        if (data.length > 0) {
-                            next({ name: 'Login', state: {settingComponentNameList: data} });
-                        }
-                    } else {
-                        message.error(loginSettingResp.msg)
-                        next("/login");
-                    }
-                }
                 // 判断用户是否拥有静态路由中指定的角色
                 if (hasRouteRole(to?.meta?.role as string[])) {
                     // 已登录状态下，请求登录页面自动跳转到首页
@@ -64,6 +53,8 @@ router.beforeEach(async (to, from, next) => {
             next({name: "Login"})
         }
     } else {
+        // 清空登录后信息
+        userSetup.clearData()
         // 重置主题
         themeStore.resetState();
         // 关闭websocket连接

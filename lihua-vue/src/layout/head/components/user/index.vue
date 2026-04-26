@@ -11,9 +11,9 @@
           <a-flex align="center" :gap="12">
             <user-avatar :size="48" :value="userStore.avatar.value" :background-color="userStore.avatar.backgroundColor" :type="userStore.avatar.type" :url="userStore.avatar.url"/>
             <a-flex vertical>
-              <a-typography-text ellipsis :copyable="{ tooltip: false }" strong v-model:content="userStore.$state.nickname" style="max-width: 120px"/>
-              <a-tooltip :title="userStore.$state.userId" placement="bottom" :getPopupContainer="(triggerNode:Document) => triggerNode.parentNode">
-                <a-typography-text ellipsis :copyable="{ tooltip: false }" v-model:content="userStore.$state.userId" style="max-width: 120px"/>
+              <a-typography-text class="user-info" ellipsis :copyable="{ tooltip: false }" strong v-model:content="userStore.$state.nickname"/>
+              <a-tooltip :title="'UID：' + userStore.$state.userId" placement="bottom" :getPopupContainer="(triggerNode:Document) => triggerNode.parentNode">
+                <a-typography-text class="user-info" ellipsis :copyable="{ tooltip: false }" v-model:content="userStore.$state.userId"/>
               </a-tooltip>
             </a-flex>
             <RightOutlined class="input-prefix-icon-color" style="position: absolute; right: var(--lihua-space-sm)"/>
@@ -57,7 +57,7 @@ import UserAvatar from "@/components/user-avatar/index.vue"
 import {useUserStore} from "@/stores/user";
 import {useRoute, useRouter} from "vue-router";
 import {message} from "ant-design-vue";
-import {refreshUserData} from "@/utils/AppInit.ts";
+import {refreshApp} from "@/app-init.ts";
 import {ref} from "vue";
 
 const userStore = useUserStore()
@@ -82,7 +82,7 @@ const handleClickMenu = async ({key}: {key: string}) => {
       break
     }
     case 'user-data-update': {
-      await refreshUserData(route)
+      await refreshApp(route)
       message.success("刷新完成")
       break
     }
@@ -107,7 +107,7 @@ const settingPage = () => {
 const logout = async () => {
   await userStore.handleLogout()
   message.success("退出成功")
-  await router.push('/login')
+  await router.push('/authentication')
 }
 </script>
 
@@ -115,6 +115,9 @@ const logout = async () => {
 .user-card {
   width: 220px;
   box-shadow: var(--lihua-box-shadow);
+}
+.user-info {
+  max-width: 120px;
 }
 .btn {
   padding: 0 0 0 8px

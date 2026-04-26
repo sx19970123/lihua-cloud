@@ -1,6 +1,6 @@
-import request, {blobRequest} from "@/utils/Request.ts";
-import type {PageResponseType} from "@/api/global/Type.ts";
-import type {SysUser, SysUserDTO, SysUserVO} from "@/api/system/user/type/SysUser.ts";
+import request, {blobRequest} from "@/utils/request.ts";
+import type {PageResponseType} from "@/api/global/type.ts";
+import type {SysUser, SysUserDTO, SysUserVO} from "@/api/system/user/type/sys-user.ts";
 import type {RcFile} from "ant-design-vue/es/vc-upload/interface";
 
 // 分页查询列表
@@ -17,6 +17,30 @@ export const queryById = (id: string) => {
     return request<SysUserDTO>({
         url: "system/user/" + id,
         method: "get"
+    })
+}
+
+// 检查用户名是否可用
+export const checkUserName = (username: string) => {
+    return request<boolean>({
+        url: 'system/user/checkUserName/' + username,
+        method: 'get'
+    })
+}
+
+// 检查用户名是否可用
+export const checkPhoneNumber = (phoneNumber: string) => {
+    return request<boolean>({
+        url: 'system/user/checkPhoneNumber/' + phoneNumber,
+        method: 'get'
+    })
+}
+
+// 检查用户名是否可用
+export const checkEmail = (email: string) => {
+    return request<boolean>({
+        url: 'system/user/checkEmail/' + email,
+        method: 'get'
     })
 }
 
