@@ -1,0 +1,26 @@
+server:
+  forward-headers-strategy: framework
+spring:
+  application:
+    name: lihua-gateway
+    version: 2.0.2
+  profiles:
+    # 切换开发/生产环境
+    active: dev
+  threads:
+    virtual:
+      # 开启虚拟线程
+      enabled: true
+
+  banner:
+    location: classpath:banner.txt
+    charset: UTF-8
+  # 配置后可正常拦截404异常
+  web:
+    resources:
+      add-mappings: false
+  # api响应时全局忽略null，
+  # 如不需要可将此配置删除（适用于controller 返回 ApiResponseModel 的情况）
+  # 如在 controller 中返回 String，则需要全局搜索：JsonUtils.toJsonIgnoreNulls(response(resultCodeEnum, msg, data)); JsonUtils.toJsonIgnoreNulls 修改为 JsonUtils.toJson
+  jackson:
+    default-property-inclusion: non_null

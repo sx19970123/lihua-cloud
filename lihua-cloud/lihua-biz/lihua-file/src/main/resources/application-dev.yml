@@ -1,0 +1,20 @@
+server:
+ port: 8083
+
+spring:
+ cloud:
+   nacos:
+     username: nacos
+     password: 123456
+     # 服务发现
+     discovery:
+       server-addr: 127.0.0.1:8848
+     # 配置中心
+     config:
+       namespace: ${spring.profiles.active}
+       file-extension: yaml
+       import-check:
+         enabled: true
+ config:
+   import:
+     - nacos:${spring.application.name}.yaml?group=${spring.application.name}

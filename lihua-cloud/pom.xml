@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.lihua</groupId>
+    <artifactId>lihua-cloud</artifactId>
+    <version>2.0.2</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.5</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+
+        <project.version>2.0.2</project.version>
+        <spring-cloud.version>2025.1.0</spring-cloud.version>
+        <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mysql.version>8.2.0</mysql.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
+        <jwt.version>4.5.1</jwt.version>
+        <redisson.version>4.2.0</redisson.version>
+        <caffeine.version>3.2.3</caffeine.version>
+        <oshi.version>6.6.4</oshi.version>
+        <tianai-captcha.version>1.5.5</tianai-captcha.version>
+        <ipaddress.version>5.5.1</ipaddress.version>
+        <ip2region.version>3.2.0</ip2region.version>
+        <dynamic-datasource.version>4.5.0</dynamic-datasource.version>
+        <fesod.version>2.0.1-incubating</fesod.version>
+        <oss.version>3.18.5</oss.version>
+        <spring-doc.version>3.0.2</spring-doc.version>
+        <snail-job.version>1.10.0-beta1</snail-job.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+<!--            微服务依赖=============================================-->
+            <!--        spring-cloud-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--        spring-cloud-alibaba-->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+<!--            基础依赖=============================================-->
+<!--            公共模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            字典模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-dict</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            文档模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-doc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            excel导入导出模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-excel</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            ip处理模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-ip</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            日志模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-log</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            mybatis持久层模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-mybatis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            缓存模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-cache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            安全模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-security</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            数据脱敏模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-sensitive</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            websocket模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-websocket</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            web模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            验证码模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-captcha</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            定时任务模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-job</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            附件模块 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-attachment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            远程调用模块-->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-base-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+<!--            远程调用依赖=============================================-->
+<!--            system业务模块远程调用 -->
+            <dependency>
+                <groupId>com.lihua</groupId>
+                <artifactId>lihua-api-system</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>lihua-base</module>
+        <module>lihua-biz</module>
+        <module>lihua-api</module>
+        <module>lihua-auth</module>
+        <module>lihua-gateway</module>
+    </modules>
+
+<!--    通用打包配置-->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
