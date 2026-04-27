@@ -23,5 +23,5 @@ public interface SysLogClient {
      * 保存登录日志
      */
     @PostExchange("login/insert")
-    Mono< ApiResponseModel<String>> insertLogin(@RequestBody LogModel logModel);
+    Mono<ApiResponseModel<String>> insertLogin(@RequestBody LogModel logModel);
 }

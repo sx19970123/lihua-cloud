@@ -145,9 +145,9 @@ public class HandleRecodeLog {
 
         // 远程调用保存日志
         if ("LOGIN".equals(type.getCode())) {
-            sysLogClientFacade.insertLogin(logModel);
+            sysLogClientFacade.insertLogin(logModel).subscribe();;
         } else {
-            sysLogClientFacade.insertOperate(logModel);
+            sysLogClientFacade.insertOperate(logModel).subscribe();;
         }
     }
 
