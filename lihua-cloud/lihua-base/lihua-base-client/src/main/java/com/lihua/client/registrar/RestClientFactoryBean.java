@@ -1,19 +1,15 @@
 package com.lihua.client.registrar;
 
-import com.lihua.client.annotation.HttpClient;
-import com.lihua.client.config.HttpClientProperties;
+import com.lihua.client.annotation.RemoteClient;
 import jakarta.annotation.Resource;
 import lombok.Setter;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-import java.time.Duration;
 
-public class HttpClientFactoryBean<T> implements FactoryBean<T> {
+public class RestClientFactoryBean<T> implements FactoryBean<T> {
 
     @Setter
     private Class<T> type;
@@ -22,12 +18,6 @@ public class HttpClientFactoryBean<T> implements FactoryBean<T> {
 
     @Resource
     private RestClient.Builder restClientBuilder;
-
-    @Resource
-    private HttpClientProperties httpClientProperties;
-
-    @Resource
-    private CloseableHttpClient httpClient;
 
     @Override
     public T getObject() {
@@ -38,23 +28,16 @@ public class HttpClientFactoryBean<T> implements FactoryBean<T> {
     }
 
     private T createClient() {
-        HttpClient annotation = type.getAnnotation(HttpClient.class);
+        RemoteClient annotation = type.getAnnotation(RemoteClient.class);
 
-        // 访问超时时间
-        int readTimeout = annotation.readTimeout();
-        HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        httpRequestFactory.setReadTimeout(readTimeout == -1 ? httpClientProperties.getReadTimeout() : Duration.ofSeconds(readTimeout));
-
-        if (!StringUtils.hasText(annotation.value())) {
+        if (!StringUtils.hasText(annotation.serverName())) {
             throw new IllegalStateException(type.getName() + " 服务名称为空");
         }
 
         RestClient client = restClientBuilder
                 .clone()
-                // 超时时间
-                .requestFactory(httpRequestFactory)
                 // 协议+服务名称
-                .baseUrl(annotation.scheme().name().toLowerCase() + "://" + annotation.value())
+                .baseUrl(annotation.scheme().name().toLowerCase() + "://" + annotation.serverName())
                 .build();
 
         HttpServiceProxyFactory factory = HttpServiceProxyFactory

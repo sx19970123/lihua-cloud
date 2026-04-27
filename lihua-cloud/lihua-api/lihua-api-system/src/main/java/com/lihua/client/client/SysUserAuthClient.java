@@ -1,6 +1,6 @@
 package com.lihua.client.client;
 
-import com.lihua.client.annotation.HttpClient;
+import com.lihua.client.annotation.RemoteClient;
 import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.security.model.CurrentUser;
@@ -11,7 +11,7 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
-@HttpClient("lihua-system")
+@RemoteClient(serverName = "lihua-system")
 @HttpExchange("system/user/auth")
 public interface SysUserAuthClient {
 

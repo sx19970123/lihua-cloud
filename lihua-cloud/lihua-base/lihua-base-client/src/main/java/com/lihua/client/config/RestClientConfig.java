@@ -1,34 +1,36 @@
 package com.lihua.client.config;
 
-import com.lihua.client.annotation.EnableHttpClients;
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.common.enums.TokenEnum;
 import com.lihua.security.manager.LoginUserContext;
+import jakarta.annotation.Resource;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactiveLoadBalancer;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.reactive.function.client.ClientRequest;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-@EnableHttpClients(packages = "com.lihua")
 public class RestClientConfig {
 
+    @Resource
+    private ClientProperties clientProperties;
+
+    /**
+     * RestClient 统一配置，每个接口配置 RestClientFactoryBean
+     */
     @Bean
     public RestClient.Builder restClientBuilder(LoadBalancerInterceptor loadBalancerInterceptor) {
         return RestClient
             .builder()
+            .requestFactory(initRequestFactory())
             // 负载均衡拦截器
             .requestInterceptor(loadBalancerInterceptor)
             // 请求拦截器
@@ -52,41 +54,20 @@ public class RestClientConfig {
             });
     }
 
-    @Bean
-    @LoadBalanced
-    public WebClient.Builder webClientBuilder(ReactorLoadBalancerExchangeFilterFunction filterFunction) {
-        return WebClient.builder().filter(filterFunction).filter((request,  next) -> {
-            // token透传
-            String token = LoginUserContext.getToken();
-            ClientRequest.Builder builder = ClientRequest.from(request);
+    /**
+     * 配置连接/超时时间
+     */
+    private HttpComponentsClientHttpRequestFactory initRequestFactory() {
+        // 设置超时时间
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(Timeout.of(clientProperties.getConnectTimeout()))
+                .setResponseTimeout(Timeout.of(clientProperties.getResponseTimeout()))
+                .build();
 
-            if (StringUtils.hasText(token)) {
-                builder.header(TokenEnum.TOKEN_KEY.getValue(), token);
-            }
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultRequestConfig(config)
+                .build();
 
-            // 签名
-            long timeMillis = DateUtils.nowTimeStamp();
-            String sign = HmacUtils.hmacSha256(
-                    SignEnum.SIGN_SECRET.getValue(),
-                    String.format("%s:%s:%s",
-                            request.method().name(),
-                            request.url().getPath(),
-                            timeMillis)
-            );
-
-            builder.header(SignEnum.SIGN_KEY.getValue(), sign);
-            builder.header("Timestamp", String.valueOf(timeMillis));
-
-            //  构建新的 request
-            ClientRequest newRequest = builder.build();
-
-            return next.exchange(newRequest);
-        });
+        return new HttpComponentsClientHttpRequestFactory(httpClient);
     }
-
-    @Bean
-    public CloseableHttpClient httpClient() {
-        return HttpClients.createDefault();
-    }
-
 }

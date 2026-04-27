@@ -44,9 +44,9 @@ public class SysUserAuthClientFacade {
         return sysUserAuthClient.register(registerUserModel);
     }
 
-    public Mono<ApiResponseModel<CurrentUser>> loginFallback(String username, Throwable throwable) {
+    public ApiResponseModel<CurrentUser> loginFallback(String username, Throwable throwable) {
         log.error("远程调用异常, 请求参数{}", username, throwable);
-        return Mono.create(sink -> ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR));
+        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 
     public ApiResponseModel<LoginUserSession> queryLoginUserProfileFallback(LoginUserSession loginUserSession, Throwable throwable) {

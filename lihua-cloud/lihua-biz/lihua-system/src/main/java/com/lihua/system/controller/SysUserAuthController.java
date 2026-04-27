@@ -10,11 +10,13 @@ import com.lihua.web.annotation.InternalOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "认证服务远程调用接口，仅远程调用使用")
 @RestController
 @RequestMapping("system/user/auth")
+@Slf4j
 public class SysUserAuthController extends ApiResponseController {
 
     @Resource
@@ -24,6 +26,7 @@ public class SysUserAuthController extends ApiResponseController {
     @GetMapping("loginSelect/{username}")
     @InternalOnly
     public ApiResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username) {
+        log.info("进来了");
         return success(sysUserAuthService.loginSelect(username));
     }
 

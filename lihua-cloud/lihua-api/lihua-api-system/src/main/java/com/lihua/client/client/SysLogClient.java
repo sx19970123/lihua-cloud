@@ -1,6 +1,6 @@
 package com.lihua.client.client;
 
-import com.lihua.client.annotation.HttpClient;
+import com.lihua.client.annotation.RemoteClient;
 import com.lihua.client.enums.ExecutionModeEnum;
 import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
@@ -9,7 +9,7 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import reactor.core.publisher.Mono;
 
-@HttpClient(value = "lihua-system", executionMode = ExecutionModeEnum.ASYNC)
+@RemoteClient(serverName = "lihua-system", executionMode = ExecutionModeEnum.ASYNC)
 @HttpExchange("system/log")
 public interface SysLogClient {
 

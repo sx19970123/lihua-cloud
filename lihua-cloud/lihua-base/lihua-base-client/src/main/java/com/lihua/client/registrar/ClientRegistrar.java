@@ -1,7 +1,7 @@
 package com.lihua.client.registrar;
 
 import com.lihua.client.annotation.EnableHttpClients;
-import com.lihua.client.annotation.HttpClient;
+import com.lihua.client.annotation.RemoteClient;
 import com.lihua.client.enums.ExecutionModeEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +18,11 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import java.util.Set;
 
+/**
+ * 自动 RestClientFactoryBean.class / WebClientFactoryBean.class 扫描注册为 bean
+ */
 @Slf4j
-public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar {
+public class ClientRegistrar implements ImportBeanDefinitionRegistrar {
 
     @SneakyThrows
     @Override
@@ -37,7 +40,7 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar {
             return;
         }
 
-        // 创建注解扫描器，扫描 @EnableHttpClients 下指定路径标记 @HttpClient 注解的类
+        // 创建注解扫描器，扫描 @EnableHttpClients 下指定路径标记 @RemoteClient 注解的类
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false) {
             @Override
             protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
@@ -45,23 +48,22 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar {
             }
         };
 
-        scanner.addIncludeFilter(new AnnotationTypeFilter(HttpClient.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(RemoteClient.class));
         for (String pkg: packages) {
             Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(pkg);
             for (BeanDefinition beanDefinition : candidateComponents) {
                 // 扫描到的包路径
                 String className = beanDefinition.getBeanClassName();
-                log.info("准备扫描 HttpExchange 接口，路径为：{}", className);
                 Class<?> clazz = Class.forName(className);
                 // 拿到注解信息
-                HttpClient annotation = clazz.getAnnotation(HttpClient.class);
+                RemoteClient annotation = clazz.getAnnotation(RemoteClient.class);
                 ExecutionModeEnum executionModeEnum = annotation.executionMode();
                 // 使用FactoryBean进行创建注册，根据注解HttpClient注册不同FactoryBean
-                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ExecutionModeEnum.SYNC.equals(executionModeEnum) ? HttpClientFactoryBean.class : WebClientFactoryBean.class);
+                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ExecutionModeEnum.SYNC.equals(executionModeEnum) ? RestClientFactoryBean.class : WebClientFactoryBean.class);
                 builder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
                 builder.addPropertyValue("type", clazz);
                 registry.registerBeanDefinition(clazz.getName(), builder.getBeanDefinition());
-                log.info("扫描到 HttpExchange 接口，路径为：{}", className);
+                log.info("扫描到HttpExchange{}接口 路径为: {}", ExecutionModeEnum.SYNC.equals(executionModeEnum) ? "同步" : "异步", className);
             }
         }
 

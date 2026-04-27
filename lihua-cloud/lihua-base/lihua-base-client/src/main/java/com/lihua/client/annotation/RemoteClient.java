@@ -8,22 +8,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * HttpClient 包路径注解
+ * RemoteClient 包路径注解
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HttpClient {
+public @interface RemoteClient {
 
     /**
      * 服务名称
      */
-    String value();
-
-    /**
-     * 访问超时时间（秒）
-     * -1 使用默认配置
-     */
-    int readTimeout() default -1;
+    String serverName();
 
     /**
      * 请求协议
