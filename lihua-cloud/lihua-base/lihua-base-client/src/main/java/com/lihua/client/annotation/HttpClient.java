@@ -1,5 +1,6 @@
 package com.lihua.client.annotation;
 
+import com.lihua.client.enums.ExecutionModeEnum;
 import com.lihua.client.enums.SchemeEnum;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,4 +29,11 @@ public @interface HttpClient {
      * 请求协议
      */
     SchemeEnum scheme() default SchemeEnum.HTTP;
+
+    /**
+     * 执行模式
+     * SYNC：同步执行
+     * ASYNC：异步执行
+     */
+    ExecutionModeEnum executionMode() default ExecutionModeEnum.SYNC;
 }

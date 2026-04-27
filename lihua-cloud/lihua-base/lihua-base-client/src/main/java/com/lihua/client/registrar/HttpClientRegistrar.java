@@ -2,6 +2,7 @@ package com.lihua.client.registrar;
 
 import com.lihua.client.annotation.EnableHttpClients;
 import com.lihua.client.annotation.HttpClient;
+import com.lihua.client.enums.ExecutionModeEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -50,9 +51,13 @@ public class HttpClientRegistrar implements ImportBeanDefinitionRegistrar {
             for (BeanDefinition beanDefinition : candidateComponents) {
                 // 扫描到的包路径
                 String className = beanDefinition.getBeanClassName();
+                log.info("准备扫描 HttpExchange 接口，路径为：{}", className);
                 Class<?> clazz = Class.forName(className);
-                // 使用FactoryBean进行创建注册
-                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
+                // 拿到注解信息
+                HttpClient annotation = clazz.getAnnotation(HttpClient.class);
+                ExecutionModeEnum executionModeEnum = annotation.executionMode();
+                // 使用FactoryBean进行创建注册，根据注解HttpClient注册不同FactoryBean
+                BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(ExecutionModeEnum.SYNC.equals(executionModeEnum) ? HttpClientFactoryBean.class : WebClientFactoryBean.class);
                 builder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
                 builder.addPropertyValue("type", clazz);
                 registry.registerBeanDefinition(clazz.getName(), builder.getBeanDefinition());

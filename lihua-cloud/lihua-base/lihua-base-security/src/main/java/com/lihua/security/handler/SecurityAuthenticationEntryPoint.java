@@ -5,6 +5,7 @@ import com.lihua.common.model.response.response.StrResponse;
 import com.lihua.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -15,9 +16,11 @@ import org.springframework.stereotype.Component;
  * 401
  */
 @Component
+@Slf4j
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
+        log.error(authException.getMessage(), authException);
         // token过期登录失效，返回默认提示信息
         if (authException instanceof InsufficientAuthenticationException) {
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED));

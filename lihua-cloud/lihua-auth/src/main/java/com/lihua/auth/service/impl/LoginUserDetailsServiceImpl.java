@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 public class LoginUserDetailsServiceImpl implements UserDetailsService {
@@ -26,7 +27,11 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
     public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
 
         // 远程调用获取用户信息
-        ApiResponseModel<CurrentUser> responseModel = sysUserAuthClientFacade.loginSelect(username);
+        Mono<ApiResponseModel<CurrentUser>> mono = sysUserAuthClientFacade.loginSelect(username);
+
+        ApiResponseModel<CurrentUser> responseModel = mono.map(data -> {
+            return data;
+        });
 
         if (200 != responseModel.getCode()) {
             throw new UsernameNotFoundException(responseModel.getMsg());
