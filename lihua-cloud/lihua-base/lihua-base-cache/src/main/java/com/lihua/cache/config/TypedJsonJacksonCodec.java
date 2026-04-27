@@ -6,14 +6,13 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.redisson.codec.TypedJsonJacksonCodec;
 
 /**
  * Redisson 序列化器，在yml文件中指定，通过反射调用
  */
-public class RedissonJsonCodec extends TypedJsonJacksonCodec {
+public class TypedJsonJacksonCodec extends org.redisson.codec.TypedJsonJacksonCodec {
 
-    public RedissonJsonCodec() {
+    public TypedJsonJacksonCodec() {
         super(Object.class, create());
     }
 

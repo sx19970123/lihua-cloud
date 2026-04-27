@@ -24,7 +24,7 @@ public class SysUserAuthClientFacade {
      * 登录
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "loginFallback")
-    public Mono<ApiResponseModel<CurrentUser>> loginSelect(String username) {
+    public ApiResponseModel<CurrentUser> loginSelect(String username) {
         return sysUserAuthClient.loginSelect(username);
     }
 
@@ -33,8 +33,7 @@ public class SysUserAuthClientFacade {
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "queryLoginUserProfileFallback")
     public ApiResponseModel<LoginUserSession> queryLoginUserProfile(LoginUserSession loginUserSession) {
-        // return sysUserAuthClient.queryLoginUserProfile(loginUserSession);
-        return null;
+        return sysUserAuthClient.queryLoginUserProfile(loginUserSession);
     }
 
     /**
@@ -42,8 +41,7 @@ public class SysUserAuthClientFacade {
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "registerFallback")
     public ApiResponseModel<String> register(RegisterUserModel registerUserModel) {
-        // return sysUserAuthClient.register(registerUserModel);
-        return null;
+        return sysUserAuthClient.register(registerUserModel);
     }
 
     public Mono<ApiResponseModel<CurrentUser>> loginFallback(String username, Throwable throwable) {
