@@ -28,7 +28,8 @@ public enum ResultCodeEnum {
     CAPTCHA_ERROR(506,"验证码错误"),
     SENSITIVE_ERROR(507,"数据脱敏异常"),
     EXCEL_IMPORT_ERROR (510,"Excel导入异常"),
-    EXCEL_EXPORT_ERROR (511,"Excel导出异常");
+    EXCEL_EXPORT_ERROR (511,"Excel导出异常"),
+    SYSTEM_ERROR (512,"系统异常");
 
     /**
      * 状态码
