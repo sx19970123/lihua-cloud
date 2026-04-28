@@ -26,7 +26,6 @@ public class SysUserAuthController extends ApiResponseController {
     @GetMapping("loginSelect/{username}")
     @InternalOnly
     public ApiResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username) {
-        log.info("进来了");
         return success(sysUserAuthService.loginSelect(username));
     }
 
