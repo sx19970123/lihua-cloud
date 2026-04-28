@@ -3,6 +3,7 @@ package com.lihua.excel.utils;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.excel.annotation.ExcelEnableComment;
 import com.lihua.excel.annotation.ExcelEnableDropdown;
+import com.lihua.excel.exception.ExcelExportException;
 import com.lihua.excel.handle.CommentHandler;
 import com.lihua.excel.handle.DropdownHandler;
 import com.lihua.web.utils.WebUtils;
@@ -104,7 +105,7 @@ public class ExcelUtils {
         // 处理响应信息
         HttpServletResponse response = WebUtils.getCurrentResponse();
         if (response == null) {
-            return  null;
+            throw new ExcelExportException("获取响应流异常");
         }
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
