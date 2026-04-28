@@ -199,7 +199,7 @@ const startBreathing = () => {
 
   // 上下均匀呼吸：振幅 16px，完整周期 4s
   const amplitude = 16
-  const period = 4000
+  const period = 6000
   breatheStartTime = performance.now()
 
   const frame = (time: number) => {
