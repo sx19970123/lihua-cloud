@@ -2,8 +2,7 @@
 
 > 一个基于 **Spring Cloud + Vue + UniApp** 的现代化 RBAC 权限管理系统
 
-[![Gitee Stars](https://gitee.com/yukino_git/lihua/badge/star.svg?theme=dark)](https://gitee.com/yukino_git/lihua/stargazers) [![GitHub Stars](https://img.shields.io/github/stars/sx19970123/lihua)](https://github.com/sx19970123/lihua) <a href="https://gitcode.com/weixin_44118742/lihua" target="_blank"><img src="https://gitcode.com/weixin_44118742/lihua/star/badge.svg" alt="AtomGit Star"/></a>
-
+[![Gitee Stars](https://gitee.com/yukino_git/lihua-cloud/badge/star.svg?theme=dark)](https://gitee.com/yukino_git/lihua/stargazers) [![GitHub Stars](https://img.shields.io/github/stars/sx19970123/lihua-cloud)](https://github.com/sx19970123/lihua) <a href="https://gitcode.com/weixin_44118742/lihua-cloud" target="_blank"><img src="https://gitcode.com/weixin_44118742/lihua-cloud/star/badge.svg" alt="AtomGit Star"/></a>
 
 
 ## 🚀 在线体验
@@ -26,10 +25,15 @@
 
 ## 🧩 项目仓库
 
+### 单体版
 - Gitee：https://gitee.com/yukino_git/lihua
 - GitHub：https://github.com/sx19970123/lihua
 - GitCode：https://gitcode.com/weixin_44118742/lihua
 
+### 微服务版
+- Gitee：https://gitee.com/yukino_git/lihua-cloud
+- GitHub：https://github.com/sx19970123/lihua-cloud
+- GitCode：https://gitcode.com/weixin_44118742/lihua-cloud
 
 
 ## 💬 交流反馈
