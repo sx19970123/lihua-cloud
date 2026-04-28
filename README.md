@@ -18,7 +18,7 @@
 ## 📚 文档
 
 - 📖 开发文档：https://doc.lihua.xyz/
-- 🤖 AI 文档（DeepWiki）：https://deepwiki.com/sx19970123/lihua
+- 🤖 AI 文档（DeepWiki）：https://deepwiki.com/sx19970123/lihua-cloud
 - 🎥 功能介绍视频：https://www.bilibili.com/video/BV14Z1oY8EKh/
 
 
