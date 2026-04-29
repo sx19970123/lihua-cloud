@@ -19,3 +19,4 @@ spring:
     import:
       - nacos:${spring.application.name}.yaml?group=monitor
       - nacos:lihua-common.yaml?group=lihua-common
+      - nacos:lihua-resilience.yaml?group=lihua-resilience
