@@ -1,8 +1,8 @@
-package com.lihua.client.registrar;
+package com.lihua.api.registrar;
 
-import com.lihua.client.annotation.EnableHttpClients;
-import com.lihua.client.annotation.RemoteClient;
-import com.lihua.client.enums.ExecutionModeEnum;
+import com.lihua.api.annotation.EnableHttpClients;
+import com.lihua.api.annotation.RemoteClient;
+import com.lihua.api.enums.ExecutionModeEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;

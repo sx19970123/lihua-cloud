@@ -1,4 +1,4 @@
-package com.lihua.client.config;
+package com.lihua.api.config;
 
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.utils.crypt.HmacUtils;

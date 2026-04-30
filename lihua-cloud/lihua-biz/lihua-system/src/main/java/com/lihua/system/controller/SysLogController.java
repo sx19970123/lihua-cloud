@@ -1,7 +1,7 @@
 package com.lihua.system.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lihua.client.model.LogModel;
+import com.lihua.api.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import com.lihua.excel.utils.ExcelUtils;

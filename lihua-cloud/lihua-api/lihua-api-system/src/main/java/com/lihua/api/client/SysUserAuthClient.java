@@ -1,7 +1,7 @@
-package com.lihua.client.client;
+package com.lihua.api.client;
 
-import com.lihua.client.annotation.RemoteClient;
-import com.lihua.client.model.RegisterUserModel;
+import com.lihua.api.annotation.RemoteClient;
+import com.lihua.api.model.RegisterUserModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;

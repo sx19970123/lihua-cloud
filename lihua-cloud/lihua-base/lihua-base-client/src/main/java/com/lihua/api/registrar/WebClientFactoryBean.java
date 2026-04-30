@@ -1,15 +1,15 @@
-package com.lihua.client.registrar;
+package com.lihua.api.registrar;
 
-import com.lihua.client.annotation.RemoteClient;
+import com.lihua.api.annotation.RemoteClient;
 import jakarta.annotation.Resource;
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-public class RestClientFactoryBean<T> implements FactoryBean<T> {
+public class WebClientFactoryBean <T> implements FactoryBean<T> {
 
     @Setter
     private Class<T> type;
@@ -17,7 +17,8 @@ public class RestClientFactoryBean<T> implements FactoryBean<T> {
     private T singleton;
 
     @Resource
-    private RestClient.Builder restClientBuilder;
+    private WebClient.Builder webClientBuilder;
+
 
     @Override
     public T getObject() {
@@ -34,15 +35,12 @@ public class RestClientFactoryBean<T> implements FactoryBean<T> {
             throw new IllegalStateException(type.getName() + " 服务名称为空");
         }
 
-        RestClient client = restClientBuilder
+        WebClient client = webClientBuilder
                 .clone()
                 // 协议+服务名称
                 .baseUrl(annotation.scheme().name().toLowerCase() + "://" + annotation.serverName())
                 .build();
-
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory
-                .builderFor(RestClientAdapter.create(client))
-                .build();
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(WebClientAdapter.create(client)).build();
 
         return factory.createClient(type);
     }

@@ -1,4 +1,4 @@
-package com.lihua.client.enums;
+package com.lihua.api.enums;
 
 public enum ExecutionModeEnum {
     // 同步执行

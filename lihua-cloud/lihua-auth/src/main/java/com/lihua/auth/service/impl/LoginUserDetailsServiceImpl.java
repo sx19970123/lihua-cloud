@@ -1,6 +1,6 @@
 package com.lihua.auth.service.impl;
 
-import com.lihua.client.facade.SysUserAuthClientFacade;
+import com.lihua.api.facade.SysUserAuthClientFacade;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.security.config.TokenProperties;
