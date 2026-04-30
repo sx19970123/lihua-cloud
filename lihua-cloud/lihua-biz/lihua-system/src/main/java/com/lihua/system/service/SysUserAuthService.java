@@ -1,6 +1,6 @@
 package com.lihua.system.service;
 
-import com.lihua.api.model.RegisterUserModel;
+import com.lihua.client.model.RegisterUserModel;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 

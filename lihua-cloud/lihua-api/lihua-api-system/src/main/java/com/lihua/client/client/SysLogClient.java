@@ -1,8 +1,8 @@
-package com.lihua.api.client;
+package com.lihua.client.client;
 
-import com.lihua.api.annotation.RemoteClient;
-import com.lihua.api.enums.ExecutionModeEnum;
-import com.lihua.api.model.LogModel;
+import com.lihua.client.annotation.RemoteClient;
+import com.lihua.client.enums.ExecutionModeEnum;
+import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;

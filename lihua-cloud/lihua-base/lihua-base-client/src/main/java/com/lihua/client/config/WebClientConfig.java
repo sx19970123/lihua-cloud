@@ -1,4 +1,4 @@
-package com.lihua.api.config;
+package com.lihua.client.config;
 
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.enums.TokenEnum;

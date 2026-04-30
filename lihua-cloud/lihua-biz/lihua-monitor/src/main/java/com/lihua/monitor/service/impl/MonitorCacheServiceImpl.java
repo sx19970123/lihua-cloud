@@ -1,6 +1,6 @@
 package com.lihua.monitor.service.impl;
 
-import com.lihua.api.facade.SysSettingClientFacade;
+import com.lihua.client.facade.SysSettingClientFacade;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.utils.json.JsonUtils;
 import com.lihua.monitor.model.CacheMonitor;

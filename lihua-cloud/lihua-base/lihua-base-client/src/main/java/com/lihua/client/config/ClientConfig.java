@@ -1,6 +1,6 @@
-package com.lihua.api.config;
+package com.lihua.client.config;
 
-import com.lihua.api.annotation.EnableHttpClients;
+import com.lihua.client.annotation.EnableHttpClients;
 import org.springframework.context.annotation.Configuration;
 
 /**

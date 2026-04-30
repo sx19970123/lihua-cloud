@@ -1,6 +1,6 @@
 package com.lihua.system.service.impl;
 
-import com.lihua.api.model.RegisterUserModel;
+import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.system.entity.SysUser;
 import com.lihua.system.mapper.SysRoleMapper;

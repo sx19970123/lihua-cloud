@@ -1,7 +1,7 @@
-package com.lihua.api.facade;
+package com.lihua.client.facade;
 
-import com.lihua.api.client.SysLogClient;
-import com.lihua.api.model.LogModel;
+import com.lihua.client.client.SysLogClient;
+import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.security.model.CurrentUser;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;

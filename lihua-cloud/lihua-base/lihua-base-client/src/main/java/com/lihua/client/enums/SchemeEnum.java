@@ -1,4 +1,4 @@
-package com.lihua.api.enums;
+package com.lihua.client.enums;
 
 public enum SchemeEnum {
     HTTP, HTTPS

@@ -1,6 +1,6 @@
-package com.lihua.api.facade;
+package com.lihua.client.facade;
 
-import com.lihua.api.client.SysSettingClient;
+import com.lihua.client.client.SysSettingClient;
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.model.response.response.ApiResponse;
