@@ -10,7 +10,6 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -41,11 +40,11 @@ public class RequestIpFilter implements GlobalFilter {
     @NullMarked
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-         return ipMatch(exchange.getRequest(), exchange.getResponse()).switchIfEmpty(chain.filter(exchange));
+         return ipMatch(exchange.getRequest()).switchIfEmpty(chain.filter(exchange));
     }
 
     // 匹配ip
-    private Mono<Void> ipMatch(ServerHttpRequest request, ServerHttpResponse response) {
+    private Mono<Void> ipMatch(ServerHttpRequest request) {
         // 获取ip黑名单数据
         String key = RedisKeyPrefixEnum.SYSTEM_IP_BLACKLIST_REDIS_PREFIX.getValue();
         List<String> prohibitIpList = localCacheManager.getWithFallback(key, new TypeReference<>() {}, () -> redisCacheManager.getCacheList(key, String.class));
