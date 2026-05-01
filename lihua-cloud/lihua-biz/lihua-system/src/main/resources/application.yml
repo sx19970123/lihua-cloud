@@ -3,7 +3,7 @@ server:
 spring:
   application:
     name: lihua-system
-    version: 2.0.2
+    version: 2.1.0
   profiles:
     # 切换开发/生产环境
     active: dev
