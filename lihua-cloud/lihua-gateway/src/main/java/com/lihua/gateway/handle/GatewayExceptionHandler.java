@@ -7,6 +7,7 @@ import com.lihua.gateway.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.boot.webflux.error.ErrorWebExceptionHandler;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -33,7 +34,7 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
             return WebUtils.renderJson(respJson, response);
         } else {
             // 网关异常最后兜底
-            return WebUtils.renderJson(StrResponse.error(ResultCodeEnum.BAD_GATEWAY_ERROR), response);
+            return WebUtils.renderJson(HttpStatus.BAD_GATEWAY, StrResponse.error(ResultCodeEnum.BAD_GATEWAY_ERROR), response);
         }
     }
 }

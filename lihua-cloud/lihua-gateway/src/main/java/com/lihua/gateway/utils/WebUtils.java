@@ -14,8 +14,15 @@ public class WebUtils {
      * 将 json 写入响应
      */
     public static Mono<Void> renderJson(String json, ServerHttpResponse response) {
+        return renderJson(HttpStatus.OK, json, response);
+    }
+
+    /**
+     * 将 json 写入响应
+     */
+    public static Mono<Void> renderJson(HttpStatus httpStatus,String json, ServerHttpResponse response) {
         if (response == null) return Mono.empty();
-        response.setStatusCode(HttpStatus.OK);
+        response.setStatusCode(httpStatus);
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
         DataBuffer buffer = response.bufferFactory()
                 .wrap(json.getBytes(StandardCharsets.UTF_8));

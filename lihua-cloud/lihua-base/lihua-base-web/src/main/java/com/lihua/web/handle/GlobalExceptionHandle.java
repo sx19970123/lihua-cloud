@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -92,12 +93,21 @@ public class GlobalExceptionHandle extends StrResponseController {
     }
 
     /**
+     * 处理认证失败异常
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    public void handleBadCredentialsException(BadCredentialsException e) {
+        log.error(e.getMessage(),e);
+        WebUtils.renderJson(error(ResultCodeEnum.AUTHENTICATION_EXPIRED, e.getMessage()));
+    }
+
+    /**
      * 系统异常处理
      */
     @ExceptionHandler(Exception.class)
     public void handleException(Exception e) {
         log.error(e.getMessage(),e);
-        WebUtils.renderJson(500, error(ResultCodeEnum.SYSTEM_ERROR));
+        WebUtils.renderJson(500, error(ResultCodeEnum.SYSTEM_ERROR, e.getMessage()));
     }
 
 }
