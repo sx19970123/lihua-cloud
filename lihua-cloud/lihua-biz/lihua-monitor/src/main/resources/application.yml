@@ -1,12 +1,30 @@
 server:
+  port: ${SERVER_PORT:8081}
   forward-headers-strategy: framework
 spring:
   application:
     name: lihua-monitor
     version: 2.1.0
-  profiles:
-    # 切换开发/生产环境
-    active: dev
+  cloud:
+    nacos:
+      server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:123456}
+      # 服务发现
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+      # 配置中心
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        file-extension: yaml
+        import-check:
+          enabled: true
+  config:
+    import:
+      - nacos:${spring.application.name}.yaml?group=monitor
+      - nacos:lihua-common.yaml?group=lihua-common
+      - nacos:lihua-resilience.yaml?group=lihua-resilience
   threads:
     virtual:
       # 开启虚拟线程
