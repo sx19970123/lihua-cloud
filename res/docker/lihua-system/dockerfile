@@ -1,0 +1,4 @@
+FROM amazoncorretto:21.0.10-alpine3.23
+LABEL author=yukino
+COPY ./lihua-system-exec.jar /app/lihua-system-exec.jar
+ENTRYPOINT ["java","-jar","/app/lihua-system-exec.jar"]

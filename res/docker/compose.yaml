@@ -1,66 +1,165 @@
 name: lihua
+
 services:
-  # 后端 java
-  server:
-    container_name: lihua-web-server                # 启动容器名
-    build:                                          # 通过./server中的dockerfile构建镜像
-      context: server
-      dockerfile: server/dockerfile
-    environment:                                    # 配置环境变量
-      - BASE_FILE_PATH=/lihua/data/                   # 文件上传目录（包含生成log路径及excel导出路径）
-      - DB_HOST=lihua-mysql                           # mysql地址，默认使用mysql容器名即可
-      - DB_PORT=3306                                  # mysql端口，根据dockerfile暴露端口配置
-      - DB_USERNAME=username                          # mysql用户名
-      - DB_PASSWORD=password                          # mysql密码
-      - REDIS_HOST=lihua-redis                        # redis地址，默认使用redis容器名即可
-      - REDIS_PORT=6379                               # redis端口，根据dockerfile暴露端口配置
-      - REDIS_PASSWORD=password                       # redis密码
-      - TZ=Asia/Shanghai                              # 设置容器时区
-    networks:                                       # 同主机下共享的自定义网络
+
+  # 认证中心
+  auth-server:
+    container_name: lihua-auth-server
+    build:
+      context: ./lihua-auth
+      dockerfile: dockerfile
+    environment:
+      - SERVER_PORT=8081
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
+      - NACOS_ADDR=lihua-nacos:8848
+      - NACOS_NAMESPACE=prod
+      - TZ=Asia/Shanghai
+    networks:
       - network
-    volumes:                                        # 挂载卷
-      - server-data:/lihua/data/
-      - jar-resource:/app/
+    volumes:
+      - auth-server-data:/lihua-auth/data/
+      - auth-jar-resource:/app/
+
+  # 核心服务
+  system-server:
+    container_name: lihua-system-server
+    build:
+      context: ./lihua-system
+      dockerfile: dockerfile
+    environment:
+      - SERVER_PORT=8082
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
+      - NACOS_ADDR=lihua-nacos:8848
+      - NACOS_NAMESPACE=prod
+      - TZ=Asia/Shanghai
+    networks:
+      - network
+    volumes:
+      - system-server-data:/lihua-system/data/
+      - system-jar-resource:/app/
+
+  # 文件服务
+  file-server:
+    container_name: lihua-file-server
+    build:
+      context: ./lihua-file
+      dockerfile: dockerfile
+    environment:
+      - SERVER_PORT=8083
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
+      - NACOS_ADDR=lihua-nacos:8848
+      - NACOS_NAMESPACE=prod
+      - TZ=Asia/Shanghai
+    networks:
+      - network
+    volumes:
+      - file-server-data:/lihua-file/data/
+      - file-jar-resource:/app/
+
+  # 监控服务
+  monitor-server:
+    container_name: lihua-monitor-server
+    build:
+      context: ./lihua-monitor
+      dockerfile: dockerfile
+    environment:
+      - SERVER_PORT=8084
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
+      - NACOS_ADDR=lihua-nacos:8848
+      - NACOS_NAMESPACE=prod
+      - TZ=Asia/Shanghai
+    networks:
+      - network
+    volumes:
+      - monitor-server-data:/lihua-monitor/data/
+      - monitor-jar-resource:/app/
+
+  # 网关服务
+  gateway-server:
+    container_name: lihua-gateway-server
+    build:
+      context: ./lihua-gateway
+      dockerfile: dockerfile
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_CLOUD_NACOS_SERVER_ADDR=lihua-nacos:8848
+      - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=lihua-nacos:8848
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=lihua-nacos:8848
+      - NACOS_USERNAME=nacos
+      - NACOS_PASSWORD=nacos
+      - NACOS_ADDR=lihua-nacos:8848
+      - NACOS_NAMESPACE=prod
+      - TZ=Asia/Shanghai
+    networks:
+      - network
+    volumes:
+      - gateway-server-data:/lihua-gateway/data/
+      - gateway-jar-resource:/app/
 
   # 前端 vue
   client:
-    container_name: lihua-web-client                # 启动容器名
-    build:                                          # 通过./client中的dockerfile构建镜像
-      context: client
-      dockerfile: client/dockerfile
-    ports:                                          # 端口映射，将容器80端口映射到主机80端口
+    container_name: lihua-web-client
+    build:
+      context: ./client
+      dockerfile: dockerfile
+    ports:
       - "80:80"
-    networks:                                       # 同主机下共享的自定义网络
+      - "443:443"
+    networks:
       - network
     volumes:
       - dist-resource:/usr/share/nginx/html/
 
   # mysql数据库
   mysql:
-    container_name: lihua-mysql                     # 启动容器名
-    image: mysql:8.0                                # 通过官方mysql:8.0构建镜像
-    ports:                                          # 端口映射，将容器3306端口映射到主机3306端口
+    container_name: lihua-mysql
+    image: mysql:8.0
+    ports:
       - "3306:3306"
-    environment:                                    # 配置环境变量
-      - MYSQL_ROOT_PASSWORD=password                # root用户密码
-      - TZ=Asia/Shanghai                            # 设置容器时区
-    networks:                                       # 同主机下共享的自定义网络
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Shanghai
+    networks:
       - network
-    volumes:                                        # 挂载卷
+    volumes:
       - mysql-conf:/etc/mysql/
       - mysql-data:/var/lib/mysql
 
   # redis 缓存
   redis:
-    container_name: lihua-redis                     # 启动容器名
-    image: redis:7                                  # 通过官方redis:7最新版构建镜像
-    command: redis-server --requirepass password    # 指定redis密码
-    networks:                                       # 同主机下共享的自定义网络
+    container_name: lihua-redis
+    image: redis:7
+    command: redis-server --requirepass password
+    networks:
       - network
-    volumes:                                        # 挂载卷
+    volumes:
       - redis-data:/data/
-    ports:                                          # 端口映射，将容器6379端口映射到主机6379端口
+    ports:
       - "6379:6379"
+
+  # nacos 注册配置中心
+  nacos:
+    container_name: lihua-nacos
+    image: nacos/nacos-server:v3.1.1
+    environment:
+      - MODE=standalone
+      - NACOS_AUTH_ENABLE=true
+      - NACOS_AUTH_TOKEN=token
+      - NACOS_AUTH_IDENTITY_KEY=nacos
+      - NACOS_AUTH_IDENTITY_VALUE=nacos
+      - JVM_XMS=256m
+      - JVM_XMX=512m
+      - JVM_XMN=128m
+    ports:
+      - "8090:8080"
+      - "8848:8848"
+      - "9848:9848"
+    networks:
+      - network
 
 # 容器间共享网络
 networks:
@@ -71,6 +170,19 @@ volumes:
   mysql-conf:
   mysql-data:
   redis-data:
-  server-data:
-  jar-resource:
   dist-resource:
+
+  auth-server-data:
+  auth-jar-resource:
+
+  system-server-data:
+  system-jar-resource:
+
+  file-server-data:
+  file-jar-resource:
+
+  gateway-server-data:
+  gateway-jar-resource:
+
+  monitor-server-data:
+  monitor-jar-resource:
