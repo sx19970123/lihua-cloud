@@ -33,7 +33,7 @@
                 <configuration>
                     <classifier>exec</classifier>
                     <finalName>${project.artifactId}</finalName>
-                    <mainClass>com.lihua.LiHuaMonitorApplication</mainClass>
+                    <mainClass>com.lihua.monitor.LiHuaMonitorApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

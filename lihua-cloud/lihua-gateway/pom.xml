@@ -95,7 +95,7 @@
                 <configuration>
                     <classifier>exec</classifier>
                     <finalName>${project.artifactId}</finalName>
-                    <mainClass>com.lihua.LiHuaAuthApplication</mainClass>
+                    <mainClass>com.lihua.gateway.LiHuaGatewayApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

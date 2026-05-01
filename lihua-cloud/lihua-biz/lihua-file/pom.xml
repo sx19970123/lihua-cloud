@@ -38,7 +38,7 @@
                 <configuration>
                     <classifier>exec</classifier>
                     <finalName>${project.artifactId}</finalName>
-                    <mainClass>com.lihua.LiHuaFileApplication</mainClass>
+                    <mainClass>com.lihua.file.LiHuaFileApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
