@@ -7,6 +7,7 @@ import com.lihua.gateway.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.boot.webflux.error.ErrorWebExceptionHandler;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
+@Order(-1)
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
     @NullMarked

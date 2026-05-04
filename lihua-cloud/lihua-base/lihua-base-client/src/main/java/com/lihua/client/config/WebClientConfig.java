@@ -1,7 +1,7 @@
 package com.lihua.client.config;
 
+import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.enums.SignEnum;
-import com.lihua.common.enums.TokenEnum;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.security.manager.LoginUserContext;
@@ -41,7 +41,7 @@ public class WebClientConfig {
                 ClientRequest.Builder builder = ClientRequest.from(request);
 
                 if (StringUtils.hasText(token)) {
-                    builder.header(TokenEnum.TOKEN_KEY.getValue(), token);
+                    builder.header(CustomHttpHeader.TOKEN.getValue(), token);
                 }
 
                 // 签名
@@ -54,8 +54,8 @@ public class WebClientConfig {
                                 timeMillis)
                 );
 
-                builder.header(SignEnum.SIGN_KEY.getValue(), sign);
-                builder.header("Timestamp", String.valueOf(timeMillis));
+                builder.header(CustomHttpHeader.SIGN.getValue(), sign);
+                builder.header(CustomHttpHeader.TIMESTAMP.getValue(), String.valueOf(timeMillis));
 
                 return next.exchange(builder.build());
             });

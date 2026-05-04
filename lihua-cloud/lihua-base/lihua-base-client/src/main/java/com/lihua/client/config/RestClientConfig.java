@@ -1,9 +1,9 @@
 package com.lihua.client.config;
 
+import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
-import com.lihua.common.enums.TokenEnum;
 import com.lihua.security.manager.LoginUserContext;
 import jakarta.annotation.Resource;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -38,7 +38,7 @@ public class RestClientConfig {
                 // token 透传
                 String token = LoginUserContext.getToken();
                 if (StringUtils.hasText(token)) {
-                    request.getHeaders().add(TokenEnum.TOKEN_KEY.getValue(), token);
+                    request.getHeaders().add(CustomHttpHeader.TOKEN.getValue(), token);
                 }
 
                 // 生成签名
@@ -47,8 +47,8 @@ public class RestClientConfig {
                         request.getMethod().name(),
                         request.getURI().getPath(),
                         timeMillis));
-                request.getHeaders().add(SignEnum.SIGN_KEY.getValue(), sign);
-                request.getHeaders().add("Timestamp", String.valueOf(timeMillis));
+                request.getHeaders().add(CustomHttpHeader.SIGN.getValue(), sign);
+                request.getHeaders().add(CustomHttpHeader.TIMESTAMP.getValue(), String.valueOf(timeMillis));
 
                 return execution.execute(request, body);
             });

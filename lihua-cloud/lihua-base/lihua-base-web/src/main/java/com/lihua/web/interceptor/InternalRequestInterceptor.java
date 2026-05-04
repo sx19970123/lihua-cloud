@@ -1,5 +1,6 @@
 package com.lihua.web.interceptor;
 
+import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.enums.SignEnum;
 import com.lihua.common.model.response.response.StrResponse;
@@ -33,7 +34,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         }
 
         // 验证内部调用请求是否超时
-        String timestampStr = request.getHeader("Timestamp");
+        String timestampStr = request.getHeader(CustomHttpHeader.TIMESTAMP.getValue());
         if (timestampStr == null) {
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
@@ -52,7 +53,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        String sign = request.getHeader(SignEnum.SIGN_KEY.getValue());
+        String sign = request.getHeader(CustomHttpHeader.SIGN.getValue());
 
         // 生成确认签名
         String confirmSign = HmacUtils.hmacSha256(SignEnum.SIGN_SECRET.getValue(), String.format("%s:%s:%s",

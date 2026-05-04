@@ -3,6 +3,7 @@ package com.lihua.gateway.filter;
 import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.cache.manager.LocalCacheManager;
 import com.lihua.cache.manager.RedisCacheManager;
+import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.gateway.exception.GatewayIpIllegalException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -40,21 +41,38 @@ public class RequestIpFilter implements GlobalFilter {
     @NullMarked
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-         return ipMatch(exchange.getRequest()).switchIfEmpty(chain.filter(exchange));
+        return ipMatch(exchange.getRequest())
+                .then(Mono.defer(() -> {
+                    ServerWebExchange newExchange = setIpToHttpHeader(exchange);
+                    return chain.filter(newExchange);
+                }));
+    }
+
+    // 将ip设置到请求头
+    private ServerWebExchange setIpToHttpHeader(ServerWebExchange exchange) {
+        String currentIp = getIpAddress(exchange.getRequest());
+
+        if (currentIp == null) {
+            return exchange;
+        }
+
+        return exchange.mutate()
+                .request(builder -> builder.header(CustomHttpHeader.IP.getValue(), currentIp))
+                .build();
     }
 
     // 匹配ip
     private Mono<Void> ipMatch(ServerHttpRequest request) {
+        // 获取当前ip
+        String currentIp = getIpAddress(request);
+        if (currentIp == null) {
+            return Mono.empty();
+        }
+
         // 获取ip黑名单数据
         String key = RedisKeyPrefixEnum.SYSTEM_IP_BLACKLIST_REDIS_PREFIX.getValue();
         List<String> prohibitIpList = localCacheManager.getWithFallback(key, new TypeReference<>() {}, () -> redisCacheManager.getCacheList(key, String.class));
         if (prohibitIpList == null || prohibitIpList.isEmpty()) {
-            return Mono.empty();
-        }
-
-        // 获取当前ip
-        String currentIp = getIpAddress(request);
-        if (currentIp == null) {
             return Mono.empty();
         }
 
@@ -70,7 +88,7 @@ public class RequestIpFilter implements GlobalFilter {
             });
             // 匹配到的黑名单ip抛出异常
             if (pattern.matcher(currentIp).matches()) {
-                throw new GatewayIpIllegalException();
+                return Mono.error(new GatewayIpIllegalException());
             }
         }
 

@@ -35,7 +35,7 @@ public class RequestTokenFilter implements GlobalFilter {
             JwtUtils.verify(token.replace(TokenEnum.TOKEN_PREFIX.getValue(), ""));
         } catch (Exception e) {
             log.error("非法Token {}", e.getMessage(), e);
-            throw new GatewayTokenIllegalException();
+            return Mono.error(new GatewayTokenIllegalException());
         }
 
         return chain.filter(exchange);

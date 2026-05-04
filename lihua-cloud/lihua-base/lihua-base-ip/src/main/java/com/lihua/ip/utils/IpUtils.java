@@ -1,13 +1,11 @@
 package com.lihua.ip.utils;
 
+import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.utils.spring.SpringUtils;
 import com.lihua.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.xdb.Searcher;
-import org.springframework.util.StringUtils;
-
-import java.util.Objects;
 
 @Slf4j
 public class IpUtils {
@@ -29,14 +27,7 @@ public class IpUtils {
      * 根据请求获取ip
      */
     public static String getIpAddress(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("X-Real-IP");
-        }
-        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
+        return request.getHeader(CustomHttpHeader.IP.getValue());
     }
 
     /**
