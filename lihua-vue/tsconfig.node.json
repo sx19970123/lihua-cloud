@@ -11,6 +11,7 @@
     "module": "ESNext",
     "allowImportingTsExtensions": true,
     "moduleResolution": "Bundler",
+    "ignoreDeprecations": "6.0",
     "types": ["node"],
     "baseUrl": ".",
     "paths": {

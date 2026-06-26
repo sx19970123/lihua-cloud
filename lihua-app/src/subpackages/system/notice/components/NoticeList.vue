@@ -9,7 +9,7 @@
 								<!-- 图标｜未读红点 -->
 								<sar-badge :dot="notice.readFlag === '0'">
 									<sar-avatar size="96rpx" background="var(--sar-primary)">
-										<sar-icon :name="notice.icon" family="outlined" size="64rpx" color="#fff"/>
+										<sar-icon :name="notice.icon || ''" family="outlined" size="64rpx" color="#fff"/>
 									</sar-avatar>
 								</sar-badge>
 								<sar-space direction="vertical" size="small">
@@ -25,7 +25,7 @@
 						</template>
 						<!-- 优先级 -->
 						<template #value>
-							<dict-tag :dict-data-value="notice.priority" :dict-data-option="sys_notice_priority"></dict-tag>
+							<dict-tag :dict-data-value="notice.priority || ''" :dict-data-option="sys_notice_priority"></dict-tag>
 						</template>
 					</sar-list-item>
 					<!-- 侧滑标星 -->

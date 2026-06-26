@@ -32,7 +32,7 @@
 					<!-- 头像背景颜色 -->
 					<color-select :dataSource="colorSource" v-model:color="avatarData.backgroundColor"></color-select>
 					<!-- 头像图标 -->
-					<IconSelect v-model:value="avatarData.value" width="686rpx"></IconSelect>
+					<IconSelect v-model:value="avatarValue" width="686rpx"></IconSelect>
 				</sar-space>
 			</view>
 		</sar-popout>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { cropImage } from 'sard-uniapp'
 import UserAvatar from '@/components/user-avatar/index.vue'
 import ColorSelect from '@/components/color-select/index.vue'
@@ -103,6 +103,12 @@ const colorSource = [
 
 // 头像数据
 const avatarData = ref<AvatarType>(cloneDeep(userStore.avatar))
+const avatarValue = computed({
+	get: () => avatarData.value.value || '',
+	set: (value: string) => {
+		avatarData.value.value = value
+	}
+})
 
 // 执行保存
 const handleSave = async (type ?: 'confirm' | 'cancel' | 'close') => {

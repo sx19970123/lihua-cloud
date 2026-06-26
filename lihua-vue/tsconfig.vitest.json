@@ -7,6 +7,7 @@
     "composite": false,
     "lib": [],
     "types": ["node", "jsdom"],
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

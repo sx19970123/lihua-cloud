@@ -26,10 +26,12 @@ import Basic from './components/ProfileBasicSetting.vue'
 import Individuation from './components/ProfileIndividuation.vue'
 import ProfileSecurity from './components/ProfileSecurity.vue'
 import ProfileLockScreen from './components/ProfileLockScreen.vue'
-import {markRaw, ref} from "vue";
+import {markRaw, ref, watch} from "vue";
 import {useThemeStore} from "@/stores/theme"
+import {useRoute} from "vue-router";
 
 const themeStore = useThemeStore()
+const route = useRoute()
 // 注册子组件
 const allComponents = ref([
   {
@@ -53,9 +55,27 @@ const allComponents = ref([
 const activeComponent = ref(markRaw(Basic))
 // 设置回显
 const selectedKeys = ref(['Basic'])
-// 点击菜单切换组件
-const handleChangeUserMenu = ({key}: {key: string}) => {
-  const target = allComponents.value.filter(item => item.name === key)[0]
+// 选择个人中心菜单
+const selectUserMenu = (key: string) => {
+  const target = allComponents.value.find(item => item.name === key)
+  if (!target) return
+
+  selectedKeys.value = [target.name]
   activeComponent.value = target.com
 }
+// 点击菜单切换组件
+const handleChangeUserMenu = ({key}: {key: string}) => {
+  selectUserMenu(key)
+}
+
+const routeTab = route.query.tab
+if (typeof routeTab === 'string') {
+  selectUserMenu(routeTab)
+}
+
+watch(() => route.query.tab, (tab) => {
+  if (typeof tab === 'string') {
+    selectUserMenu(tab)
+  }
+})
 </script>

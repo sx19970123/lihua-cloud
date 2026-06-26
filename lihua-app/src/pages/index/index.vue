@@ -95,6 +95,18 @@ const showVersion = ref<boolean>(false)
 
 const versionInfo = [
 	{
+		version: '2.2.0',
+		updateDate: '2026-06-25',
+		updateContent: [
+			'1. 项目版本更新为 2.2.0',
+			'2. manifest.json 更新 versionName 为 2.2.0，versionCode 为 220',
+			'3. 更新 UniApp/DCloud 版本到 3.0.0-5000720260410001',
+			'4. 更新 sard-uniapp 版本到 1.30.3',
+			'5. 更新 dayjs、lodash-es 等依赖',
+			'6. 保持 Vue、Vite、DCloud types、runtime-core、Sass 等工具链敏感版本不变',
+		]
+	},
+	{
 		version: '2.1.0',
 		updateDate: '2026-05-01',
 		updateContent: [

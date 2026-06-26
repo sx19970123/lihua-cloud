@@ -16,9 +16,22 @@ const nextUpdate = [
  */
 export const versionInfo = {
     springBootVersion: ' 4.0.5',
-    vueVersion: ' 3.5.31',
+    vueVersion: ' 3.5.38',
     lihuaUpdateLog: [
         // 每次更新版本在集合头部新增一条
+        {
+            version: '2.2.0',
+            updateDate: '2026-06-25',
+            updateContent: [
+                '1. 项目版本更新为2.2.0',
+                '2. 后端升级MySQL、java-jwt、Redisson、Caffeine、OSHI、ip2region、Fesod、SpringDoc、Snail Job等依赖',
+                '3. 微服务后端保持Spring Boot 4.0.5、Spring Cloud 2025.1.0、Spring Cloud Alibaba 2025.1.0.0组合，暂缓Boot/Cloud生态升级',
+                '4. Web端升级Vue、Vite、Pinia、Vue Router、VueUse、FingerprintJS、TypeScript、Axios、TinyMCE等依赖',
+                '5. App端升级DCloud/UniApp、sard-uniapp、dayjs、lodash-es等依赖',
+                '6. 修复未配置锁屏密码时点击锁屏入口导致滚动条残留隐藏的问题',
+                '7. 未配置锁屏密码时跳转到个人中心锁屏设置',
+            ]
+        },
         {
             version: '2.1.0',
             updateDate: '2026-05-01',

@@ -156,14 +156,14 @@ let startOffset = 0
 
 // 点击进入预锁屏状态
 const preLock = () => {
-  disableOverflowY()
   const lockScreen = getLockScreenInfo();
   if (!(lockScreen && lockScreen.password)) {
     message.error("请先在个人中心配置锁屏密码")
-    router.push("/profile")
+    router.push({path: "/profile", query: {tab: "LockScreen"}})
     return;
   }
 
+  disableOverflowY()
   openLock.value = true
   nextTick(() => {
     const element = lockMaskRef.value
