@@ -1,6 +1,6 @@
 package com.lihua.system.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.lihua.cache.enums.RedisTopicEnum;
 import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.cache.publisher.RedisPublisher;

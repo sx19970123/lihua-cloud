@@ -1,7 +1,7 @@
 package com.lihua.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.system.entity.SysUserDept;
