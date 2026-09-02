@@ -24,7 +24,7 @@ spring:
     import:
       - nacos:${spring.application.name}.yaml?group=${spring.application.name}
       - nacos:lihua-common.yaml?group=lihua-common
-      - nacos:lihua-resilience-gateway.yaml?group=lihua-resilience-gateway
+      - nacos:lihua-resilience.yaml?group=lihua-resilience
   threads:
     virtual:
       # 开启虚拟线程
