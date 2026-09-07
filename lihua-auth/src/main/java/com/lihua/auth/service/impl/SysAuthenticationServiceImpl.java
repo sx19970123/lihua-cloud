@@ -3,6 +3,8 @@ package com.lihua.auth.service.impl;
 import com.lihua.client.facade.SysSettingClientFacade;
 import com.lihua.client.facade.SysUserAuthClientFacade;
 import com.lihua.client.model.RegisterUserModel;
+import com.lihua.common.enums.RegisterTypeEnum;
+import com.lihua.common.enums.SysStatusEnum;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
@@ -77,8 +79,8 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
         registerUserModel
                 .setUsername(username)
                 .setPassword(SecurityUtils.encryptPassword(password))
-                .setStatus("0")
-                .setRegisterType("1")
+                .setStatus(SysStatusEnum.NORMAL.getValue())
+                .setRegisterType(RegisterTypeEnum.SELF_REGISTER.getValue())
                 .setPasswordUpdateTime(DateUtils.now());
         // 远程调用注册
         return sysUserAuthClientFacade.register(registerUserModel);
