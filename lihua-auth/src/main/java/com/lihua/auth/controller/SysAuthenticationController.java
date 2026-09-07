@@ -106,8 +106,9 @@ public class SysAuthenticationController extends ApiResponseController {
     private boolean checkCaptcha(String captchaVerification) {
         ApiResponseModel<Boolean> responseModel = sysSettingClientFacade.enableCaptcha();
 
-        if (200 == responseModel.getCode()) {
-            return responseModel.getData();
+        // 验证码开关关闭时直接放行；开启、开关值缺失或远程配置读取失败（从严降级）时走二次校验
+        if (200 == responseModel.getCode() && Boolean.FALSE.equals(responseModel.getData())) {
+            return true;
         }
 
         if (imageCaptchaApplication instanceof SecondaryVerificationApplication) {

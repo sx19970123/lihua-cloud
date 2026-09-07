@@ -40,10 +40,10 @@ public class CaptchaController extends ApiResponseController {
         return response;
     }
 
-    //验证码接收内部类
+    // 验证码接收内部类
     @lombok.Data
     public static class Data {
-        private String  id;
+        private String id;
         private ImageCaptchaTrack data;
     }
 

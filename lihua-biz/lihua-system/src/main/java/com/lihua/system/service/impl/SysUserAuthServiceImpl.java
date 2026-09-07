@@ -39,7 +39,7 @@ public class SysUserAuthServiceImpl implements SysUserAuthService {
     private List<CacheLoginUserStrategy> cacheLoginUserStrategyList;
 
     @Resource
-    private List<SaveRegisterUserAssociatedStrategy> saveRegisterUserAssociatedStrategieList;
+    private List<SaveRegisterUserAssociatedStrategy> saveRegisterUserAssociatedStrategyList;
 
 
     @Override
@@ -79,7 +79,7 @@ public class SysUserAuthServiceImpl implements SysUserAuthService {
         sysUserMapper.insert(sysUser);
 
         // 通过用户注册配置类保存相关关联表数据
-        saveRegisterUserAssociatedStrategieList.forEach(strategy -> strategy.saveRegisterUserAssociated(sysUser.getId(), signInSetting));
+        saveRegisterUserAssociatedStrategyList.forEach(strategy -> strategy.saveRegisterUserAssociated(sysUser.getId(), signInSetting));
 
         return sysUser.getId();
     }
