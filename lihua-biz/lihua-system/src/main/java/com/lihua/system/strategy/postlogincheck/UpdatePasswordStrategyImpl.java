@@ -4,6 +4,7 @@ import com.lihua.common.utils.date.DateUtils;
 import com.lihua.system.model.dto.SysSettingDTO;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.SecurityUtils;
+import com.lihua.system.mapper.SysUserMapper;
 import com.lihua.system.service.SysSettingService;
 import jakarta.annotation.Resource;
 import org.springframework.core.annotation.Order;
@@ -21,13 +22,16 @@ public class UpdatePasswordStrategyImpl implements PostLoginCheckStrategy {
     @Resource
     private SysSettingService sysSettingService;
 
+    @Resource
+    private SysUserMapper sysUserMapper;
+
     final String COMPONENT_NAME = "UserSetupResetPassword";
 
     @Override
     public String check(LoginUserSession loginUserSession) {
 
-        // 用户密码与默认密码相同
-        if (SecurityUtils.matchesPassword(sysSettingService.getDefaultPassword(), loginUserSession.getPassword())) {
+        // 用户密码与默认密码相同（密码哈希自查 DB，会话不携带密码）
+        if (SecurityUtils.matchesPassword(sysSettingService.getDefaultPassword(), sysUserMapper.selectById(loginUserSession.getUser().getId()).getPassword())) {
             return COMPONENT_NAME;
         }
 
