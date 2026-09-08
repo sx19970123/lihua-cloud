@@ -2,6 +2,7 @@ package com.lihua.system.service;
 
 import com.lihua.system.model.dto.SysCheckPasswordDTO;
 import com.lihua.system.model.dto.SysProfileBasicDTO;
+import com.lihua.system.model.dto.SysUpdatePasswordDTO;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ public interface SysProfileService {
     String saveBasics(SysProfileBasicDTO sysProfileBasicDTO);
 
     /**
-     * 修改密码
+     * 修改密码（含旧密码与新密码规则校验，失败抛 ServiceException）
      */
-    String updatePassword(String newPassword);
+    String updatePassword(SysUpdatePasswordDTO sysUpdatePasswordDTO);
 
     /**
      * 获取用户密码
