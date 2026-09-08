@@ -8,10 +8,10 @@ import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.model.AuthInfo;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
-import com.lihua.system.entity.SysUser;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
 import com.lihua.system.model.dto.SysCheckPasswordDTO;
+import com.lihua.system.model.dto.SysProfileBasicDTO;
 import com.lihua.system.model.dto.SysUpdatePasswordDTO;
 import com.lihua.system.model.validation.ProfileValidation;
 import com.lihua.security.model.CurrentDept;
@@ -42,8 +42,8 @@ public class AppSysProfileController extends ApiResponseController {
     @Operation(summary = "保存个人信息")
     @PostMapping("basics")
     @Log(description = "保存个人信息", type = LogTypeEnum.SAVE)
-    public ApiResponseModel<String> saveBasics(@RequestBody @Validated(ProfileValidation.ProfileSaveValidation.class) SysUser sysUser) {
-        return success(sysProfileService.saveBasics(sysUser));
+    public ApiResponseModel<String> saveBasics(@RequestBody @Validated(ProfileValidation.ProfileSaveValidation.class) SysProfileBasicDTO sysProfileBasicDTO) {
+        return success(sysProfileService.saveBasics(sysProfileBasicDTO));
     }
 
     @Operation(summary = "修改密码")
