@@ -4,6 +4,7 @@ import com.lihua.client.facade.SysSettingClientFacade;
 import com.lihua.client.facade.SysUserAuthClientFacade;
 import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.enums.RegisterTypeEnum;
+import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.enums.SysStatusEnum;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.model.response.ApiResponseModel;
@@ -54,7 +55,8 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     public String cacheLoginUserInfo(LoginUserSession loginUserSession) {
         // 远程调用获取用户信息
         ApiResponseModel<LoginUserSession> responseModel = sysUserAuthClientFacade.queryLoginUserProfile(loginUserSession);
-        if (200 != responseModel.getCode()) {
+        // 枚举常量为 Integer，须 equals 值比较（== 为引用比较，200 超出 Integer 缓存必不等）
+        if (!ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode())) {
             throw new ServiceException(responseModel.getMsg());
         }
 
@@ -90,7 +92,8 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     public void checkSameAccount(String token) {
         // 获取最大登录用户配置信息，-1为未配置
         ApiResponseModel<Integer> responseModel = sysSettingClientFacade.getMaxConcurrentLogins();
-        if (200 != responseModel.getCode()) {
+        // 枚举常量为 Integer，须 equals 值比较（== 为引用比较，200 超出 Integer 缓存必不等）
+        if (!ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode())) {
             throw new ServiceException(responseModel.getMsg());
         }
 

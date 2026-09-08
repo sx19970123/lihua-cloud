@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.lihua.cache.enums.RedisKeyPrefixEnum.SYSTEM_IP_BLACKLIST_REDIS_PREFIX;
 import static com.lihua.cache.enums.RedisKeyPrefixEnum.SYSTEM_SETTING_REDIS_PREFIX;
@@ -81,32 +82,32 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
 
     @Override
     public boolean enableGrayMode() {
-        SysSetting captchaSetting = getSysSettingByKey(SysSettingEnum.GRAY_MODEL.getKey());
-        if (captchaSetting == null) {
+        SysSetting grayModelSetting = getSysSettingByKey(SysSettingEnum.GRAY_MODEL.getKey());
+        if (grayModelSetting == null) {
             return false;
         }
-        String json = captchaSetting.getJson();
+        String json = grayModelSetting.getJson();
         if (!StringUtils.hasText(json)) {
             return false;
         }
-        SysSettingDTO.GrayModelSetting grayModelSetting = JsonUtils.toObject(json, SysSettingDTO.GrayModelSetting.class);
+        SysSettingDTO.GrayModelSetting grayModelSettingDTO = JsonUtils.toObject(json, SysSettingDTO.GrayModelSetting.class);
         // 未开启时直接返回
-        if (!grayModelSetting.isEnable()) {
+        if (!grayModelSettingDTO.isEnable()) {
             return false;
         }
         // 关闭时间
-        LocalDateTime closeTime = grayModelSetting.getCloseTime();
+        LocalDateTime closeTime = grayModelSettingDTO.getCloseTime();
         // 未设置关闭时间或还未到关闭时间视为开启中，到达关闭时间后视为已关闭
         return closeTime == null || DateUtils.differenceMinute(DateUtils.now(), closeTime) > 0;
     }
 
     @Override
     public boolean enableSignUp() {
-        SysSetting captchaSetting = getSysSettingByKey(SysSettingEnum.SIGN_UP.getKey());
-        if (captchaSetting == null) {
+        SysSetting signUpSetting = getSysSettingByKey(SysSettingEnum.SIGN_UP.getKey());
+        if (signUpSetting == null) {
             return false;
         }
-        String json = captchaSetting.getJson();
+        String json = signUpSetting.getJson();
         if (!StringUtils.hasText(json)) {
             return false;
         }
@@ -117,12 +118,15 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
     @Override
     public int getMaxConcurrentLogins() {
 
-        SysSetting captchaSetting = getSysSettingByKey(SysSettingEnum.SAME_ACCOUNT_LOGIN.getKey());
-        if (captchaSetting == null) {
+        SysSetting sameAccountLoginSetting = getSysSettingByKey(SysSettingEnum.SAME_ACCOUNT_LOGIN.getKey());
+        if (sameAccountLoginSetting == null) {
             return -1;
         }
-
-        SysSettingDTO.SameAccountLoginSetting setting = JsonUtils.toObject(captchaSetting.getJson(), SysSettingDTO.SameAccountLoginSetting.class);
+        String json = sameAccountLoginSetting.getJson();
+        if (!StringUtils.hasText(json)) {
+            return -1;
+        }
+        SysSettingDTO.SameAccountLoginSetting setting = JsonUtils.toObject(json, SysSettingDTO.SameAccountLoginSetting.class);
         if (!setting.isEnable()) {
             return -1;
         }
@@ -131,15 +135,19 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
     }
 
     @Override
-    public SysSettingDTO.SignInSetting getSignInSetting() {
+    public SysSettingDTO.SignUpSetting getSignUpSetting() {
         SysSetting setting = getSysSettingByKey(SysSettingEnum.SIGN_UP.getKey());
 
         if (setting == null) {
             return null;
         }
+        String json = setting.getJson();
+        if (!StringUtils.hasText(json)) {
+            return null;
+        }
 
         // 自助注册配置
-        return JsonUtils.toObject(setting.getJson(), SysSettingDTO.SignInSetting.class);
+        return JsonUtils.toObject(json, SysSettingDTO.SignUpSetting.class);
     }
 
     @Override
@@ -148,8 +156,12 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
         if (intervalUpdatePasswordSetting == null) {
             return null;
         }
+        String json = intervalUpdatePasswordSetting.getJson();
+        if (!StringUtils.hasText(json)) {
+            return null;
+        }
 
-        return JsonUtils.toObject(intervalUpdatePasswordSetting.getJson(), SysSettingDTO.IntervalUpdatePasswordSetting.class);
+        return JsonUtils.toObject(json, SysSettingDTO.IntervalUpdatePasswordSetting.class);
     }
 
     @Override
@@ -159,7 +171,11 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
         if (defaultPasswordSetting == null) {
             return "";
         }
-        SysSettingDTO.DefaultPasswordSetting passwordSetting = JsonUtils.toObject(defaultPasswordSetting.getJson(), SysSettingDTO.DefaultPasswordSetting.class);
+        String json = defaultPasswordSetting.getJson();
+        if (!StringUtils.hasText(json)) {
+            return "";
+        }
+        SysSettingDTO.DefaultPasswordSetting passwordSetting = JsonUtils.toObject(json, SysSettingDTO.DefaultPasswordSetting.class);
         return passwordSetting.getDefaultPassword();
     }
 
@@ -175,12 +191,21 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
         if (restrictAccessIpSetting == null) {
             return;
         }
-        SysSettingDTO.RestrictAccessIpSetting ipSetting = JsonUtils.toObject(restrictAccessIpSetting.getJson(), SysSettingDTO.RestrictAccessIpSetting.class);
+        String json = restrictAccessIpSetting.getJson();
+        if (!StringUtils.hasText(json)) {
+            return;
+        }
+        SysSettingDTO.RestrictAccessIpSetting ipSetting = JsonUtils.toObject(json, SysSettingDTO.RestrictAccessIpSetting.class);
         // 未开启配置直接返回
         if (!ipSetting.isEnable()) {
             return;
         }
-        redisCacheManager.setCacheList(IP_BLACKLIST_KEY, ipSetting.getIpList());
+        // 过滤空白项（关闭态保存的空占位串不应进入黑名单）
+        List<String> ipList = ipSetting.getIpList() == null ? List.of()
+                : ipSetting.getIpList().stream().filter(StringUtils::hasText).toList();
+        if (!ipList.isEmpty()) {
+            redisCacheManager.setCacheList(IP_BLACKLIST_KEY, ipList);
+        }
     }
 
     /**

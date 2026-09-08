@@ -107,7 +107,8 @@ public class SysAuthenticationController extends ApiResponseController {
         ApiResponseModel<Boolean> responseModel = sysSettingClientFacade.enableCaptcha();
 
         // 验证码开关关闭时直接放行；开启、开关值缺失或远程配置读取失败（从严降级）时走二次校验
-        if (200 == responseModel.getCode() && Boolean.FALSE.equals(responseModel.getData())) {
+        // 枚举常量为 Integer，须 equals 值比较（== 为引用比较，200 超出 Integer 缓存必不等）
+        if (ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode()) && Boolean.FALSE.equals(responseModel.getData())) {
             return true;
         }
 
