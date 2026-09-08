@@ -3,7 +3,6 @@ package com.lihua.client.facade;
 import com.lihua.client.client.SysLogClient;
 import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
-import com.lihua.security.model.CurrentUser;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ public class SysLogClientFacade {
     }
 
 
-    public Mono<ApiResponseModel<CurrentUser>> logFallback(LogModel logModel, Throwable throwable) {
+    public Mono<ApiResponseModel<String>> logFallback(LogModel logModel, Throwable throwable) {
         log.error("远程调用异常, 请求参数{}", logModel, throwable);
         return Mono.error(throwable);
     }
