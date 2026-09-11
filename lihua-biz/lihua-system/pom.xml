@@ -28,6 +28,11 @@
             <groupId>com.lihua</groupId>
             <artifactId>lihua-base-mybatis</artifactId>
         </dependency>
+        <!--            附件（公开链 URL 解析纯函数）-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-attachment</artifactId>
+        </dependency>
         <!--            excel导入导出-->
         <dependency>
             <groupId>com.lihua</groupId>
