@@ -52,6 +52,7 @@ services:
       - NACOS_PASSWORD=nacos
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
+      - ATTACHMENT_DOWNLOAD_SIGN_KEY=${ATTACHMENT_DOWNLOAD_SIGN_KEY}   # 下载链接签名密钥（在 .env 或部署环境提供，缺失启动失败）
       - TZ=Asia/Shanghai
     networks:
       - network

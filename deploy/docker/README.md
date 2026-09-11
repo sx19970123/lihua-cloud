@@ -251,3 +251,15 @@ docker compose up -d --build --force-recreate gateway-server
 - 修改 `compose.yaml` 后，执行 `docker compose up -d` 使配置生效。
 - 修改 `client/nginx.conf` 后，执行 `docker compose up -d --build --force-recreate client`。
 - 修改 Nacos 配置后，按服务实际配置刷新或重启对应后端容器。
+
+
+## 3.0 升级部署必读
+
+1. **先执行数据库升级**：导入本仓库 `deploy/db/upgrade-3.0.0.sql`（幂等可重跑），再启动服务；基线新装直接用 `lihua.sql`（含全部变更）。
+2. **下载链接签名密钥必配**：3.0 起 `attachment.download-sign-key` 缺失服务启动失败（fail-fast）。docker 部署在 compose 同目录 `.env` 提供：
+   ```
+   ATTACHMENT_DOWNLOAD_SIGN_KEY=<openssl rand -hex 32 生成，至少 16 字符>
+   ```
+   （compose 已透传该变量；mono 生产 yml 与 cloud Nacos lihua-file.yaml 均以 `${ATTACHMENT_DOWNLOAD_SIGN_KEY}` 占位。）
+3. **Nacos 配置重导入（cloud）**：`deploy/nacos/nacos_config_export.zip` 已更新（附件 attachment 段 3.0 形态、附件路由超时 10m、路由显式 order、uploadFilePath 指向数据卷），升级后需在 Nacos 重新导入并发布。
+4. **附件存储卷（cloud）**：lihua-file 的 `uploadFilePath` 已指向 `/lihua-file/data/upload/`（落在 `file-server-data` 卷）；请勿改回相对路径，否则容器重建附件丢失。
