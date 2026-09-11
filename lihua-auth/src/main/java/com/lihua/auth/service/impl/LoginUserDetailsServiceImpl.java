@@ -40,7 +40,7 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
         }
 
         // 创建 LoginUserSession 包含登录的用户信息 和 过期时间
-        return new LoginUserSession(data, DateUtils.now().plusMinutes(tokenProperties.getTokenExpireTime()));
+        return new LoginUserSession(data, DateUtils.now().plus(tokenProperties.getTokenExpireTime()));
     }
 }
 
