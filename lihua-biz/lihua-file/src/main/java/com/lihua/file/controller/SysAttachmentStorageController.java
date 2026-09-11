@@ -12,6 +12,7 @@ import com.lihua.file.model.dto.AttachmentUploadDTO;
 import com.lihua.file.model.vo.AttachmentUploadVO;
 import com.lihua.file.model.vo.FastUploadResultVO;
 import com.lihua.file.model.vo.SysAttachmentChunkVO;
+import com.lihua.file.model.vo.SysAttachmentVO;
 import com.lihua.file.service.SysAttachmentStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +38,7 @@ public class SysAttachmentStorageController extends ApiResponseController {
 
     @Operation(summary = "查询附件信息")
     @PostMapping("info")
-    public ApiResponseModel<List<SysAttachment>> queryAttachmentInfoByIds(@RequestBody @NotEmpty(message = "附件id为空") List<String> ids) {
+    public ApiResponseModel<List<SysAttachmentVO>> queryAttachmentInfoByIds(@RequestBody @NotEmpty(message = "附件id为空") List<String> ids) {
         return success(sysAttachmentStorageService.queryAttachmentInfoByIds(ids));
     }
 
@@ -76,6 +77,7 @@ public class SysAttachmentStorageController extends ApiResponseController {
 
     @Operation(summary = "上传分片")
     @PostMapping("chunk/upload/{uploadId}/{index}")
+    @Log(description = "附件上传（分片单元）", type = LogTypeEnum.UPLOAD)
     public ApiResponseModel<String> chunksUpload(@RequestParam("file") MultipartFile file,
                                                  @PathVariable("uploadId") String uploadId,
                                                  @PathVariable("index") Integer index) {
@@ -85,6 +87,7 @@ public class SysAttachmentStorageController extends ApiResponseController {
 
     @Operation(summary = "合并分片")
     @PostMapping("chunk/merge/{total}")
+    @Log(description = "附件上传（分片合并）", type = LogTypeEnum.UPLOAD)
     public ApiResponseModel<AttachmentUploadVO> chunksMerge(@RequestBody @Validated AttachmentChunkMergeDTO chunkMergeDTO,
                                                 @PathVariable("total") Integer total) {
         return success(sysAttachmentStorageService.chunksMerge(chunkMergeDTO, total));

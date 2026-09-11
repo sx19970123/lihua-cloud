@@ -9,12 +9,14 @@ import com.lihua.log.enums.LogTypeEnum;
 import com.lihua.file.model.dto.SysAttachmentDTO;
 import com.lihua.file.model.vo.SysAttachmentVO;
 import com.lihua.file.service.SysAttachmentService;
+import com.lihua.mybatis.model.validation.MaxPageSizeLimit;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -31,7 +33,7 @@ public class SysAttachmentController extends ApiResponseController {
 
     @Operation(summary = "分页查询")
     @PostMapping("page")
-    public ApiResponseModel<IPage<SysAttachment>> queryPage(@RequestBody SysAttachmentDTO sysAttachmentDTO) {
+    public ApiResponseModel<IPage<SysAttachmentVO>> queryPage(@RequestBody @Validated(MaxPageSizeLimit.class) SysAttachmentDTO sysAttachmentDTO) {
         return success(sysAttachmentService.queryPage(sysAttachmentDTO));
     }
 

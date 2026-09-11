@@ -9,6 +9,7 @@ import com.lihua.file.model.dto.AttachmentFastUploadDTO;
 import com.lihua.file.model.dto.AttachmentUploadDTO;
 import com.lihua.file.model.vo.AttachmentUploadVO;
 import com.lihua.file.model.vo.FastUploadResultVO;
+import com.lihua.file.model.vo.SysAttachmentVO;
 import com.lihua.file.service.SysAttachmentStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +34,7 @@ public class AppSysAttachmentStorageController extends ApiResponseController {
 
     @Operation(summary = "获取附件信息")
     @PostMapping("info")
-    public ApiResponseModel<List<SysAttachment>> queryAttachmentInfoByIds(@RequestBody @NotEmpty(message = "附件id为空") List<String> ids) {
+    public ApiResponseModel<List<SysAttachmentVO>> queryAttachmentInfoByIds(@RequestBody @NotEmpty(message = "附件id为空") List<String> ids) {
         return success(sysAttachmentStorageService.queryAttachmentInfoByIds(ids));
     }
 

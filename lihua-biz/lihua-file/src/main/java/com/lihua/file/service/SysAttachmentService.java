@@ -1,7 +1,6 @@
 package com.lihua.file.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.lihua.file.entity.SysAttachment;
 import com.lihua.file.model.dto.SysAttachmentDTO;
 import com.lihua.file.model.vo.SysAttachmentVO;
 
@@ -12,7 +11,7 @@ public interface SysAttachmentService {
     /**
      * 分页查询附件
      */
-    IPage<SysAttachment> queryPage(SysAttachmentDTO sysAttachmentDTO);
+    IPage<SysAttachmentVO> queryPage(SysAttachmentDTO sysAttachmentDTO);
 
     /**
      * 根据主键查询附件详情
