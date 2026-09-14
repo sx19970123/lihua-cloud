@@ -1,5 +1,6 @@
 package com.lihua.file.controller;
 
+import com.lihua.file.controller.base.BaseSysAttachmentStorageController;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.file.model.dto.AttachmentChunkMergeDTO;
 import com.lihua.file.model.dto.AttachmentChunkStartDTO;

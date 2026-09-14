@@ -1,6 +1,6 @@
 package com.lihua.file.controller.app;
 
-import com.lihua.file.controller.BaseSysAttachmentStorageController;
+import com.lihua.file.controller.base.BaseSysAttachmentStorageController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
