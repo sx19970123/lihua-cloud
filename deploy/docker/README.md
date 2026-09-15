@@ -81,7 +81,7 @@ Nginx 已配置：
 
 后端服务包含 `auth-server`、`system-server`、`file-server`、`monitor-server`、`gateway-server` 五个容器。
 
-各服务镜像基于 `amazoncorretto:21.0.10-alpine3.23` 构建，构建时将对应的 `*-exec.jar` 复制到 `/app/` 目录，容器启动时执行 `java -jar`。
+各服务镜像基于 `eclipse-temurin:25.0.4_7-jre-noble`（与 Java 25 编译目标匹配；镜像内含 fontconfig 与 DejaVu 字体，满足验证码字体渲染）构建，构建时将对应的 `*-exec.jar` 复制到 `/app/` 目录，容器启动时执行 `java -jar`。
 
 当前服务端口如下：
 
