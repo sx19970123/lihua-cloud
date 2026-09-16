@@ -22,7 +22,7 @@ spring:
           enabled: true
   config:
     import:
-      - nacos:${spring.application.name}.yaml?group=monitor
+      - nacos:${spring.application.name}.yaml?group=${spring.application.name}
       - nacos:lihua-common.yaml?group=lihua-common
       - nacos:lihua-resilience.yaml?group=lihua-resilience
   threads:
