@@ -2,7 +2,6 @@ package com.lihua.web.interceptor;
 
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.enums.ResultCodeEnum;
-import com.lihua.common.enums.SignEnum;
 import com.lihua.common.model.response.response.StrResponse;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.web.utils.WebUtils;
@@ -10,6 +9,7 @@ import com.lihua.web.annotation.InternalOnly;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,6 +19,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 @Component
 public class InternalRequestInterceptor implements HandlerInterceptor {
+
+    // 内部 RPC 签名密钥（来自 lihua-common.yaml internal 段；无默认值=缺失启动失败）
+    @Value("${internal.signKey}")
+    private String internalSignKey;
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
@@ -56,7 +60,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         String sign = request.getHeader(CustomHttpHeader.SIGN.getValue());
 
         // 生成确认签名
-        String confirmSign = HmacUtils.hmacSha256(SignEnum.SIGN_SECRET.getValue(), String.format("%s:%s:%s",
+        String confirmSign = HmacUtils.hmacSha256(internalSignKey, String.format("%s:%s:%s",
                 request.getMethod(),
                 request.getRequestURI(),
                 timestamp));

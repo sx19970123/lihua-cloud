@@ -5,6 +5,7 @@ import com.lihua.gateway.exception.GatewayTokenIllegalException;
 import com.lihua.gateway.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
@@ -22,6 +23,10 @@ import java.util.List;
 @Slf4j
 public class RequestTokenFilter implements GlobalFilter {
 
+    // JWT 验签密钥（与 auth 服务签发密钥一致，来自 lihua-common.yaml token 段；无默认值=缺失启动失败）
+    @Value("${token.tokenSecret}")
+    private String tokenSecret;
+
     @NullMarked
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -34,7 +39,7 @@ public class RequestTokenFilter implements GlobalFilter {
         String token = targetHeaders.get(0);
 
         try {
-            JwtUtils.verify(token.replace(TokenEnum.TOKEN_PREFIX.getValue(), ""));
+            JwtUtils.verify(token.replace(TokenEnum.TOKEN_PREFIX.getValue(), ""), tokenSecret);
         } catch (Exception e) {
             log.error("非法Token {}", e.getMessage(), e);
             return Mono.error(new GatewayTokenIllegalException());

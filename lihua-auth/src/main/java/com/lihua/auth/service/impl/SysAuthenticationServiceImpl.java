@@ -14,6 +14,7 @@ import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.auth.model.dto.SysLoginUserDTO;
 import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.manager.LoginUserManager;
+import com.lihua.security.config.TokenProperties;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
 import com.lihua.security.utils.SecurityUtils;
@@ -44,6 +45,9 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     @Resource
     private RedisCacheManager redisCacheManager;
 
+    @Resource
+    private TokenProperties tokenProperties;
+
 
     @Override
     public LoginUserSession login(SysLoginUserDTO loginUserDTO) {
@@ -72,7 +76,7 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
     @Override
     public String cacheAndCreateToken(LoginUserSession loginUserSession) {
         String redisKey = cacheLoginUserInfo(loginUserSession);
-        return JwtUtils.create(redisKey);
+        return JwtUtils.create(redisKey, tokenProperties.getTokenSecret());
     }
 
     @Override

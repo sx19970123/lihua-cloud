@@ -1,12 +1,12 @@
 package com.lihua.client.config;
 
 import com.lihua.common.enums.CustomHttpHeader;
-import com.lihua.common.enums.SignEnum;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.security.manager.LoginUserContext;
 import io.netty.channel.ChannelOption;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +21,10 @@ public class WebClientConfig {
 
     @Resource
     private ClientProperties clientProperties;
+
+    // 内部 RPC 签名密钥（来自 lihua-common.yaml internal 段；无默认值=缺失启动失败）
+    @Value("${internal.signKey}")
+    private String internalSignKey;
 
     /**
      * WebClient 统一配置，每个接口配置 WebClientFactoryBean
@@ -47,7 +51,7 @@ public class WebClientConfig {
                 // 签名
                 long timeMillis = DateUtils.nowTimeStamp();
                 String sign = HmacUtils.hmacSha256(
-                        SignEnum.SIGN_SECRET.getValue(),
+                        internalSignKey,
                         String.format("%s:%s:%s",
                                 request.method().name(),
                                 request.url().getPath(),
