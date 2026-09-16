@@ -22,8 +22,8 @@ public class WebClientConfig {
     @Resource
     private ClientProperties clientProperties;
 
-    // 内部 RPC 签名密钥（来自 lihua-common.yaml internal 段；无默认值=缺失启动失败）
-    @Value("${internal.signKey}")
+    // 内部 RPC 签名密钥（来自 lihua-common.yaml rpc 段；无默认值=缺失启动失败）
+    @Value("${rpc.signKey}")
     private String internalSignKey;
 
     /**

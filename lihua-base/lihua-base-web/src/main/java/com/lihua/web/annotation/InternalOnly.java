@@ -5,13 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 标记内部 RPC 端点（由 InternalRequestInterceptor 验签放行；签名密钥与时间窗配置见 lihua-common.yaml rpc 段）
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InternalOnly {
-
-    /**
-     * 超时时间
-     * 验证内部请求时间，超过 timeout 后则拒绝请求
-     */
-    int timeout() default 10000;
 }

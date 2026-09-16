@@ -20,9 +20,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class InternalRequestInterceptor implements HandlerInterceptor {
 
-    // 内部 RPC 签名密钥（来自 lihua-common.yaml internal 段；无默认值=缺失启动失败）
-    @Value("${internal.signKey}")
+    // 内部 RPC 签名密钥（来自 lihua-common.yaml rpc 段；无默认值=缺失启动失败）
+    @Value("${rpc.signKey}")
     private String internalSignKey;
+
+    // 签名时间窗毫秒（请求时间戳超出窗口即拒绝，防重放；容器间时钟漂移须小于该值）
+    @Value("${rpc.signTimeout:10000}")
+    private long signTimeout;
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
@@ -52,7 +56,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        if (Math.abs(System.currentTimeMillis() - timestamp) > internalOnly.timeout()) {
+        if (Math.abs(System.currentTimeMillis() - timestamp) > signTimeout) {
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名过期"));
             return false;
         }
