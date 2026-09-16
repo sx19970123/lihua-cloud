@@ -1,5 +1,6 @@
 package com.lihua.monitor.service;
 
+
 import com.lihua.monitor.model.ServerInfo;
 
 public interface MonitorServerService {

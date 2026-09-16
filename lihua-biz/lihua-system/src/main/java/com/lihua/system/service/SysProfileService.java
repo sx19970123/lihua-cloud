@@ -3,7 +3,6 @@ package com.lihua.system.service;
 import com.lihua.system.model.dto.SysCheckPasswordDTO;
 import com.lihua.system.model.dto.SysProfileBasicDTO;
 import com.lihua.system.model.dto.SysUpdatePasswordDTO;
-
 import java.util.List;
 
 public interface SysProfileService {

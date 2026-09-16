@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
  * 认证异常处理器
  * 401
  */
-@Component
 @Slf4j
+@Component
 public class SecurityAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {

@@ -2,7 +2,6 @@ package com.lihua.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.common.enums.SysStatusEnum;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.utils.date.DateUtils;
@@ -11,6 +10,7 @@ import com.lihua.system.mapper.SysUserMapper;
 import com.lihua.system.model.dto.SysCheckPasswordDTO;
 import com.lihua.system.model.dto.SysProfileBasicDTO;
 import com.lihua.system.model.dto.SysUpdatePasswordDTO;
+import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.manager.LoginUserManager;
 import com.lihua.security.model.CurrentUser;

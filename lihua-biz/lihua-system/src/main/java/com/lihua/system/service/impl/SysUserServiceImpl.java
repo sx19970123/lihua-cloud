@@ -313,8 +313,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>  imp
     @Override
     public List<String> queryAllUserIds() {
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().select(SysUser::getId)
-                .eq(SysUser::getDelFlag, "0");
+        queryWrapper.lambda().select(SysUser::getId).eq(SysUser::getDelFlag, "0");
         return sysUserMapper.selectList(queryWrapper).stream().map(SysUser::getId).toList();
     }
 
@@ -349,7 +348,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>  imp
 
     // 新增用户
     private String insert(SysUser sysUser) {
-
         LocalDateTime now = DateUtils.now();
         // 密码加密
         sysUser.setPassword(SecurityUtils.encryptPassword(sysUser.getPassword()));

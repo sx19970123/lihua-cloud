@@ -2,9 +2,9 @@ package com.lihua.system.controller.app;
 
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.tree.TreeUtils;
+import com.lihua.system.controller.base.BaseSysProfileController;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
-import com.lihua.system.controller.base.BaseSysProfileController;
 import com.lihua.system.model.dto.SysCheckPasswordDTO;
 import com.lihua.system.model.dto.SysUpdatePasswordDTO;
 import com.lihua.security.manager.LoginUserContext;

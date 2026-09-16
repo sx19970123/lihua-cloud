@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 /**
@@ -48,7 +47,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 LoginUserManager.verifyLoginUserCache();
             }
         }
-        filterChain.doFilter(request, response);
+
+        filterChain.doFilter(request,response);
     }
 
 }

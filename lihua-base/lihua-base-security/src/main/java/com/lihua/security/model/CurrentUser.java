@@ -75,4 +75,5 @@ public class CurrentUser implements Serializable {
      * 1：自助注册
      */
     private String registerType;
+
 }

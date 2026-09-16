@@ -1,13 +1,13 @@
 package com.lihua.security.manager;
 
-import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.cache.enums.RedisTopicEnum;
 import com.lihua.cache.manager.LocalCacheManager;
-import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.cache.publisher.RedisPublisher;
 import com.lihua.common.exception.ServiceException;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.common.utils.spring.SpringUtils;
+import com.lihua.cache.manager.RedisCacheManager;
+import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.security.config.TokenProperties;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
@@ -81,7 +81,6 @@ public class LoginUserManager {
         loginUserSession.getUser().setPassword(null);
         // 登录客户端类型
         loginUserSession.setClientType(WebUtils.getClientType());
-
         // 当 loginUserSession 的 cacheKey 不存在，即为新登录用户，重新生成cacheKey，其余情况均为刷新缓存
         String cacheKey = loginUserSession.getCacheKey();
         if (!StringUtils.hasText(cacheKey)) {

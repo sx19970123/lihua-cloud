@@ -15,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -92,6 +91,7 @@ public class GlobalExceptionHandle extends StrResponseController {
         WebUtils.renderJson(error(ResultCodeEnum.REQUEST_METHOD_ERROR));
     }
 
+
     /**
      * 处理认证失败异常
      */
@@ -109,5 +109,4 @@ public class GlobalExceptionHandle extends StrResponseController {
         log.error(e.getMessage(),e);
         WebUtils.renderJson(500, error(ResultCodeEnum.SYSTEM_ERROR, e.getMessage()));
     }
-
 }
