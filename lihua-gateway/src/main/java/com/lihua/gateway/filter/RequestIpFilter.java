@@ -4,6 +4,7 @@ import com.lihua.cache.enums.RedisKeyPrefixEnum;
 import com.lihua.cache.manager.LocalCacheManager;
 import com.lihua.cache.manager.RedisCacheManager;
 import com.lihua.common.enums.CustomHttpHeader;
+import com.lihua.common.utils.ip.IpResolveUtils;
 import com.lihua.gateway.exception.GatewayIpIllegalException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import tools.jackson.core.type.TypeReference;
@@ -95,26 +95,15 @@ public class RequestIpFilter implements GlobalFilter {
         return Mono.empty();
     }
 
-    // 获取当前请求ip
+    // 获取当前请求ip（X-Real-IP → X-Forwarded-For 末段 → remoteAddr 三级回退，解析规则见 IpResolveUtils）
     private String getIpAddress(ServerHttpRequest request) {
-        String ip = request.getHeaders().getFirst("X-Forwarded-For");
-        if (StringUtils.hasText(ip) && !"unknown".equalsIgnoreCase(ip)) {
-            if (ip.contains(",")) {
-                ip = ip.split(",")[0].trim();
-            }
-            return ip;
-        }
-
-        ip = request.getHeaders().getFirst("X-Real-IP");
-        if (StringUtils.hasText(ip) && !"unknown".equalsIgnoreCase(ip)) {
-            return ip;
-        }
-
         InetSocketAddress remoteAddress = request.getRemoteAddress();
-        if (remoteAddress != null) {
-            return remoteAddress.getAddress().getHostAddress();
-        }
-
-        return null;
+        String remoteAddr = remoteAddress == null || remoteAddress.getAddress() == null
+                ? null
+                : remoteAddress.getAddress().getHostAddress();
+        return IpResolveUtils.resolveClientIp(
+                request.getHeaders().getFirst("X-Real-IP"),
+                request.getHeaders().getFirst("X-Forwarded-For"),
+                remoteAddr);
     }
 }
