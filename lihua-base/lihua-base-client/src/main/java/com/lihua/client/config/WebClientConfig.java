@@ -66,7 +66,7 @@ public class WebClientConfig {
     }
 
     /**
-     * 配置连接/超时时间
+     * 配置连接/超时时间（connector 启动期一次性构建，配置变更需重启生效）
      */
     private ReactorClientHttpConnector initConnector() {
         HttpClient httpClient = HttpClient.create()

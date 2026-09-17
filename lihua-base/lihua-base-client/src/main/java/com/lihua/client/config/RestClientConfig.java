@@ -61,7 +61,7 @@ public class RestClientConfig {
     }
 
     /**
-     * 配置连接池与超时时间
+     * 配置连接池与超时时间（客户端与连接池启动期一次性构建，配置变更需重启生效）
      */
     private HttpComponentsClientHttpRequestFactory initRequestFactory() {
         // 设置超时时间

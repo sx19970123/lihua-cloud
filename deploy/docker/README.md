@@ -250,7 +250,7 @@ docker compose up -d --build --force-recreate gateway-server
 
 - 修改 `compose.yaml` 后，执行 `docker compose up -d` 使配置生效。
 - 修改 `client/nginx.conf` 后，执行 `docker compose up -d --build --force-recreate client`。
-- 修改 Nacos 配置后，按服务实际配置刷新或重启对应后端容器。
+- 修改 Nacos 配置后**不热生效**：rpc 超时/连接池、resilience4j 熔断、数据源、redisson 等启动期组件的参数修改后需重启对应后端容器；仅业务运行时读取的自定义配置项随推送即时生效。
 
 
 ## 3.0 升级部署必读

@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Duration;
 
 /**
- * RPC 客户端超时与连接池配置（prefix=rpc，与服务间签名配置同段——见 lihua-common.yaml rpc 段）
+ * RPC 客户端超时与连接池配置（prefix=rpc，与服务间签名配置同段——见 lihua-common.yaml rpc 段）。
+ * 本段参数在服务启动时一次性构建进 HTTP 客户端与连接池，Nacos 修改后需重启服务生效
+ * （与数据源、redisson 等启动期组件一致；仅业务运行时读取的自定义配置项随推送即时生效）
  */
 @Data
 @Configuration
