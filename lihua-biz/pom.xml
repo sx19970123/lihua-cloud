@@ -45,6 +45,11 @@
             <groupId>com.lihua</groupId>
             <artifactId>lihua-base-log</artifactId>
         </dependency>
+        <!--        system 服务 RPC 契约（业务服务消费 facade 与 LogClient 实现）-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-api-system</artifactId>
+        </dependency>
         <!--        接口文档-->
         <dependency>
             <groupId>com.lihua</groupId>

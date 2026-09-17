@@ -22,10 +22,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
-        <!--        api远程调用-->
+        <!--        日志落库接口返回 Mono-->
         <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-api-system</artifactId>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
         </dependency>
         <!--        公共模块-->
         <dependency>

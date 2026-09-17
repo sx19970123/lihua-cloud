@@ -17,4 +17,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <!--        日志落库契约（SysLogClientFacade 实现该接口）-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-log</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

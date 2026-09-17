@@ -1,4 +1,4 @@
-package com.lihua.client.model;
+package com.lihua.log.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

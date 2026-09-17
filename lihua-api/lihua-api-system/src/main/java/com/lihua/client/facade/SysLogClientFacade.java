@@ -1,8 +1,9 @@
 package com.lihua.client.facade;
 
 import com.lihua.client.client.SysLogClient;
-import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.log.client.LogClient;
+import com.lihua.log.model.LogModel;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Slf4j
-public class SysLogClientFacade {
+public class SysLogClientFacade implements LogClient {
 
     @Resource
     private SysLogClient sysLogClient;
@@ -22,6 +23,7 @@ public class SysLogClientFacade {
     /**
      * 保存操作日志
      */
+    @Override
     @CircuitBreaker(name = "sysLog", fallbackMethod = "logFallback")
     public Mono<ApiResponseModel<String>> insertOperate(LogModel logModel) {
         return sysLogClient.insertOperate(logModel);
@@ -30,6 +32,7 @@ public class SysLogClientFacade {
     /**
      * 保存登录日志
      */
+    @Override
     @CircuitBreaker(name = "sysLog", fallbackMethod = "logFallback")
     public Mono<ApiResponseModel<String>> insertLogin(LogModel logModel) {
         return sysLogClient.insertLogin(logModel);

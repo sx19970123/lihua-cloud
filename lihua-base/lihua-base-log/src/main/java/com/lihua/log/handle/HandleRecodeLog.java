@@ -1,14 +1,14 @@
 package com.lihua.log.handle;
 
-import com.lihua.client.facade.SysLogClientFacade;
-import com.lihua.client.model.LogModel;
 import com.lihua.common.model.response.ApiResponseModel;
 import com.lihua.common.utils.date.DateUtils;
 import com.lihua.common.utils.json.JsonUtils;
 import com.lihua.ip.utils.IpUtils;
 import com.lihua.log.annotation.Log;
+import com.lihua.log.client.LogClient;
 import com.lihua.log.enums.LogStatusEnum;
 import com.lihua.log.enums.LogTypeEnum;
+import com.lihua.log.model.LogModel;
 import com.lihua.security.manager.LoginUserContext;
 import com.lihua.security.manager.LoginUserManager;
 import com.lihua.security.model.CurrentUser;
@@ -38,7 +38,7 @@ public class HandleRecodeLog {
     private static final Pattern DATA_PATTERN = Pattern.compile("\"data\":\"([^\"]*?)\"");
 
     @Resource
-    private SysLogClientFacade sysLogClientFacade;
+    private LogClient logClient;
 
     /**
      * 通过传入参数整理组合为Log对象存入数据库
@@ -147,9 +147,9 @@ public class HandleRecodeLog {
 
         // 远程调用保存日志
         if (isLogin) {
-            sysLogClientFacade.insertLogin(logModel).subscribe();
+            logClient.insertLogin(logModel).subscribe();
         } else {
-            sysLogClientFacade.insertOperate(logModel).subscribe();
+            logClient.insertOperate(logModel).subscribe();
         }
     }
 
