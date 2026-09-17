@@ -23,6 +23,11 @@
             <groupId>com.lihua</groupId>
             <artifactId>lihua-base-log</artifactId>
         </dependency>
+        <!--        字典回源契约（SysDictDataClientFacade 实现该接口）+ DictDataModel-->
+        <dependency>
+            <groupId>com.lihua</groupId>
+            <artifactId>lihua-base-dict</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

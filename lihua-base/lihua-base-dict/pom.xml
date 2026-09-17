@@ -17,11 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <!--        mybatis-plus 持久化-->
-        <dependency>
-            <groupId>com.lihua</groupId>
-            <artifactId>lihua-base-mybatis</artifactId>
-        </dependency>
         <!--        manager 缓存-->
         <dependency>
             <groupId>com.lihua</groupId>
@@ -29,15 +24,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <!--        指定打包后包含的文件-->
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
-    </build>
 </project>
