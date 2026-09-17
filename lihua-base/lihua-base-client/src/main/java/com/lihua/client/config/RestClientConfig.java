@@ -8,6 +8,8 @@ import jakarta.annotation.Resource;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
@@ -59,16 +61,24 @@ public class RestClientConfig {
     }
 
     /**
-     * 配置连接/超时时间
+     * 配置连接池与超时时间
      */
     private HttpComponentsClientHttpRequestFactory initRequestFactory() {
         // 设置超时时间
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(Timeout.of(clientProperties.getConnectTimeout()))
                 .setResponseTimeout(Timeout.of(clientProperties.getResponseTimeout()))
+                .setConnectionRequestTimeout(Timeout.of(clientProperties.getConnectionRequestTimeout()))
+                .build();
+
+        // 连接池参数显式化（不显式配置时 HC5 默认池仅 25 总连接/每路由 5，高峰期等池排队）
+        PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setMaxConnTotal(clientProperties.getMaxConnTotal())
+                .setMaxConnPerRoute(clientProperties.getMaxConnPerRoute())
                 .build();
 
         CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(config)
                 .build();
 
