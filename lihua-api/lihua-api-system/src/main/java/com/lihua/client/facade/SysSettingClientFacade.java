@@ -22,9 +22,14 @@ public class SysSettingClientFacade {
     /**
      * 缓存ip黑名单
      */
-    @CircuitBreaker(name = "sysSetting")
+    @CircuitBreaker(name = "sysSetting", fallbackMethod = "cacheIpBlackFallback")
     public ApiResponseModel<String> cacheIpBlack() {
         return sysSettingClient.cacheIpBlack();
+    }
+
+    public ApiResponseModel<String> cacheIpBlackFallback(Throwable throwable) {
+        log.error("远程调用异常", throwable);
+        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 
     /**

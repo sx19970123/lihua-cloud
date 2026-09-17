@@ -181,31 +181,42 @@ public class SysSettingServiceImpl extends ServiceImpl<SysSettingMapper, SysSett
 
     @Override
     public void cacheIpBlackList() {
+        // 先按当前配置计算新名单，中途任何异常（DB 不可用等）都不动 Redis 旧名单
+        List<String> ipList = resolveIpBlackList();
+
         // 清除本地缓存
         redisPublisher.send(RedisTopicEnum.INVALIDATE_LOCAL_CACHE.getValue(), IP_BLACKLIST_KEY);
 
-        redisCacheManager.delete(IP_BLACKLIST_KEY);
+        if (ipList.isEmpty()) {
+            // 不生效形态（无配置/未启用/列表空）统一为无 key
+            redisCacheManager.delete(IP_BLACKLIST_KEY);
+        } else {
+            redisCacheManager.setCacheList(IP_BLACKLIST_KEY, ipList);
+        }
+    }
+
+    /**
+     * 按系统设置计算生效的 IP 黑名单，不生效形态返回空列表
+     */
+    private List<String> resolveIpBlackList() {
         // 系统中配置的禁止访问ip
         SysSetting restrictAccessIpSetting = getSysSettingByKey(SysSettingEnum.RESTRICT_ACCESS_IP.getKey());
         // 没有此配置项直接返回
         if (restrictAccessIpSetting == null) {
-            return;
+            return List.of();
         }
         String json = restrictAccessIpSetting.getJson();
         if (!StringUtils.hasText(json)) {
-            return;
+            return List.of();
         }
         SysSettingDTO.RestrictAccessIpSetting ipSetting = JsonUtils.toObject(json, SysSettingDTO.RestrictAccessIpSetting.class);
         // 未开启配置直接返回
         if (!ipSetting.isEnable()) {
-            return;
+            return List.of();
         }
         // 过滤空白项（关闭态保存的空占位串不应进入黑名单）
-        List<String> ipList = ipSetting.getIpList() == null ? List.of()
+        return ipSetting.getIpList() == null ? List.of()
                 : ipSetting.getIpList().stream().filter(StringUtils::hasText).toList();
-        if (!ipList.isEmpty()) {
-            redisCacheManager.setCacheList(IP_BLACKLIST_KEY, ipList);
-        }
     }
 
     /**
