@@ -126,7 +126,7 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
         keys.stream()
             .sorted(Comparator.comparingLong(LoginUserManager::getLoginTimestampByCacheKey))
             .limit(count)
-            .forEach(key -> redisCacheManager.delete(key));
+            .forEach(LoginUserManager::removeLoginUserSession);
     }
 
     @Override
