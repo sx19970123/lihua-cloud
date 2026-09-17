@@ -3,7 +3,9 @@ package com.lihua.client.config;
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
+import com.lihua.common.utils.trace.TraceIdUtils;
 import com.lihua.security.manager.LoginUserContext;
+import com.lihua.web.utils.WebUtils;
 import jakarta.annotation.Resource;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -11,6 +13,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.core5.util.Timeout;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +48,24 @@ public class RestClientConfig {
                 String token = LoginUserContext.getToken();
                 if (StringUtils.hasText(token)) {
                     request.getHeaders().add(CustomHttpHeader.TOKEN.getValue(), token);
+                }
+
+                // traceId 透传（MDC 由入口 TraceIdFilter 写入）
+                String traceId = MDC.get(TraceIdUtils.MDC_KEY);
+                if (StringUtils.hasText(traceId)) {
+                    request.getHeaders().add(CustomHttpHeader.TRACE_ID.getValue(), traceId);
+                }
+
+                // 原始请求的 ip 与客户端类型透传（仅请求线程传播；非请求线程无原始上下文可透传）
+                if (WebUtils.getCurrentRequest() != null) {
+                    String ipAddress = LoginUserContext.getIpAddress();
+                    if (StringUtils.hasText(ipAddress)) {
+                        request.getHeaders().add(CustomHttpHeader.IP.getValue(), ipAddress);
+                    }
+                    String clientType = LoginUserContext.getClientType();
+                    if (StringUtils.hasText(clientType)) {
+                        request.getHeaders().add(CustomHttpHeader.CLIENT_TYPE.getValue(), clientType);
+                    }
                 }
 
                 // 生成签名

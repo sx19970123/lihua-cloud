@@ -3,9 +3,12 @@ package com.lihua.client.config;
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
+import com.lihua.common.utils.trace.TraceIdUtils;
 import com.lihua.security.manager.LoginUserContext;
+import com.lihua.web.utils.WebUtils;
 import io.netty.channel.ChannelOption;
 import jakarta.annotation.Resource;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +49,24 @@ public class WebClientConfig {
 
                 if (StringUtils.hasText(token)) {
                     builder.header(CustomHttpHeader.TOKEN.getValue(), token);
+                }
+
+                // traceId 透传（MDC 由入口 TraceIdFilter 写入）
+                String traceId = MDC.get(TraceIdUtils.MDC_KEY);
+                if (StringUtils.hasText(traceId)) {
+                    builder.header(CustomHttpHeader.TRACE_ID.getValue(), traceId);
+                }
+
+                // 原始请求的 ip 与客户端类型透传（仅请求线程传播；非请求线程无原始上下文可透传）
+                if (WebUtils.getCurrentRequest() != null) {
+                    String ipAddress = LoginUserContext.getIpAddress();
+                    if (StringUtils.hasText(ipAddress)) {
+                        builder.header(CustomHttpHeader.IP.getValue(), ipAddress);
+                    }
+                    String clientType = LoginUserContext.getClientType();
+                    if (StringUtils.hasText(clientType)) {
+                        builder.header(CustomHttpHeader.CLIENT_TYPE.getValue(), clientType);
+                    }
                 }
 
                 // 签名
