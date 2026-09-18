@@ -15,6 +15,7 @@ import com.lihua.security.manager.LoginUserManager;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 /**
  * 处理日志对象的构建及调用对应 service保存至数据库
  */
+@Slf4j
 @Component
 public class HandleRecodeLog {
 
@@ -149,11 +151,16 @@ public class HandleRecodeLog {
         logModel.setCreateTime(DateUtils.now());
         logModel.setDelFlag("0");
 
-        // 远程调用保存日志
+        // 远程调用保存日志（fire-and-forget：错误留痕在 onError 回调；回调运行于 WebClient IO 线程，
+        // MDC 不可用，上下文取 logModel 自带字段——含 traceId）
         if (isLogin) {
-            logClient.insertLogin(logModel).subscribe();
+            logClient.insertLogin(logModel).subscribe(
+                response -> { },
+                error -> log.error("登录日志异步落库失败, logModel={}", logModel, error));
         } else {
-            logClient.insertOperate(logModel).subscribe();
+            logClient.insertOperate(logModel).subscribe(
+                response -> { },
+                error -> log.error("操作日志异步落库失败, logModel={}", logModel, error));
         }
     }
 

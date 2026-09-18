@@ -6,7 +6,6 @@ import com.lihua.log.client.LogClient;
 import com.lihua.log.model.LogModel;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +13,6 @@ import reactor.core.publisher.Mono;
  * 系统日志相关远程调用
  */
 @Component
-@Slf4j
 public class SysLogClientFacade implements LogClient {
 
     @Resource
@@ -39,8 +37,11 @@ public class SysLogClientFacade implements LogClient {
     }
 
 
+    /**
+     * 日志落库为 fire-and-forget 链路：失败留痕统一由消费端 subscribe 的 onError 回调负责，
+     * 此处仅透传异常，勿在此补日志（会与消费端重复）
+     */
     public Mono<ApiResponseModel<String>> logFallback(LogModel logModel, Throwable throwable) {
-        log.error("远程调用异常, 请求参数{}", logModel, throwable);
         return Mono.error(throwable);
     }
 }
