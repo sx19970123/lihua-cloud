@@ -1,5 +1,6 @@
 package com.lihua.client.config;
 
+import com.lihua.client.annotation.RemoteClient;
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
@@ -22,6 +23,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 
+import java.time.Duration;
+
 @Configuration
 public class RestClientConfig {
 
@@ -39,7 +42,8 @@ public class RestClientConfig {
     public RestClient.Builder restClientBuilder(LoadBalancerInterceptor loadBalancerInterceptor) {
         return RestClient
             .builder()
-            .requestFactory(initRequestFactory())
+            // 基底默认超时（FactoryBean clone 后按接口注解覆盖；防未覆盖路径拿到无超时配置）
+            .requestFactory(requestFactory(Duration.ofSeconds(RemoteClient.TIMEOUT_DEFAULT)))
             // 负载均衡拦截器
             .requestInterceptor(loadBalancerInterceptor)
             // 请求拦截器
@@ -82,13 +86,14 @@ public class RestClientConfig {
     }
 
     /**
-     * 配置连接池与超时时间（客户端与连接池启动期一次性构建，配置变更需重启生效）
+     * 共享 HTTP 客户端（持连接池，全接口唯一一份）——各接口差异化超时经 requestFactory(responseTimeout)
+     * 在 factory 层实现，连接池不随接口数增长
      */
-    private HttpComponentsClientHttpRequestFactory initRequestFactory() {
-        // 设置超时时间
-        RequestConfig config = RequestConfig.custom()
+    @Bean(destroyMethod = "close")
+    public CloseableHttpClient sharedHttpClient() {
+        // 默认配置仅连接族超时（网络环境特征全接口统一）；响应等待超时是接口特征，由各接口 factory 级配置覆盖
+        RequestConfig defaultConfig = RequestConfig.custom()
                 .setConnectTimeout(Timeout.of(clientProperties.getConnectTimeout()))
-                .setResponseTimeout(Timeout.of(clientProperties.getResponseTimeout()))
                 .setConnectionRequestTimeout(Timeout.of(clientProperties.getConnectionRequestTimeout()))
                 .build();
 
@@ -98,11 +103,20 @@ public class RestClientConfig {
                 .setMaxConnPerRoute(clientProperties.getMaxConnPerRoute())
                 .build();
 
-        CloseableHttpClient httpClient = HttpClients.custom()
+        return HttpClients.custom()
                 .setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(config)
+                .setDefaultRequestConfig(defaultConfig)
                 .build();
+    }
 
-        return new HttpComponentsClientHttpRequestFactory(httpClient);
+    /**
+     * 构建指定响应等待超时的请求工厂（连接族超时与池均取共享客户端的默认配置）。
+     * 供 RestClientFactoryBean 按 @RemoteClient(timeout) 逐接口调用；客户端与连接池启动期一次性构建，配置变更需重启生效
+     */
+    public HttpComponentsClientHttpRequestFactory requestFactory(Duration responseTimeout) {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(sharedHttpClient());
+        // readTimeout 即 HC5 的 responseTimeout，随每次请求合并进共享客户端默认配置生效
+        factory.setReadTimeout(responseTimeout);
+        return factory;
     }
 }

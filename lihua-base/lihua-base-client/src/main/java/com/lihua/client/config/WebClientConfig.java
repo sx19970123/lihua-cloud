@@ -1,5 +1,6 @@
 package com.lihua.client.config;
 
+import com.lihua.client.annotation.RemoteClient;
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.common.utils.date.DateUtils;
@@ -19,6 +20,8 @@ import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
+import java.time.Duration;
+
 @Configuration
 public class WebClientConfig {
 
@@ -30,13 +33,25 @@ public class WebClientConfig {
     private String internalSignKey;
 
     /**
+     * 构建指定响应等待超时的 connector（HttpClient.create() 底层共享默认连接池，不随接口数增长）。
+     * 供 WebClientFactoryBean 按 @RemoteClient(timeout) 逐接口调用；connector 启动期一次性构建，配置变更需重启生效
+     */
+    public ReactorClientHttpConnector connector(Duration responseTimeout) {
+        HttpClient httpClient = HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.toIntExact(clientProperties.getConnectTimeout().toMillis()))
+                .responseTimeout(responseTimeout);
+        return new ReactorClientHttpConnector(httpClient);
+    }
+
+    /**
      * WebClient 统一配置，每个接口配置 WebClientFactoryBean
      */
     @Bean
     public WebClient.Builder webClientBuilder(ReactorLoadBalancerExchangeFilterFunction filterFunction) {
         return WebClient
             .builder()
-            .clientConnector(initConnector())
+            // 基底默认超时（FactoryBean clone 后按接口注解覆盖）
+            .clientConnector(connector(Duration.ofSeconds(RemoteClient.TIMEOUT_DEFAULT)))
             // 负载均衡过滤器
             .filter(filterFunction)
             // 透传
@@ -84,15 +99,5 @@ public class WebClientConfig {
 
                 return next.exchange(builder.build());
             });
-    }
-
-    /**
-     * 配置连接/超时时间（connector 启动期一次性构建，配置变更需重启生效）
-     */
-    private ReactorClientHttpConnector initConnector() {
-        HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.toIntExact(clientProperties.getConnectTimeout().toMillis()))
-                .responseTimeout(clientProperties.getResponseTimeout());
-        return new ReactorClientHttpConnector(httpClient);
     }
 }

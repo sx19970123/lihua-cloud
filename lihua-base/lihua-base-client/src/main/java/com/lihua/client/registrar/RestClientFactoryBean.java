@@ -1,6 +1,7 @@
 package com.lihua.client.registrar;
 
 import com.lihua.client.annotation.RemoteClient;
+import com.lihua.client.config.RestClientConfig;
 import jakarta.annotation.Resource;
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
@@ -8,6 +9,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import java.time.Duration;
 
 public class RestClientFactoryBean<T> implements FactoryBean<T> {
 
@@ -18,6 +21,9 @@ public class RestClientFactoryBean<T> implements FactoryBean<T> {
 
     @Resource
     private RestClient.Builder restClientBuilder;
+
+    @Resource
+    private RestClientConfig restClientConfig;
 
     @Override
     public T getObject() {
@@ -36,6 +42,8 @@ public class RestClientFactoryBean<T> implements FactoryBean<T> {
 
         RestClient client = restClientBuilder
                 .clone()
+                // 接口级响应等待超时（连接池与连接族超时共享全局单例）
+                .requestFactory(restClientConfig.requestFactory(Duration.ofSeconds(annotation.timeout())))
                 // 协议+服务名称
                 .baseUrl(annotation.scheme().name().toLowerCase() + "://" + annotation.serverName())
                 .build();

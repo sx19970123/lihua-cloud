@@ -1,6 +1,7 @@
 package com.lihua.client.registrar;
 
 import com.lihua.client.annotation.RemoteClient;
+import com.lihua.client.config.WebClientConfig;
 import jakarta.annotation.Resource;
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
@@ -8,6 +9,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import java.time.Duration;
 
 public class WebClientFactoryBean <T> implements FactoryBean<T> {
 
@@ -18,6 +21,9 @@ public class WebClientFactoryBean <T> implements FactoryBean<T> {
 
     @Resource
     private WebClient.Builder webClientBuilder;
+
+    @Resource
+    private WebClientConfig webClientConfig;
 
 
     @Override
@@ -37,6 +43,8 @@ public class WebClientFactoryBean <T> implements FactoryBean<T> {
 
         WebClient client = webClientBuilder
                 .clone()
+                // 接口级响应等待超时（连接池与连接超时共享全局配置）
+                .clientConnector(webClientConfig.connector(Duration.ofSeconds(annotation.timeout())))
                 // 协议+服务名称
                 .baseUrl(annotation.scheme().name().toLowerCase() + "://" + annotation.serverName())
                 .build();
