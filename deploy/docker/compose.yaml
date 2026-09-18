@@ -32,7 +32,8 @@ services:
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
-      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+      # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/lihua-auth/data/ -XX:+ExitOnOutOfMemoryError
     depends_on:
       mysql:
         condition: service_healthy
@@ -65,7 +66,8 @@ services:
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
-      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+      # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/lihua-system/data/ -XX:+ExitOnOutOfMemoryError
     depends_on:
       mysql:
         condition: service_healthy
@@ -99,7 +101,8 @@ services:
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
-      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+      # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/lihua-file/data/ -XX:+ExitOnOutOfMemoryError
     depends_on:
       mysql:
         condition: service_healthy
@@ -132,7 +135,8 @@ services:
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
-      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+      # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/lihua-monitor/data/ -XX:+ExitOnOutOfMemoryError
     depends_on:
       mysql:
         condition: service_healthy
@@ -168,7 +172,8 @@ services:
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（512m）的 75%
-      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+      # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/lihua-gateway/data/ -XX:+ExitOnOutOfMemoryError
     depends_on:
       nacos:
         condition: service_healthy

@@ -195,6 +195,7 @@ docker compose logs -f auth-server
 - **depends_on 启动排序**：四个业务服务等 mysql/redis/nacos 全部 `(healthy)` 后才启动（首次部署不再需要手动分步起基础组件，直接 `docker compose up -d --build` 即可）；gateway 等 nacos；前端等 gateway。
 - **restart: unless-stopped 宿主机重启自愈**：服务器重启后 Docker 自动拉起全部容器（手动 `docker compose stop` 停掉的不会被拉起，尊重运维意图）。
 - **资源与日志**：各容器已设 `mem_limit`（JVM 堆经 `-XX:MaxRAMPercentage=75.0` 跟随容器限额），日志统一 json-file 轮转（单文件 10MB × 3 份）。
+- **OOM 行为**：JVM 内存溢出时异常栈进容器日志（`docker compose logs` 可见），堆快照 dump 到各服务数据卷（`java_pid*.hprof`，约等于堆大小——排查 OOM 的现场材料，低频事件手动清理），随后进程立即退出交由 restart 自愈——OOM 半死僵尸态不会出现。
 
 ### 优雅停机与更新
 
