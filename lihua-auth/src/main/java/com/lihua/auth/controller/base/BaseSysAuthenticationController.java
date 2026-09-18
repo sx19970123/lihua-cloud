@@ -12,6 +12,7 @@ import com.lihua.common.model.response.basecontroller.ApiResponseController;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
 import com.lihua.security.model.LoginUserSession;
+import com.lihua.web.annotation.PreventDuplicateSubmit;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -62,6 +63,7 @@ public abstract class BaseSysAuthenticationController extends ApiResponseControl
      */
     @Operation(summary = "用户注册")
     @PostMapping("register")
+    @PreventDuplicateSubmit
     @Log(description = "用户注册", type = LogTypeEnum.REGISTER, excludeParams = {"password", "confirmPassword"}, recordResult = false)
     public ApiResponseModel<String> register(@RequestBody @Valid SysRegisterDTO sysRegisterDTO) {
         // 校验验证码
