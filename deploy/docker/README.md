@@ -189,9 +189,9 @@ docker compose logs -f auth-server
 
 ## 容器健康与自愈
 
-五个后端服务引入 actuator 探针（`management.server.port=9090` 独立端口，Nacos `lihua-common.yaml` 的 `management` 段统一配置）——不占用业务端口、不经网关路由、不映射宿主机，仅容器内网可达。compose 据此为每个容器配置了体检与自愈：
+五个后端服务引入 actuator 探针（健康端点挂各服务主端口 `/actuator/health`，Nacos `lihua-common.yaml` 的 `management` 段统一配置——主端口每服务天然唯一，本机多服务同跑无冲突；SecurityConfig 白名单放行且网关无该前缀路由，仅内网/本机可达）。compose 据此为每个容器配置了体检与自愈：
 
-- **healthcheck 定时体检**：后端服务探 `9090/actuator/health`（聚合数据库/Redis 连通性）；mysql/redis/nacos 用各自官方命令探活。`docker compose ps` 的 STATUS 列显示 `(healthy)` 即体检通过。
+- **healthcheck 定时体检**：后端服务探各自主端口的 `/actuator/health`（聚合数据库/Redis 连通性）；mysql/redis/nacos 用各自官方命令探活。`docker compose ps` 的 STATUS 列显示 `(healthy)` 即体检通过。
 - **depends_on 启动排序**：四个业务服务等 mysql/redis/nacos 全部 `(healthy)` 后才启动（首次部署不再需要手动分步起基础组件，直接 `docker compose up -d --build` 即可）；gateway 等 nacos；前端等 gateway。
 - **restart: unless-stopped 宿主机重启自愈**：服务器重启后 Docker 自动拉起全部容器（手动 `docker compose stop` 停掉的不会被拉起，尊重运维意图）。
 - **资源与日志**：各容器已设 `mem_limit`（JVM 堆经 `-XX:MaxRAMPercentage=75.0` 跟随容器限额），日志统一 json-file 轮转（单文件 10MB × 3 份）。

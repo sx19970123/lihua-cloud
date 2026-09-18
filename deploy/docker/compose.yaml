@@ -7,10 +7,11 @@ x-logging: &default-logging
     max-size: "10m"
     max-file: "3"
 
-# JVM 服务统一探针：management 独立端口 9090 的全量 health（聚合 db/redis 指标）；
+# JVM 服务统一探针：主端口 /actuator/health 全量聚合（含 db/redis 指标）——主端口每服务天然唯一，
+# 本机多服务同跑无冲突；容器内经 $SERVER_PORT 环境变量寻址（$$ 为 compose 转义，留待容器 shell 展开）。
 # start_period 给足 JVM 启动 + nacos 配置拉取窗口，期间失败不计入 retries
 x-java-healthcheck: &java-healthcheck
-  test: ["CMD", "curl", "-fsS", "http://localhost:9090/actuator/health"]
+  test: ["CMD-SHELL", "curl -fsS http://localhost:$${SERVER_PORT}/actuator/health"]
   interval: 15s
   timeout: 5s
   retries: 5
