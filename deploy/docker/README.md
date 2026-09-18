@@ -187,6 +187,23 @@ docker compose logs -f auth-server
 
 配置仅包含基础项目启动，更多生产需求请结合实际情况修改 `dockerfile`、`compose.yaml`、`nginx.conf` 和 Nacos 配置。
 
+## 容器健康与自愈
+
+五个后端服务引入 actuator 探针（`management.server.port=9090` 独立端口，Nacos `lihua-common.yaml` 的 `management` 段统一配置）——不占用业务端口、不经网关路由、不映射宿主机，仅容器内网可达。compose 据此为每个容器配置了体检与自愈：
+
+- **healthcheck 定时体检**：后端服务探 `9090/actuator/health`（聚合数据库/Redis 连通性）；mysql/redis/nacos 用各自官方命令探活。`docker compose ps` 的 STATUS 列显示 `(healthy)` 即体检通过。
+- **depends_on 启动排序**：四个业务服务等 mysql/redis/nacos 全部 `(healthy)` 后才启动（首次部署不再需要手动分步起基础组件，直接 `docker compose up -d --build` 即可）；gateway 等 nacos；前端等 gateway。
+- **restart: unless-stopped 宿主机重启自愈**：服务器重启后 Docker 自动拉起全部容器（手动 `docker compose stop` 停掉的不会被拉起，尊重运维意图）。
+- **资源与日志**：各容器已设 `mem_limit`（JVM 堆经 `-XX:MaxRAMPercentage=75.0` 跟随容器限额），日志统一 json-file 轮转（单文件 10MB × 3 份）。
+
+### 优雅停机与更新
+
+后端服务开启优雅停机（`server.shutdown=graceful`，收尾超时 30s）：容器收到停止信号后先从 Nacos 注销实例（负载均衡摘流）、停止接收新请求、等待在途请求完成（最长 30s，compose `stop_grace_period=35s` 兜底）。更新版本时 `docker compose up -d --build --force-recreate <服务>` 的单服务重建即处于该语义下——大文件上传/流式下载等长请求若超 30s 仍会被截断，安排在低峰期更新。
+
+### 容器时钟同步要求
+
+服务间内部调用带 HMAC 防重放验签（时间窗 10s，`rpc.signTimeout`），**宿主机时钟漂移超过该窗口会导致内部 RPC 鉴权失败**（表现为服务间调用 401 类错误）。服务器须启用 NTP/chrony 等时钟同步；多机部署时所有宿主机统一对时。
+
 ## 卷映射
 
 通过卷映射可以持久化数据库、缓存、前端资源、后端 jar 包和服务数据。

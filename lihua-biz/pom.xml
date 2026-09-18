@@ -25,6 +25,11 @@
     </modules>
 
     <dependencies>
+        <!--        运维探针（compose healthcheck 经 management 独立端口探活）-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
         <!--        服务注册发现-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

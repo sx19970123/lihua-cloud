@@ -1,5 +1,21 @@
 name: lihua
 
+# 日志轮转（所有容器统一）：单文件 10MB × 保留 3 份，防 json-file 无上限写爆磁盘
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# JVM 服务统一探针：management 独立端口 9090 的全量 health（聚合 db/redis 指标）；
+# start_period 给足 JVM 启动 + nacos 配置拉取窗口，期间失败不计入 retries
+x-java-healthcheck: &java-healthcheck
+  test: ["CMD", "curl", "-fsS", "http://localhost:9090/actuator/health"]
+  interval: 15s
+  timeout: 5s
+  retries: 5
+  start_period: 60s
+
 services:
 
   # 认证中心
@@ -15,6 +31,20 @@ services:
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
+      # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: *java-healthcheck
+    stop_grace_period: 35s
+    mem_limit: 768m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -34,6 +64,20 @@ services:
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
+      # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: *java-healthcheck
+    stop_grace_period: 35s
+    mem_limit: 768m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -51,9 +95,23 @@ services:
       - NACOS_USERNAME=nacos
       - NACOS_PASSWORD=nacos
       - NACOS_ADDR=lihua-nacos:8848
-      - NACOS_NAMESPACE=prod
       - ATTACHMENT_DOWNLOAD_SIGN_KEY=${ATTACHMENT_DOWNLOAD_SIGN_KEY}   # 下载链接签名密钥（在 .env 或部署环境提供，缺失启动失败）
+      - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
+      # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: *java-healthcheck
+    stop_grace_period: 35s
+    mem_limit: 768m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -73,6 +131,20 @@ services:
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
+      # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: *java-healthcheck
+    stop_grace_period: 35s
+    mem_limit: 768m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -95,6 +167,16 @@ services:
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
       - TZ=Asia/Shanghai
+      # 堆上限 = 容器 mem_limit（512m）的 75%
+      - JAVA_OPTS=-XX:MaxRAMPercentage=75.0
+    depends_on:
+      nacos:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck: *java-healthcheck
+    stop_grace_period: 35s
+    mem_limit: 512m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -109,7 +191,20 @@ services:
       dockerfile: dockerfile
     ports:
       - "80:80"
-      - "443:443"
+      # 443 已移除：nginx 仅 listen 80 无证书，映射属假暴露——将来启用 HTTPS 时恢复本映射，
+      # 并在 nginx.conf 补 listen 443 ssl + 证书挂载
+    depends_on:
+      gateway-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    mem_limit: 128m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -124,6 +219,15 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - TZ=Asia/Shanghai
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    mem_limit: 1g
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -135,6 +239,17 @@ services:
     container_name: lihua-redis
     image: redis:7
     command: redis-server --requirepass password
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "password", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    mem_limit: 256m
+    logging: *default-logging
     networks:
       - network
     volumes:
@@ -155,6 +270,17 @@ services:
       - JVM_XMS=256m
       - JVM_XMX=512m
       - JVM_XMN=128m
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    healthcheck:
+      # v3 健康端点（console 端口 8080，容器内直连）
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/nacos/v3/console/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    mem_limit: 768m
+    logging: *default-logging
     ports:
       - "8090:8080"
       - "8848:8848"
