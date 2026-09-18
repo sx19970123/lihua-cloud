@@ -4,7 +4,7 @@ server:
 spring:
   application:
     name: lihua-system
-    version: 2.2.0
+    version: 3.0.0
   cloud:
     nacos:
       server-addr: ${NACOS_ADDR:127.0.0.1:8848}
