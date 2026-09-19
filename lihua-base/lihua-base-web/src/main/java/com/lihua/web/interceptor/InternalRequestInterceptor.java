@@ -8,6 +8,7 @@ import com.lihua.web.utils.WebUtils;
 import com.lihua.web.annotation.InternalOnly;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * 搭配@InternalOnly注解，对目标 controller 进行拦截验证签名
  */
 @Component
+@Slf4j
 public class InternalRequestInterceptor implements HandlerInterceptor {
 
     // 内部 RPC 签名密钥（来自 lihua-common.yaml rpc 段；无默认值=缺失启动失败）
@@ -41,9 +43,11 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 验证内部调用请求是否超时
+        // 验证内部调用请求是否超时（拒绝须留日志：HTTP 200 + code 401 的静默拒绝在上游被防枚举
+        // 掩盖为凭据失败，是「正确密码偶发登录失败」且无迹可查的头号来源）
         String timestampStr = request.getHeader(CustomHttpHeader.TIMESTAMP.getValue());
         if (timestampStr == null) {
+            log.warn("内部RPC签名校验拒绝（缺时间戳头）: {} {}", request.getMethod(), request.getRequestURI());
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
         }
@@ -52,11 +56,14 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         try {
             timestamp = Long.parseLong(timestampStr);
         } catch (Exception e) {
+            log.warn("内部RPC签名校验拒绝（时间戳格式非法）: {} {}", request.getMethod(), request.getRequestURI());
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
         }
 
         if (Math.abs(System.currentTimeMillis() - timestamp) > signTimeout) {
+            log.warn("内部RPC签名校验拒绝（时间戳超窗，疑容器时钟漂移超过{}ms）: {} {}",
+                    signTimeout, request.getMethod(), request.getRequestURI());
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名过期"));
             return false;
         }
@@ -71,6 +78,8 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
 
         // 签名对比
         if (!confirmSign.equals(sign)) {
+            log.warn("内部RPC签名校验拒绝（签名不匹配，疑实例间signKey不一致）: {} {}",
+                    request.getMethod(), request.getRequestURI());
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名错误"));
             return false;
         }

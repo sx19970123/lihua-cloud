@@ -8,6 +8,7 @@ import com.lihua.security.config.TokenProperties;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class LoginUserDetailsServiceImpl implements UserDetailsService {
 
     @Resource
@@ -31,6 +33,10 @@ public class LoginUserDetailsServiceImpl implements UserDetailsService {
 
         // 枚举常量为 Integer，须 equals 值比较（== 为引用比较，200 超出 Integer 缓存必不等）
         if (!ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode())) {
+            // 须留日志：此处 msg 经 UsernameNotFoundException 抛出后会被 DaoAuthenticationProvider
+            // 防枚举掩盖为凭据失败（"用户名或密码错误"），真实原因（如内部RPC签名拒绝）不再有任何痕迹
+            log.warn("登录用户加载失败（auth→system RPC 返回非200）：username={}, code={}, msg={}",
+                    username, responseModel.getCode(), responseModel.getMsg());
             throw new UsernameNotFoundException(responseModel.getMsg());
         }
 
