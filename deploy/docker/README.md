@@ -201,10 +201,6 @@ docker compose logs -f auth-server
 
 后端服务开启优雅停机（`server.shutdown=graceful`，收尾超时 30s）：容器收到停止信号后先从 Nacos 注销实例（负载均衡摘流）、停止接收新请求、等待在途请求完成（最长 30s，compose `stop_grace_period=35s` 兜底）。更新版本时 `docker compose up -d --build --force-recreate <服务>` 的单服务重建即处于该语义下——大文件上传/流式下载等长请求若超 30s 仍会被截断，安排在低峰期更新。
 
-### 容器时钟同步要求
-
-服务间内部调用带 HMAC 防重放验签（时间窗 10s，`rpc.signTimeout`），**宿主机时钟漂移超过该窗口会导致内部 RPC 鉴权失败**（表现为服务间调用 401 类错误）。服务器须启用 NTP/chrony 等时钟同步；多机部署时所有宿主机统一对时。
-
 ## 卷映射
 
 通过卷映射可以持久化数据库、缓存、前端资源、后端 jar 包和服务数据。

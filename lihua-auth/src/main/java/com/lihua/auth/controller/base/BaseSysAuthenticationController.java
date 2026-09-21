@@ -16,6 +16,7 @@ import com.lihua.web.annotation.PreventDuplicateSubmit;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -98,6 +99,13 @@ public abstract class BaseSysAuthenticationController extends ApiResponseControl
         // 枚举常量为 Integer，须 equals 值比较（== 为引用比较，200 超出 Integer 缓存必不等）
         if (ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode()) && Boolean.FALSE.equals(responseModel.getData())) {
             return true;
+        }
+
+        // 远程配置读取降级（system 不可达，captchaFallback 已吞异常返回 503 响应体）：
+        // 登录链后续 RPC 同样不可用（checkSameAccount 对 sysSetting 熔断无 fallback，
+        // 强行继续只会以 501 收场），直接以 503 语义快速失败
+        if (ResultCodeEnum.SERVER_BAD_ERROR.getCode().equals(responseModel.getCode())) {
+            throw new InternalAuthenticationServiceException(ResultCodeEnum.SERVER_BAD_ERROR.getDefaultMsg());
         }
 
         // 未携带验证码令牌直接判定失败（二次校验对空参抛 NPE）

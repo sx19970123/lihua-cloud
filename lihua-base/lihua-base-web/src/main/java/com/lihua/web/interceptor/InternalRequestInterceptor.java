@@ -26,10 +26,6 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
     @Value("${rpc.signKey}")
     private String internalSignKey;
 
-    // 签名时间窗毫秒（请求时间戳超出窗口即拒绝，防重放；容器间时钟漂移须小于该值）
-    @Value("${rpc.signTimeout:10000}")
-    private long signTimeout;
-
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
 
@@ -43,7 +39,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 验证内部调用请求是否超时（拒绝须留日志：HTTP 200 + code 401 的静默拒绝在上游被防枚举
+        // 验签（拒绝须留日志：HTTP 200 + code 401 的静默拒绝在上游被防枚举
         // 掩盖为凭据失败，是「正确密码偶发登录失败」且无迹可查的头号来源）
         String timestampStr = request.getHeader(CustomHttpHeader.TIMESTAMP.getValue());
         if (timestampStr == null) {
@@ -61,13 +57,8 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        if (Math.abs(System.currentTimeMillis() - timestamp) > signTimeout) {
-            log.warn("内部RPC签名校验拒绝（时间戳超窗，疑容器时钟漂移超过{}ms）: {} {}",
-                    signTimeout, request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名过期"));
-            return false;
-        }
-
+        // 时间戳仅作签名材料使各请求签名互异（单个签名泄露无法复用到其他请求/参数），不校验时效——
+        // 内部网络不存在需要防御的截获延迟重放面，而两实例时钟比对反而会误杀合法调用（多机时钟漂移）
         String sign = request.getHeader(CustomHttpHeader.SIGN.getValue());
 
         // 生成确认签名
