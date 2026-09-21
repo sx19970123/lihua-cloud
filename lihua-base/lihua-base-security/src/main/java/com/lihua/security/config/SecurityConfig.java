@@ -8,6 +8,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -78,6 +79,10 @@ public class SecurityConfig {
 
         // 关闭csrf拦截
         http.csrf(AbstractHttpConfigurer::disable);
+
+        // CORS 接入 Security 链：按名探测 base-web CorsConfig 的 corsConfigurationSource bean（唯一 CORS 源），
+        // 使受保护接口的 OPTIONS 预检在认证前短路返回
+        http.cors(Customizer.withDefaults());
 
         // 允许通过iframe访问
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
