@@ -43,6 +43,8 @@ public enum RedisKeyPrefixEnum {
 
     LOGIN_LOCK_REDIS_PREFIX("LOGIN_LOCK:", "登录锁定（账号/ip）", null),
 
+    PERMISSION_UPDATE_REDIS_PREFIX("REDIS_CACHE_PERMISSION_UPDATE:", "权限数据更新标记（数据更新红点）", null),
+
     // 业务需要，非真实 manager key
     OTHER("OTHER", "其他", null);
 

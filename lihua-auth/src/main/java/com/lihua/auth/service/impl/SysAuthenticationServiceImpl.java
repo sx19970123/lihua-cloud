@@ -18,6 +18,7 @@ import com.lihua.security.config.LoginLockProperties;
 import com.lihua.security.config.TokenProperties;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.security.utils.JwtUtils;
+import com.lihua.security.utils.PermissionUpdateUtils;
 import com.lihua.security.utils.SecurityUtils;
 import com.lihua.auth.service.SysAuthenticationService;
 import com.lihua.web.utils.WebUtils;
@@ -148,6 +149,9 @@ public class SysAuthenticationServiceImpl implements SysAuthenticationService {
         if (loginUserSession == null) {
             throw new ServiceException("获取信息为空");
         }
+
+        // 消费权限数据更新标记（「数据更新」红点熄灭）：登录与 reloadData 都经过此处
+        PermissionUpdateUtils.clear(loginUserSession.getUser().getId());
 
         // 设置redis缓存
         return LoginUserManager.setLoginUserCache(loginUserSession);
