@@ -30,7 +30,7 @@ public class SysUserAuthController extends ApiResponseController {
     }
 
     @Operation(summary = "查询登录用户上下文信息")
-    // 携带请求体必须 POST（GET+body 靠栈容忍不可依赖，CR-90）；客户端 @PostExchange 同步，签名材料含 HTTP method 双端一致
+    // 携带请求体必须 POST（GET+body 靠栈容忍不可依赖）；客户端 @PostExchange 同步，签名材料含 HTTP method 双端一致
     @PostMapping("queryLoginUserProfile")
     @InternalOnly
     public ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession) {

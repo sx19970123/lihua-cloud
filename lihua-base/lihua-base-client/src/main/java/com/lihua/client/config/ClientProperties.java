@@ -12,7 +12,7 @@ import java.time.Duration;
  * （与数据源、redisson 等启动期组件一致；仅业务运行时读取的自定义配置项随推送即时生效）。
  * 连接池三参数（maxConnTotal/maxConnPerRoute/connectionRequestTimeout）仅作用于同步侧（HC5/RestClient）：
  * WebClient 异步侧走 reactor-netty 默认池（500 连接/等池 45s）——当前唯一异步消费方为日志 fire-and-forget，
- * 流量不值得为其自建 ConnectionProvider（2026-09-22 拍板维持默认，CR-24/CR-46 登记不动）
+ * 流量不值得为其自建 ConnectionProvider（拍板维持默认）
  */
 @Data
 @Configuration

@@ -33,7 +33,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
-        <!--        运维探针（compose healthcheck 经 management 独立端口探活，reactive 自动适配）-->
+        <!--        运维探针（compose healthcheck 经主端口 /actuator/health 探活，reactive 自动适配）-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
