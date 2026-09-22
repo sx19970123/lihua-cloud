@@ -51,7 +51,10 @@ public class SecurityConfig {
                         "/system/setting/GrayModelSetting",              // 灰色模式设置
                         "/system/setting/base/**"                        // 基础设置
                 ).permitAll()
-                // 远程调用接口
+                // 远程调用接口——@InternalOnly 与 permitAll 的搭配规则（签名为服务间信任凭证，与登录墙正交）：
+                // 仅「调用时无用户 token」的场景入本清单由签名独扛（登录链在 token 签发前/注册/日志落库）；
+                // 其余远程调用端点（如 system/setting/cacheIpBlack、system/dictData/queryByDictTypeCode——
+                // 调用方恒带透传 token）保持 anyRequest().authenticated() 叠加签名墙，勿移入本清单
                 .requestMatchers(
                         "/system/log/login/insert",                     // 登录日志记录
                         "/system/log/operate/insert",                   // 操作日志记录

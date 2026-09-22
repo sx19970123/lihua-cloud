@@ -32,6 +32,13 @@
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot3</artifactId>
         </dependency>
+        <!-- Mono/Flux 返回值上的 @CircuitBreaker/fallback 装饰依赖本模块（ReactorCircuitBreakerAspectExt/
+             ReactorFallbackDecorator 按 @ConditionalOnClass(AbstractSubscriber) 装配）——缺失时切面静默
+             退化为装配期记一次成功后原样返回，熔断永不打开、fallback 永不触发（CR-6，sysLog 日志链为在役消费方） -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-reactor</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

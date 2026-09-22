@@ -42,11 +42,11 @@ mvn clean package -DskipTests
 将生成的 exec jar 复制到 Docker 部署目录：
 
 ```shell
-cp lihua-auth/target/lihua-auth-exec.jar ../res/docker/lihua-auth/
-cp lihua-gateway/target/lihua-gateway-exec.jar ../res/docker/lihua-gateway/
-cp lihua-biz/lihua-system/target/lihua-system-exec.jar ../res/docker/lihua-system/
-cp lihua-biz/lihua-file/target/lihua-file-exec.jar ../res/docker/lihua-file/
-cp lihua-biz/lihua-monitor/target/lihua-monitor-exec.jar ../res/docker/lihua-monitor/
+cp lihua-auth/target/lihua-auth-exec.jar ../deploy/docker/lihua-auth/
+cp lihua-gateway/target/lihua-gateway-exec.jar ../deploy/docker/lihua-gateway/
+cp lihua-biz/lihua-system/target/lihua-system-exec.jar ../deploy/docker/lihua-system/
+cp lihua-biz/lihua-file/target/lihua-file-exec.jar ../deploy/docker/lihua-file/
+cp lihua-biz/lihua-monitor/target/lihua-monitor-exec.jar ../deploy/docker/lihua-monitor/
 ```
 
 前端在 `lihua-vue` 目录下打包：
@@ -57,7 +57,7 @@ npm install
 npm run build
 ```
 
-将生成的 `dist` 目录复制或替换到 `res/docker/client/dist`。
+将生成的 `dist` 目录复制或替换到 `deploy/docker/client/dist`。
 
 ### client
 
@@ -112,7 +112,7 @@ Nginx 已配置：
 - 配置卷：`mysql-conf`
 - 数据卷：`mysql-data`
 
-首次部署后，需要导入项目数据库脚本 `res/db/lihua.sql`。可以使用 Navicat、DataGrip 等工具连接宿主机 `3306` 端口后执行，也可以进入容器执行导入命令。
+首次部署后，需要导入项目数据库脚本 `deploy/db/lihua.sql`。可以使用 Navicat、DataGrip 等工具连接宿主机 `3306` 端口后执行，也可以进入容器执行导入命令。
 
 生产环境请务必修改 `MYSQL_ROOT_PASSWORD`，并根据需要限制数据库端口对外暴露。
 
@@ -141,13 +141,13 @@ redis-server --requirepass password
 - 默认账号密码：`nacos` / `nacos`
 - 命名空间：后端服务默认使用 `prod`
 
-首次部署时，需要将 `res/nacos/nacos_config_export.zip` 导入到 Nacos，并确认配置中的 MySQL、Redis、网关地址、文件存储等参数与当前 compose 环境一致。
+首次部署时，需要将 `deploy/nacos/nacos_config_export.zip` 导入到 Nacos，并确认配置中的 MySQL、Redis、网关地址、文件存储等参数与当前 compose 环境一致。
 
 ### compose.yaml
 
 启动前请根据服务器实际情况修改 `compose.yaml` 中的密码、端口、Nacos token、命名空间和 JVM 参数。
 
-将 `res/docker` 目录上传到服务器后，在该目录执行：
+将 `deploy/docker` 目录上传到服务器后，在该目录执行：
 
 ```shell
 docker compose up -d --build
@@ -171,7 +171,7 @@ docker compose up -d --build
 docker compose up -d mysql redis nacos
 ```
 
-导入 `res/db/lihua.sql` 和 `res/nacos/nacos_config_export.zip`，确认配置无误后再执行：
+导入 `deploy/db/lihua.sql` 和 `deploy/nacos/nacos_config_export.zip`，确认配置无误后再执行：
 
 ```shell
 docker compose up -d --build auth-server system-server file-server monitor-server gateway-server client
@@ -228,7 +228,7 @@ Docker 命名卷默认位于服务器 `/var/lib/docker/volumes` 目录下。
 
 ### 更新前端
 
-重新打包 `lihua-vue`，替换 `res/docker/client/dist` 后执行：
+重新打包 `lihua-vue`，替换 `deploy/docker/client/dist` 后执行：
 
 ```shell
 docker compose up -d --build --force-recreate client
@@ -247,8 +247,8 @@ docker compose restart client
 示例：更新网关服务。
 
 ```shell
-cp lihua-cloud/lihua-gateway/target/lihua-gateway-exec.jar res/docker/lihua-gateway/
-cd res/docker
+cp lihua-cloud/lihua-gateway/target/lihua-gateway-exec.jar deploy/docker/lihua-gateway/
+cd deploy/docker
 docker compose up -d --build --force-recreate gateway-server
 ```
 

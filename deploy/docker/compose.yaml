@@ -31,6 +31,9 @@ services:
       - NACOS_PASSWORD=nacos
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
+# redis 连接（nacos lihua-common.yaml 占位符的消费方，容器名注入）
+      - REDIS_ADDR=${REDIS_ADDR:-redis:6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
       # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
@@ -67,6 +70,12 @@ services:
       - NACOS_PASSWORD=nacos
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
+# 数据层连接（nacos lihua-system/file.yaml 占位符的消费方，容器名注入）
+      - MYSQL_ADDR=${MYSQL_ADDR:-mysql:3306}
+      - MYSQL_USERNAME=${MYSQL_USERNAME:-root}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+      - REDIS_ADDR=${REDIS_ADDR:-redis:6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
       # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
@@ -104,6 +113,12 @@ services:
       - NACOS_ADDR=lihua-nacos:8848
       - ATTACHMENT_DOWNLOAD_SIGN_KEY=${ATTACHMENT_DOWNLOAD_SIGN_KEY}   # 下载链接签名密钥（在 .env 或部署环境提供，缺失启动失败）
       - NACOS_NAMESPACE=prod
+# 数据层连接（nacos lihua-system/file.yaml 占位符的消费方，容器名注入）
+      - MYSQL_ADDR=${MYSQL_ADDR:-mysql:3306}
+      - MYSQL_USERNAME=${MYSQL_USERNAME:-root}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+      - REDIS_ADDR=${REDIS_ADDR:-redis:6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
       # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
@@ -140,6 +155,9 @@ services:
       - NACOS_PASSWORD=nacos
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
+# redis 连接（nacos lihua-common.yaml 占位符的消费方，容器名注入）
+      - REDIS_ADDR=${REDIS_ADDR:-redis:6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（768m）的 75%，其余留给元空间/线程栈/直接内存
       # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）
@@ -179,6 +197,9 @@ services:
       - NACOS_PASSWORD=nacos
       - NACOS_ADDR=lihua-nacos:8848
       - NACOS_NAMESPACE=prod
+# redis 连接（nacos lihua-common.yaml 占位符的消费方，容器名注入）
+      - REDIS_ADDR=${REDIS_ADDR:-redis:6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
       - TZ=Asia/Shanghai
       # 堆上限 = 容器 mem_limit（512m）的 75%
       # OOM 治理：dump 堆快照到数据卷（事后排查；约等于堆大小，低频事件，手动清理）+ OOM 即退出（交 restart 自愈，防半死僵尸态）

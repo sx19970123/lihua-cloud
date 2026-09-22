@@ -22,9 +22,9 @@ public interface SysUserAuthClient {
     ApiResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username);
 
     /**
-     * 查询登录用户信息
+     * 查询登录用户信息（携带请求体，必须 POST：GET+body 仅靠当前 HC5/Tomcat 栈容忍，换客户端/介入代理即断）
      */
-    @GetExchange("queryLoginUserProfile")
+    @PostExchange("queryLoginUserProfile")
     ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession);
 
     /**

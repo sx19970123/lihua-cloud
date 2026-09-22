@@ -152,7 +152,9 @@ public class HandleRecodeLog {
         logModel.setDelFlag("0");
 
         // 远程调用保存日志（fire-and-forget：错误留痕在 onError 回调；回调运行于 WebClient IO 线程，
-        // MDC 不可用，上下文取 logModel 自带字段——含 traceId）
+        // MDC 不可用，上下文取 logModel 自带字段——含 traceId）。
+        // 注：system 进程内 logClient 为本地实现（同步直写后返回 Mono.empty()），落库异常在 subscribe 之前
+        // 同步抛出、永不进上述 onError，实际经 @Async void 的 UncaughtExceptionHandler 留痕——错误通道与远程侧不同
         if (isLogin) {
             logClient.insertLogin(logModel).subscribe(
                 response -> { },
