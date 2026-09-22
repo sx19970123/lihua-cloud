@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 /**
  * 搭配@InternalOnly注解，对目标 controller 进行拦截验证签名
  */
@@ -67,8 +70,8 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
                 request.getRequestURI(),
                 timestamp));
 
-        // 签名对比
-        if (!confirmSign.equals(sign)) {
+        // 签名对比（常量时间比对防时序侧信道，SignedUrlUtils 同范式；sign 缺失先短路）
+        if (sign == null || !MessageDigest.isEqual(confirmSign.getBytes(StandardCharsets.UTF_8), sign.getBytes(StandardCharsets.UTF_8))) {
             log.warn("内部RPC签名校验拒绝（签名不匹配，疑实例间signKey不一致）: {} {}",
                     request.getMethod(), request.getRequestURI());
             WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名错误"));
