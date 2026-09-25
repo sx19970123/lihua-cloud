@@ -28,6 +28,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
+        <!--        事务同步（TransactionSendUtils 事务后执行）-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
         <!--        jackson-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

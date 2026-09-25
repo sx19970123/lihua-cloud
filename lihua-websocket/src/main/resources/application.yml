@@ -1,0 +1,39 @@
+server:
+  port: ${SERVER_PORT:8086}
+  forward-headers-strategy: framework
+spring:
+  application:
+    name: lihua-websocket
+    version: 3.0.0
+  cloud:
+    nacos:
+      server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:123456}
+      # 服务发现
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+      # 配置中心
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        file-extension: yaml
+        import-check:
+          enabled: true
+  config:
+    import:
+      - nacos:${spring.application.name}.yaml?group=${spring.application.name}
+      - nacos:lihua-common.yaml?group=lihua-common
+      - nacos:lihua-resilience.yaml?group=lihua-resilience
+  threads:
+    virtual:
+      # 开启虚拟线程
+      enabled: true
+  # 配置后可正常拦截404异常
+  web:
+    resources:
+      add-mappings: false
+  # api响应时全局忽略null，
+  # 如不需要可将此配置删除（适用于controller 返回 ApiResponseModel 的情况）
+  jackson:
+    default-property-inclusion: non_null

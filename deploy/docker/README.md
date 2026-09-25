@@ -24,6 +24,9 @@
 │   ├── lihua-system                                      # 核心业务服务目录
 │   │   ├── lihua-system-exec.jar                         # 后端打包后的 jar 文件（需自行添加）
 │   │   ├── dockerfile                                    # 后端镜像构建文件
+│   ├── lihua-websocket                                   # WS 连接服务目录
+│   │   ├── lihua-websocket-exec.jar                      # 后端打包后的 jar 文件（需自行添加）
+│   │   ├── dockerfile                                    # 后端镜像构建文件
 ```
 
 ## 部署说明
@@ -47,6 +50,7 @@ cp lihua-gateway/target/lihua-gateway-exec.jar ../deploy/docker/lihua-gateway/
 cp lihua-biz/lihua-system/target/lihua-system-exec.jar ../deploy/docker/lihua-system/
 cp lihua-biz/lihua-file/target/lihua-file-exec.jar ../deploy/docker/lihua-file/
 cp lihua-biz/lihua-monitor/target/lihua-monitor-exec.jar ../deploy/docker/lihua-monitor/
+cp lihua-websocket/target/lihua-websocket-exec.jar ../deploy/docker/lihua-websocket/
 ```
 
 前端在 `lihua-vue` 目录下打包：
@@ -79,7 +83,7 @@ Nginx 已配置：
 
 ### server
 
-后端服务包含 `auth-server`、`system-server`、`file-server`、`monitor-server`、`gateway-server` 五个容器。
+后端服务包含 `auth-server`、`system-server`、`file-server`、`monitor-server`、`ws-server`、`gateway-server` 六个容器。
 
 各服务镜像基于 `eclipse-temurin:25.0.4_7-jre-noble`（与 Java 25 编译目标匹配；镜像内含 fontconfig 与 DejaVu 字体，满足验证码字体渲染）构建，构建时将对应的 `*-exec.jar` 复制到 `/app/` 目录，容器启动时执行 `java -jar`。
 
@@ -91,6 +95,7 @@ Nginx 已配置：
 | `system-server` | `lihua-system-server` | `8082` | 核心业务服务 |
 | `file-server` | `lihua-file-server` | `8083` | 文件服务 |
 | `monitor-server` | `lihua-monitor-server` | `8084` | 监控服务 |
+| `ws-server` | `lihua-websocket-server` | `8086` | WS 连接服务（无库，可多实例） |
 | `gateway-server` | `lihua-gateway-server` | `8080` | 网关服务 |
 
 后端容器默认不直接暴露到宿主机，外部请求通过 `client` 容器的 Nginx 代理进入网关。部署时可通过 `compose.yaml` 中的环境变量调整端口、Nacos 地址、命名空间和账号密码：
@@ -160,6 +165,7 @@ docker compose up -d --build
 - `lihua-system-server`
 - `lihua-file-server`
 - `lihua-monitor-server`
+- `lihua-websocket-server`
 - `lihua-gateway-server`
 - `lihua-mysql`
 - `lihua-redis`
@@ -174,7 +180,7 @@ docker compose up -d mysql redis nacos
 导入 `deploy/db/lihua.sql` 和 `deploy/nacos/nacos_config_export.zip`，确认配置无误后再执行：
 
 ```shell
-docker compose up -d --build auth-server system-server file-server monitor-server gateway-server client
+docker compose up -d --build auth-server system-server file-server monitor-server ws-server gateway-server client
 ```
 
 查看容器状态和日志：
@@ -189,10 +195,10 @@ docker compose logs -f auth-server
 
 ## 容器健康与自愈
 
-五个后端服务引入 actuator 探针（健康端点挂各服务主端口 `/actuator/health`，Nacos `lihua-common.yaml` 的 `management` 段统一配置——主端口每服务天然唯一，本机多服务同跑无冲突；SecurityConfig 白名单放行且网关无该前缀路由，仅内网/本机可达）。compose 据此为每个容器配置了体检与自愈：
+六个后端服务引入 actuator 探针（健康端点挂各服务主端口 `/actuator/health`，Nacos `lihua-common.yaml` 的 `management` 段统一配置——主端口每服务天然唯一，本机多服务同跑无冲突；SecurityConfig 白名单放行且网关无该前缀路由，仅内网/本机可达）。compose 据此为每个容器配置了体检与自愈：
 
 - **healthcheck 定时体检**：后端服务探各自主端口的 `/actuator/health`（聚合数据库/Redis 连通性）；mysql/redis/nacos 用各自官方命令探活。`docker compose ps` 的 STATUS 列显示 `(healthy)` 即体检通过。
-- **depends_on 启动排序**：四个业务服务等 mysql/redis/nacos 全部 `(healthy)` 后才启动（首次部署不再需要手动分步起基础组件，直接 `docker compose up -d --build` 即可）；gateway 等 nacos；前端等 gateway。
+- **depends_on 启动排序**：四个业务服务等 mysql/redis/nacos 全部 `(healthy)` 后才启动（ws 服务无库，等 redis/nacos；首次部署不再需要手动分步起基础组件，直接 `docker compose up -d --build` 即可）；gateway 等 nacos；前端等 gateway。
 - **restart: unless-stopped 宿主机重启自愈**：服务器重启后 Docker 自动拉起全部容器（手动 `docker compose stop` 停掉的不会被拉起，尊重运维意图）。
 - **资源与日志**：各容器已设 `mem_limit`（JVM 堆经 `-XX:MaxRAMPercentage=75.0` 跟随容器限额），日志统一 json-file 轮转（单文件 10MB × 3 份）。
 - **OOM 行为**：JVM 内存溢出时异常栈进容器日志（`docker compose logs` 可见），堆快照 dump 到各服务数据卷（`java_pid*.hprof`，约等于堆大小——排查 OOM 的现场材料，低频事件手动清理），随后进程立即退出交由 restart 自愈——OOM 半死僵尸态不会出现。
@@ -221,6 +227,8 @@ Docker 命名卷默认位于服务器 `/var/lib/docker/volumes` 目录下。
 - `gateway-jar-resource`：网关服务 jar 目录，挂载到 `/app/`。
 - `monitor-server-data`：监控服务数据目录，挂载到 `/lihua-monitor/data/`。
 - `monitor-jar-resource`：监控服务 jar 目录，挂载到 `/app/`。
+- `ws-server-data`：WS 连接服务数据目录，挂载到 `/lihua-websocket/data/`。
+- `ws-jar-resource`：WS 连接服务 jar 目录，挂载到 `/app/`。
 
 注意：各后端服务同时在镜像内复制 jar，并将 `/app/` 映射为命名卷。首次创建命名卷时 Docker 会将镜像内 `/app/` 的 jar 初始化到卷中；后续如果只替换部署目录中的 jar，需要重建镜像并重建对应容器，或直接替换对应 `*-jar-resource` 卷中的 jar。
 
@@ -258,6 +266,7 @@ docker compose up -d --build --force-recreate gateway-server
 - `system-server`：`lihua-system/lihua-system-exec.jar`
 - `file-server`：`lihua-file/lihua-file-exec.jar`
 - `monitor-server`：`lihua-monitor/lihua-monitor-exec.jar`
+- `ws-server`：`lihua-websocket/lihua-websocket-exec.jar`
 - `gateway-server`：`lihua-gateway/lihua-gateway-exec.jar`
 
 ### 更新配置
@@ -277,3 +286,4 @@ docker compose up -d --build --force-recreate gateway-server
    （compose 已透传该变量；mono 生产 yml 与 cloud Nacos lihua-file.yaml 均以 `${ATTACHMENT_DOWNLOAD_SIGN_KEY}` 占位。）
 3. **Nacos 配置重导入（cloud）**：`deploy/nacos/nacos_config_export.zip` 已更新（附件 attachment 段 3.0 形态、附件路由超时 10m、路由显式 order、uploadFilePath 指向数据卷），升级后需在 Nacos 重新导入并发布。
 4. **附件存储卷（cloud）**：lihua-file 的 `uploadFilePath` 已指向 `/lihua-file/data/upload/`（落在 `file-server-data` 卷）；请勿改回相对路径，否则容器重建附件丢失。
+5. **WS 连接服务拆分（cloud）**：`/ws-connect/**` 网关路由已从 lihua-system 挪至新增 `lihua-websocket` 组（zip 新增 `lihua-websocket/lihua-websocket.yaml`）；重导入种子后须重新打包部署 `ws-server`（lihua-system 已卸除 base-websocket，旧 system 容器不再持有 WS 连接）。
