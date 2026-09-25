@@ -41,3 +41,4 @@ build/
 ### 运行时上传目录（本机直跑服务时 uploadFilePath 相对路径的落点，禁止入库） ###
 /lihua/
 /lihua-file/
+/lihua-biz/lihua-file
