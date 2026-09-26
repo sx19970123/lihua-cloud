@@ -47,6 +47,7 @@
 | lihua-system | 8084 | 核心业务：RBAC、字典、通知公告、日志、系统设置 |
 | lihua-file | 8083 | 附件服务：上传 / 秒传 / 分片 / 签名下载 |
 | lihua-monitor | 8081 | 监控服务：在线用户、缓存监控、服务器监控 |
+| lihua-websocket | 8086 | WS 连接服务：连接持有与消息推送（无库，可多实例） |
 
 ## 📁 目录结构
 
@@ -55,7 +56,8 @@ lihua-cloud/
 ├── lihua-api/              # 服务间 RPC 契约（client 接口 + facade + model）
 ├── lihua-auth/             # 认证中心
 ├── lihua-gateway/          # 网关服务
-├── lihua-base/             # 基础能力层（含 client 远程调用框架，共 15 个子模块）
+├── lihua-websocket/        # WS 连接服务（第六服务，连接层代码 + 启动引导一体）
+├── lihua-base/             # 基础能力层（含 client 远程调用框架与 ws 消息边界，共 15 个子模块）
 ├── lihua-biz/              # 业务服务（lihua-system / lihua-file / lihua-monitor）
 ├── deploy/                 # 数据库脚本、nacos 配置导出、docker 部署编排
 ├── LICENSE
@@ -68,7 +70,7 @@ lihua-cloud/
 2. 导入数据库脚本 `deploy/db/lihua.sql`（升级场景执行 `deploy/db/upgrade-3.0.0.sql`）
 3. 导入 Nacos 配置：`deploy/nacos/nacos_config_export.zip`（lihua-common / lihua-resilience + 五服务各自配置）
 4. 配置环境变量：`NACOS_ADDR` / `NACOS_USERNAME` / `NACOS_PASSWORD`，以及 `MYSQL_*`、`REDIS_*`、`ATTACHMENT_DOWNLOAD_SIGN_KEY`（3.0 必配）
-5. 依次启动 `lihua-system` → `lihua-file` → `lihua-monitor` → `lihua-auth` → `lihua-gateway`
+5. 依次启动 `lihua-system` → `lihua-file` → `lihua-monitor` → `lihua-auth` → `lihua-websocket` → `lihua-gateway`
 6. 配合 [lihua-web](https://gitee.com/yukino_git/lihua-web) 访问 `http://localhost:90`（代理目标改为网关地址）
 
 ### 🔐 数据库脚本默认账号
