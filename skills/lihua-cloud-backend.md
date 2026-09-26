@@ -1,6 +1,6 @@
 ---
 name: lihua-cloud-backend
-description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后端：gateway/auth/system/file/monitor 五服务 + Nacos 配置中心）的服务端开发与验证。适用于 Maven 模块与服务落位、Gateway 路由与过滤器、@RemoteClient 远程调用、Resilience4j 熔断降级、Controller/Service/Mapper、RBAC 安全、日志、字典、附件、WebSocket、Nacos 配置、数据库 SQL，以及二开边界、与 lihua 单体仓的 base 层双仓同步、与 lihua-web / lihua-app 的契约对齐。
+description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后端：gateway/auth/system/file/monitor/websocket 六服务 + Nacos 配置中心）的服务端开发与验证。适用于 Maven 模块与服务落位、Gateway 路由与过滤器、@RemoteClient 远程调用、Resilience4j 熔断降级、Controller/Service/Mapper、RBAC 安全、日志、字典、附件、WebSocket、Nacos 配置、数据库 SQL，以及二开边界、与 lihua 单体仓的 base 层双仓同步、与 lihua-web / lihua-app 的契约对齐。
 ---
 
 # 狸花猫微服务版后端开发（lihua-cloud 仓）
@@ -10,9 +10,8 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 ## 仓库结构
 
 - Maven 父工程：本仓根 `pom.xml`，顶层 `<modules>` 为 `lihua-base`、`lihua-websocket`、`lihua-biz`、`lihua-api`、`lihua-auth`、`lihua-gateway`；编译版本 `java.version=25`。
-- 基础模块（`lihua-base/`，15 个）：attachment、cache、captcha、**client**、common、dict、doc、excel、job、log、mybatis、security、sensitive、web、**ws**（`lihua-base-client` 是远程调用基建，mono 无此模块；无独立 ip 模块——IP 能力收口在 base-web/WebUtils）。
-- **WS 消息面边界 `lihua-base-ws`**（base 下公共库，业务服务随手引；mono 仓同名同位）：包 `com.lihua.ws.push`（下行投递 `WebSocketPushUtils` + `WsPushMessage`）+ `com.lihua.ws.receive`（上行契约：SPI `WsMessageReceiver` + 回写通道 `WsReply` + 帧实体 `WsClientMessage`——lihua-websocket 进程内 handleTextMessage 解析帧后按 type 分发；内置心跳参考实现 `receive/impl/HeartbeatWsMessageReceiver`（客户端 30s 一跳 ping→服务端回 pong，不做超时踢线）。**处理器生效范围=连接所在进程（lihua-websocket 服务）**，业务服务（system 等）进程注册的处理器收不到调用——跨服务上行业务处理预留 WS 上行 Redis topic 桥接，勿用进程内 event（不跨进程））。业务与连接层的中间层，投递唯一入口；依赖 base-cache（Redis 原语）。
-- **WS 连接服务 `lihua-websocket`（cloud 第六服务，顶层）**：连接层代码 + 服务启动引导一体（`LiHuaWebSocketApplication`，端口 8086，nacos 注册名 `lihua-websocket`）；与 mono 仓同名模块的关系同 lihua-system 双仓关系——**连接层源码双仓一致，cloud 侧多服务启动引导**（mono 侧为纯库由 admin 装配引入）。持有 `/ws-connect` 连接，订阅 Redis pub/sub 扇出推送本地会话；**可多实例水平扩容**（每实例各推自己持有的连接，天然扇出）。业务服务零依赖本模块。
+- 基础模块（`lihua-base/`，15 个）：attachment、cache、captcha、**client**、common、dict、doc、excel、job、log、mybatis、security、sensitive、web、ws（`lihua-base-client` 是远程调用基建，mono 无此模块；无独立 ip 模块——IP 能力收口在 base-web/WebUtils）。
+- `lihua-base-ws`（base 下，业务服务随手引）与顶层 `lihua-websocket`（第六服务本体，业务服务零依赖）分别是 WS 的业务消息面与连接持有层——职责切分与完整契约见「WebSocket」节。
 - 远程调用契约模块：`lihua-api/lihua-api-system`，包含 `client`、`facade`、`model` 三层。
 - 可运行服务（六服务）：
   - `lihua-gateway`：Spring Cloud Gateway 网关，外部唯一入口。过滤器三件 = `RequestIpFilter`（IP 黑名单）、`RequestTokenFilter`（**只拦非法 token——无 token 直接放行，鉴权由各服务 SecurityConfig 裁决**）、`TraceIdFilter`；另有 FallbackController（CB 降级）与 GatewayExceptionHandler。路由配置在 nacos `lihua-gateway/lihua-gateway.yaml`（**路由顺序承重**：具体路径必须先于 `/system/**` 通配——lihua-file 先于 system 的先例写在路由注释里）。
@@ -20,7 +19,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
   - `lihua-biz/lihua-system`：系统/RBAC/字典/配置/通知等核心业务。
   - `lihua-biz/lihua-file`：附件与文件服务。
   - `lihua-biz/lihua-monitor`：监控服务。
-  - `lihua-websocket`：WS 连接服务（顶层第六服务，无库基础设施，连接层代码 + 启动引导一体）——持有 `/ws-connect` 连接，订阅 Redis pub/sub 扇出推送本地会话；**可多实例水平扩容**（每实例各推自己持有的连接，天然扇出）。system 不再引入 WS 连接层。
+  - `lihua-websocket`：WS 连接服务（顶层第六服务，无库基础设施）——持有 `/ws-connect` 连接，可多实例水平扩容，细则见「WebSocket」节。
 - 启动类使用 `@ComponentScan({"com.lihua.**"})`；含持久化的服务使用 `@MapperScan({"com.lihua.**.mapper"})`；新增包保持在 `com.lihua` 命名空间下。业务枚举在消费服务的 `enums` 包（现例 `lihua-biz/lihua-system/.../com/lihua/system/enums`）；双版本控制器基类统一在 `controller/base` 子包（现存 6 个：system 的 setting/dictData/notice/profile、auth 的 authentication、file 的 attachment storage）。
 - **配置双轨**：各服务 `src/main/resources/application.yml` + `application-dev/prod.yml`（经 `spring.config.import` 引入 Nacos 配置）；运行时配置在 Nacos，种子为仓库导出 `deploy/nacos/nacos_config_export.zip`（按服务分组：lihua-common/lihua-system/lihua-file/lihua-auth/lihua-gateway/lihua-monitor/lihua-websocket/lihua-resilience 各一份 yaml）。token 参数唯一来源 `lihua-common.yaml`（如 `token.tokenSecret`，网关验签与 auth 签发共用）；熔断策略统一 `lihua-resilience.yaml`；附件配置 `lihua-file.yaml`（上传模式/100MB 限制/下载时效/签名密钥）。biz 模块不自带业务配置文件。
 - 数据面：数据源 dynamic-datasource、Redis Redisson 项目自定义 codec；虚拟线程、Jackson 忽略 null、MyBatis-Plus 逻辑删除 `delFlag`、mapper XML 扫描 `classpath*:com/lihua/**/mapper/**/*.xml`。
@@ -76,7 +75,39 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 - **异步上下文接力唯一通道 = ContextCopyTaskDecorator**（base-web）：经 Spring executor 提交的任务自动被装饰（提交时快照 MDC+SecurityContext、执行时覆盖恢复、finally 清理；写返回值的 @Async 方法同样被装饰）。**MODE_INHERITABLETHREADLOCAL 策略已下线勿恢复**（正确性依赖「每任务新线程」形态，回池化 executor 即静默数据错误）。**非 executor 线程（手动 new Thread/commonPool/parallelStream/@Scheduled/reactor 调度）明确无上下文**——需要上下文时经 executor 提交或显式传参。setTaskDecorator 单槽。**微服务注意：线程上下文不跨进程——RPC 调用方的会话信息靠 base-client 的 token 透传到目标服务重建**。
 - **token/IP 取值唯一源头**：取 token/IP 一律经 `WebUtils.getToken/getIpAddress`（base-web）或 `LoginUserContext`（base-security），任何新代码不得自行读 Authorization/Request-IP 头解析。cloud 侧 IP 链路见「云端运行态」（网关裁决头优先）。**防双击写接口挂 `@PreventDuplicateSubmit`**（base-web，唯一参数 `interval` 秒默认 5；幂等键=同会话 token（匿名退 IP）+URI+参数摘要，SET NX PX 占键、窗口期 TTL 自然过期不删键；重复抛 DuplicateSubmitException → REPEAT_SUBMIT_ERROR(511)）——Redis 占键使幂等**天然跨服务实例生效**（多实例部署不失效）。
 - **新表设计默认口径**：业务表继承 `BaseEntity`（base-mybatis，审计字段 + 逻辑删除 `delFlag`）；带状态语义的字段用字典 + 枚举承载（见「字典与枚举」）；有同组排序需求加 `sort` 列且实体 `implements SortEntity`；char(1) 状态列配 `@Pattern`、varchar 按 DB 列长配 `@Size`。
-- **跨模块/跨服务解耦分层**：**服务内**用领域事件——`ApplicationEventPublisher` 发事件、监听器消费，勿跨模块直调内部实现；**事件载体统一放 `base-common` 的 `com.lihua.common.model.event/<业务域>/` 子包、类名统一 `Event` 后缀**（可携带数据 `event/log/LogEvent`，也可纯信号空类 `event/setting/CacheBlackIpEvent`；同一业务域多个事件在域包内并列分类）。**微服务关键差异：进程内事件不跨服务、不跨实例传播——跨服务联动只有三条正路：`lihua-api` RPC、独立事实源（如 Redis 标记），或 Redis pub/sub（WS 推送即此形态）**。原「权限更新三件套」（PermissionUpdateEvent + PermissionUpdateEventListener 进程内事件腿）已退役：WS 实时推送统一走 `WebSocketPushUtils`（lihua-base-ws）Redis pub/sub 投递，`PermissionUpdateUtils`（base-security）保留 Redis 标记（事实源）+ markChanged 内 runAfterCommit 后 pub/sub 投递。事务内推送/联动用 `TransactionSendUtils.runAfterCommit`（**base-common** `utils/spring`：有活动事务挂 afterCommit、否则立即执行——事务内直接推送会先于数据提交到达，客户端回拉读不到数据；发布点包裹、勿嵌套）。
+- **跨模块/跨服务解耦分层**：**服务内**用领域事件——`ApplicationEventPublisher` 发事件、监听器消费，勿跨模块直调内部实现；**事件载体统一放 `base-common` 的 `com.lihua.common.model.event/<业务域>/` 子包、类名统一 `Event` 后缀**（可携带数据 `event/log/LogEvent`，也可纯信号空类 `event/setting/CacheBlackIpEvent`；同一业务域多个事件在域包内并列分类）。**微服务关键差异：进程内事件不跨服务、不跨实例传播——跨服务联动只有三条正路：`lihua-api` RPC、独立事实源（如 Redis 标记），或 Redis pub/sub（WS 推送即此形态）**。**WS 实时推送不走进程内事件**——统一经 `WebSocketPushUtils`（见「WebSocket」节）；权限红点即此形态：`PermissionUpdateUtils`（base-security）以 Redis 标记为事实源，推送只是实时提示。事务内推送/联动用 `TransactionSendUtils.runAfterCommit`（base-common `utils/spring`：有活动事务挂 afterCommit、否则立即执行——事务内直接推送会先于数据提交到达，客户端回拉读不到数据；发布点包裹、勿嵌套）。
+
+## WebSocket（lihua-base-ws 消息面 × lihua-websocket 连接服务）
+
+**模块切分——面向业务端的只有 `lihua-base-ws`**：
+
+- `lihua-base-ws`（base 下，业务服务随手引；依赖 base-cache；mono 仓同名同位）＝业务与连接层之间的唯一消息边界：`ws/push/` 下行投递（`WebSocketPushUtils` + 消息体 `WsPushMessage`）+ `ws/receive/` 上行 SPI（`WsMessageReceiver`/`WsReply`/`WsClientMessage`，内置心跳参考实现）。业务服务 pom 只依赖它。
+- `lihua-websocket`（顶层第六服务，**业务服务零依赖**，包名 `com.lihua.websocket`）＝连接持有层：`/ws-connect` 端点（WebSocketConfig）、握手鉴权（WebSocketInterceptor）、会话登记与收发（WebSocketManager）、Redis 订阅器（WsPushSubscriber）、下行帧模型（WebSocketResult）。
+- 装配分叉：cloud 侧模块自带启动引导（`LiHuaWebSocketApplication`）即服务本体——无库不落表、默认 8086、nacos 注册名与配置组 `lihua-websocket`（引 `lihua-websocket.yaml` + lihua-common/lihua-resilience）；mono 侧同名模块为纯库由 `lihua-admin` 引入、同进程持有连接。两端职责相同，仅部署形态不同。
+
+**下行推送（业务侧唯一入口 `WebSocketPushUtils`）**：
+
+- 投递即 Redis pub/sub：`push(userIdList, type, data)` / `pushAll(type, data)`（=push(null)）→ `RedisPublisher` → `RedisTopicEnum.WS_PUSH`（消息以 JSON 字符串中转——Redisson 全局 codec 对 POJO 解码退化 Map）；所有 WS 实例的 `WsPushSubscriber` 各收一次、各自查本地会话表推送 = **多实例部署天然扇出**，投递方不持有任何连接。
+- 消息体最小化 `{userIdList(null=全员), type(WebSocketMsgTypeEnum.name()), data}`；`WebSocketMsgTypeEnum` 在 base-common（WS_NOTICE / WS_HEARTBEAT / WS_REFRESH_PERMISSION），投递方与订阅方共同依赖；载荷保持最小、客户端拉取兜底。
+- **铁纪律：禁止业务侧依赖 `lihua-websocket`、直调 `WebSocketManager` 或进程内事件触达**——那是单实例语义，双实例部署时另一实例的连接漏推（单实例测试发现不了）。
+- fire-and-forget：无送达承诺不重试，可靠性靠持久层 + 客户端拉取兜底（如权限红点事实源=Redis 标记，推送只是实时提示）；会话表无此用户的实例静默跳过属扇出常态。
+- 「写库 + 推送」在**发布点**包 `TransactionSendUtils.runAfterCommit`（`WebSocketPushUtils` 内部不包——afterCommit 回调内事务同步仍激活，嵌套注册不会执行）。先例：SysNoticeServiceImpl 发布/定向（WS_NOTICE）、PermissionUpdateUtils.markChanged（置 Redis 标记后 WS_REFRESH_PERMISSION 定向推）。
+
+**上行消息（`ws/receive` SPI，二开扩展点）**：
+
+- 客户端帧 `{type, data, timestamp}`（`WsClientMessage`）→ 连接层按 type 分发到 `WsMessageReceiver`（`type()` 声明帧类型 + `receive(userId, data, reply)`）；实现加 @Component 即被扫描注册，type 重复保留先注册者并告警。
+- 回写经 `WsReply.send(data)`：连接层构造并捕获当前连接，向其回写同 type 帧（`{type, data, timestamp}` Map 拼装绕开强枚举）；回写经装饰 session 与下行推送共享排队锁，实现方不接触 session/序列化细节。
+- 内置 `HeartbeatWsMessageReceiver` 为参考实现：客户端 30s 发 WS_HEARTBEAT（data="ping"）→ 回 pong；服务端不基于心跳踢线，断连由容器回调驱动客户端自动重连；心跳帧在连接所在进程内闭环、不经 Redis。二开新上行三步：①type 取新值（内置枚举或自定义字符串）②实现 `WsMessageReceiver` ③receive 消费 data / 经 reply 回写。
+- **处理器生效范围 = 连接所在进程**（cloud 为 lihua-websocket 服务进程，mono 为 admin 进程）：业务服务（system 等）进程内注册的处理器收不到调用——跨服务上行业务处理须经 WS 上行 Redis topic 桥接（`ws/receive` 预留方向），勿用进程内事件（event 不跨进程）；上行是低频控制面，处理器内勿做重活（异常由连接层兜底记日志，不影响连接存活）。
+
+**连接层内部机制（lihua-websocket，业务不接触）**：
+
+- 握手鉴权：URL 参数 `token/clientId/clientType`，once token 查 Redis 即删（一次性）。
+- 会话表 `ConcurrentHashMap<userId, Map<userId_clientId_clientType, session>>`（同人同端重连踢旧连接）；session 存储前装饰为 `ConcurrentWebSocketSessionDecorator`（发送 5s 超时 + 512KB 缓冲上限，慢消费端自动断开），装饰实例放入 attributes 供上行回写与下行共享排队锁；断连清理用 `compute` 原子移除（防与并发新连接竞争丢推送）。
+
+**部署与网关**：
+
+- 网关路由 `lihua-websocket`（order 1、`Path=/ws-connect/**`、wsCircuitBreaker + fallbackUri；具体路径先于 `/system/**` 通配）；**WS 升级请求被 CB fallback 拦截时表现为握手失败（非 501 错误体）——服务下线先摘流量再停实例**；compose 容器 `lihua-websocket-server`（SERVER_PORT=8086，ws-server-data 卷）。
 
 ## 远程调用契约
 
@@ -115,7 +146,6 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 - **新业务落位**：在 `lihua-biz` 下新建服务模块（独立 `spring.application.name`，nacos 服务发现自动注册），接入四件套 = ①nacos `lihua-gateway.yaml` 加路由（**具体路径的 route order 必须先于 `/system/**` 通配**，配 CircuitBreaker filter + fallbackUri）②服务 SecurityConfig 引用 base-security 共用配置（免登录端点登记 permitAll 对应组）③被其他服务调用则在 `lihua-api` 建 client/facade 契约 ④配置进 nacos `<服务名>/<服务名>.yaml` 并补种子 zip。勿把二开业务混入 system/file/auth/monitor（平台自身功能）。
 - **服务平级互不依赖**（见核心规则 9）：跨服务一切走 `lihua-api` RPC + 熔断；服务内跨模块用领域事件；进程内事件不跨服务。
 - **配置归属**：服务配置在 nacos `<服务名>/<服务名>.yaml`（种子同步进仓库 zip），全局横切参数（token/停机等）唯一来源 `lihua-common.yaml`；勿把配置写死代码或散落服务 yml。
-- **WS 连接归属独立 lihua-websocket 服务（架构拍板 2026-09-25，命名收口 09-26）**：WS 连接层即顶层第六服务 `lihua-websocket`（无库、可多实例部署，连接层代码与启动引导一体，同 lihua-system 的双仓关系），system 已卸除 WS 连接层依赖；gateway 路由 `/ws-connect/**` 单独指向 lihua-websocket（具体路径先于 `/system/**` 通配）。**网关侧运维注意：WebSocket 升级请求被 CB fallback 拦截时表现为握手失败（非 501 错误体）——ws 服务下线时先摘流量再停实例**。**推送投递统一走 Redis pub/sub**（`RedisTopicEnum.WS_PUSH`）：业务侧（任意服务，引 lihua-base-ws 即可）经 `WebSocketPushUtils.push`（lihua-base-ws `com.lihua.ws.push` 包，**业务投递唯一入口**，业务与 lihua-websocket 的中间层）投递 `{userIdList, type, data}` 最小化消息体（null userIdList=全员广播；载荷客户端拉取，推送是在线即时提示非送达承诺，红点事实源仍是 Redis 标记），所有订阅该 topic 的 WS 实例各收一次、各自推本地连接=多实例天然扇出。**铁纪律：禁止业务侧依赖 lihua-websocket 或直调 WebSocketManager/进程内事件触达**——那是单实例语义，双实例部署即漏推（单实例测试发现不了，多实例才暴露）；「写库 + 推送」一律 `TransactionSendUtils.runAfterCommit` 包裹（发布点包，勿嵌套）。
 - **无分布式事务（拍板）**：跨服务写操作按最终一致设计（RPC 即边界，先例 auth 注册链无补偿机制），不引入 Saga/分布式事务框架。
 - **主键与分布式 ID 现状**：BaseEntity 未显式配置 `@TableId`、全局未配 `id-type`——走 MyBatis-Plus 默认 **ASSIGN_ID（雪花）**（存量显式声明亦以 ASSIGN_ID 为主），跨服务天然不撞，勿随意改全局 id-type；无统一发号器（业务单号/对外编号类），出现诉求时再立。
 - **auth 服务无数据库**（nacos 配置无 datasource、全程无 @Transactional）：认证服务纯 RPC + Redis——需要落表的业务勿放 auth。
@@ -124,7 +154,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 **一体感：照先例写代码**
 
 - 落笔前先在仓内找同类先例（最接近的 Controller/Service/Mapper/facade 与前端页面），照其结构写——不引入第二套风格（自造返回包装、自拼分页、绕过 base-client 手写远程调用都是破窗）。
-- 横切能力一律用平台现成实现，新增写端点配三件套（`@Tag`/`@Operation` 文档 + `@PreAuthorize` 权限 + `@Log` 操作日志）：统一返回 `ApiResponseController`、全局异常 `ServiceException` → `GlobalExceptionHandle`、参数校验 `@Validated` + 分组、分页 BaseDTO + `MaxPageSizeLimit`、登录态 `LoginUserContext`、字典 `DictEnum` + `DictUtils`、附件 base-attachment 全家（file 服务）、实时通知 `WebSocketPushUtils`（lihua-base-ws，Redis pub/sub 扇出，投递不依赖连接持有方）+ `TransactionSendUtils.runAfterCommit`、防重提交 `@PreventDuplicateSubmit`、排序归一化 `SortUtils`、IP 归属地 `WebUtils`、跨服务 RPC `lihua-api` facade + `@CircuitBreaker`。
+- 横切能力一律用平台现成实现，新增写端点配三件套（`@Tag`/`@Operation` 文档 + `@PreAuthorize` 权限 + `@Log` 操作日志）：统一返回 `ApiResponseController`、全局异常 `ServiceException` → `GlobalExceptionHandle`、参数校验 `@Validated` + 分组、分页 BaseDTO + `MaxPageSizeLimit`、登录态 `LoginUserContext`、字典 `DictEnum` + `DictUtils`、附件 base-attachment 全家（file 服务）、实时通知 `WebSocketPushUtils` + `TransactionSendUtils.runAfterCommit`（见「WebSocket」节）、防重提交 `@PreventDuplicateSubmit`、排序归一化 `SortUtils`、IP 归属地 `WebUtils`、跨服务 RPC `lihua-api` facade + `@CircuitBreaker`。
 - 表命名边界：平台表前缀 `sys_`；二开业务表用业务域自己的前缀，勿冒用 `sys_`。
 
 ## 红线与已否决方案
@@ -151,7 +181,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
   5. SecurityConfig：cloud 多 3 条内部端点 permitAll（log insert / user auth / setting）。
   6. TokenEnum 位置：cloud 在 base-common，mono 在 base-security（值相同，硬编码 JWT 密钥）。
 - **配置双轨**：mono 用 application-dev/prod.yml，cloud 用 nacos（仓库导出 `deploy/nacos/nacos_config_export.zip`，目录=group）；token 参数唯一来源是 nacos `lihua-common.yaml`。
-- **WS 部署形态**：mono 单 jar WS 嵌 admin 进程（顶层 `lihua-websocket` 纯库由 lihua-admin 显式引入，业务模块零依赖；推送投递经 Redis pub/sub 回本进程订阅器推送，mono 部署多份天然扇出）/ cloud 独立 `lihua-websocket` 服务（连接层即服务本体，无库、可多实例；gateway 路由 `/ws-connect/**` 指向它；system 已卸除 WS 连接层依赖）。两形态同构：连接层与业务模块完全隔离、仅经 Redis 交互（WS_PUSH 投递/订阅 + once token 握手鉴权读写）；业务侧投递一律 `WebSocketPushUtils.push`（lihua-base-ws），禁止依赖连接层/直调 WebSocketManager。
+- **WS 部署形态**：mono 由 lihua-admin 装配 `lihua-websocket` 纯库、WS 嵌 admin 进程（自发自收，部署多份天然扇出）/ cloud 同名模块自带启动引导即服务本体（无库、可多实例，gateway 路由 `/ws-connect/**` 指向它）。模块切分双仓同构，细则见各仓 skill「WebSocket」节。
 - **范式约定**：分页 `POST /page` + `@Validated(MaxPageSizeLimit.class)` + BaseDTO（pageNum/pageSize 上限 999999/100）；权限维持 `hasRole('ROLE_admin')` 粗粒度（细粒度 authorities 通道保留但不消费，项目定位类若依脚手架）。
 - **同步纪律**：base 层/公共契约改动必须双仓成对（同 commit 粒度），改任一侧先检查另一侧对应文件；业务枚举双仓同名同值（mono `com.lihua.enums` / cloud `com.lihua.system.enums`）。
 
