@@ -16,6 +16,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import tools.jackson.core.type.TypeReference;
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -63,7 +64,7 @@ public class RequestIpFilter implements GlobalFilter {
                 .build();
     }
 
-    // 匹配ip
+    // 匹配ip：黑名单回源为阻塞调用，本地缓存未命中时挪到 boundedElastic 执行，避免阻塞 Netty 事件循环
     private Mono<Void> ipMatch(ServerHttpRequest request) {
         // 获取当前ip
         String currentIp = getIpAddress(request);
@@ -73,7 +74,22 @@ public class RequestIpFilter implements GlobalFilter {
 
         // 获取ip黑名单数据
         String key = RedisKeyPrefixEnum.SYSTEM_IP_BLACKLIST_REDIS_PREFIX.getValue();
-        List<String> prohibitIpList = localCacheManager.getWithFallback(key, new TypeReference<>() {}, () -> redisCacheManager.getCacheList(key, String.class));
+
+        // 快路径：本地缓存命中，事件循环上纯内存读取、零线程切换
+        @SuppressWarnings("unchecked")
+        List<String> prohibitIpList = (List<String>) localCacheManager.getCache(key, List.class);
+        if (prohibitIpList != null) {
+            return matchBlacklist(prohibitIpList, currentIp);
+        }
+
+        // 慢路径：同步回源 Redis，挂到弹性线程池等待
+        return Mono.fromCallable(() -> localCacheManager.getWithFallback(key, new TypeReference<>() {}, () -> redisCacheManager.getCacheList(key, String.class)))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMap(list -> matchBlacklist(list, currentIp));
+    }
+
+    // 命中黑名单返回 Mono.error（门禁语义与原同步版一致）
+    private Mono<Void> matchBlacklist(List<String> prohibitIpList, String currentIp) {
         if (prohibitIpList == null || prohibitIpList.isEmpty()) {
             return Mono.empty();
         }
