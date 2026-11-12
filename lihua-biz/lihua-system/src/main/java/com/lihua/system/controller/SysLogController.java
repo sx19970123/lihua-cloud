@@ -2,8 +2,8 @@ package com.lihua.system.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lihua.log.model.LogModel;
-import com.lihua.common.model.response.ApiResponseModel;
-import com.lihua.common.model.response.basecontroller.ApiResponseController;
+import com.lihua.common.model.response.ResponseModel;
+import com.lihua.common.model.response.ResponseController;
 import com.lihua.excel.utils.ExcelUtils;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
@@ -27,7 +27,7 @@ import java.util.Map;
 @RequestMapping("system/log")
 @RestController
 @Validated
-public class SysLogController extends ApiResponseController {
+public class SysLogController extends ResponseController {
 
     // 操作日志service
     @Resource(name = "sysOperateLogService")
@@ -39,7 +39,7 @@ public class SysLogController extends ApiResponseController {
 
     @Operation(summary = "获取日志类型选项")
     @GetMapping("option")
-    public ApiResponseModel<List<Map<String, String>>> getLogTypeOption() {
+    public ResponseModel<List<Map<String, String>>> getLogTypeOption() {
         List<Map<String, String>> maps = Arrays
                 .stream(LogTypeEnum.values())
                 .filter(value -> value != LogTypeEnum.LOGIN)
@@ -52,20 +52,20 @@ public class SysLogController extends ApiResponseController {
     @Operation(summary = "操作日志-保存日志信息")
     @PostMapping("operate/insert")
     @InternalOnly
-    public ApiResponseModel<String> insertOperate(@RequestBody LogModel logModel) {
+    public ResponseModel<String> insertOperate(@RequestBody LogModel logModel) {
         sysOperateLogService.insert(logModel);
         return success();
     }
 
     @Operation(summary = "操作日志-分页查询")
     @PostMapping("operate/page")
-    public ApiResponseModel<IPage<? extends SysLogVO>> queryOperatePage(@RequestBody @Validated(MaxPageSizeLimit.class) SysLogDTO sysLogDTO) {
+    public ResponseModel<IPage<? extends SysLogVO>> queryOperatePage(@RequestBody @Validated(MaxPageSizeLimit.class) SysLogDTO sysLogDTO) {
         return success(sysOperateLogService.queryPage(sysLogDTO));
     }
 
     @Operation(summary = "操作日志-根据id查询详情")
     @GetMapping("operate/{id}")
-    public ApiResponseModel<SysLogVO> queryOperateById(@PathVariable("id") String id) {
+    public ResponseModel<SysLogVO> queryOperateById(@PathVariable("id") String id) {
         return success(sysOperateLogService.queryById(id));
     }
 
@@ -73,7 +73,7 @@ public class SysLogController extends ApiResponseController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @DeleteMapping("operate")
     @Log(description = "删除操作日志", type = LogTypeEnum.DELETE)
-    public ApiResponseModel<String> deleteOperateByIds(@RequestBody @NotEmpty(message = "请选择数据") List<String> ids) {
+    public ResponseModel<String> deleteOperateByIds(@RequestBody @NotEmpty(message = "请选择数据") List<String> ids) {
         sysOperateLogService.deleteByIds(ids);
         return success();
     }
@@ -82,7 +82,7 @@ public class SysLogController extends ApiResponseController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @DeleteMapping("operate/clear")
     @Log(description = "清空操作日志", type = LogTypeEnum.DELETE)
-    public ApiResponseModel<String> clearOperateLog() {
+    public ResponseModel<String> clearOperateLog() {
         sysOperateLogService.clearLog();
         return success();
     }
@@ -99,26 +99,26 @@ public class SysLogController extends ApiResponseController {
     @Operation(summary = "登录日志-保存日志信息")
     @PostMapping("login/insert")
     @InternalOnly
-    public ApiResponseModel<String> insertLogin(@RequestBody LogModel logModel) {
+    public ResponseModel<String> insertLogin(@RequestBody LogModel logModel) {
         sysLoginLogService.insert(logModel);
         return success();
     }
 
     @Operation(summary = "登录日志-分页查询")
     @PostMapping("login/page")
-    public ApiResponseModel<IPage<? extends SysLogVO>> queryLoginPage(@RequestBody @Validated(MaxPageSizeLimit.class) SysLogDTO sysLogDTO) {
+    public ResponseModel<IPage<? extends SysLogVO>> queryLoginPage(@RequestBody @Validated(MaxPageSizeLimit.class) SysLogDTO sysLogDTO) {
         return success(sysLoginLogService.queryPage(sysLogDTO));
     }
 
     @Operation(summary = "登录日志-根据id查询详情")
     @GetMapping("login/{id}")
-    public ApiResponseModel<SysLogVO> queryLoginById(@PathVariable("id") String id) {
+    public ResponseModel<SysLogVO> queryLoginById(@PathVariable("id") String id) {
         return success(sysLoginLogService.queryById(id));
     }
 
     @Operation(summary = "登录日志-根据缓存查询日志")
     @GetMapping("login/cacheKey/{cacheKey}")
-    public ApiResponseModel<SysLogVO> queryLoginByCacheKey(@PathVariable("cacheKey") String cacheKey) {
+    public ResponseModel<SysLogVO> queryLoginByCacheKey(@PathVariable("cacheKey") String cacheKey) {
         return success(sysLoginLogService.queryByCacheKey(cacheKey));
     }
 
@@ -126,7 +126,7 @@ public class SysLogController extends ApiResponseController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @DeleteMapping("login")
     @Log(description = "删除登录日志", type = LogTypeEnum.DELETE)
-    public ApiResponseModel<String> deleteLoginByIds(@RequestBody @NotEmpty(message = "请选择数据") List<String> ids) {
+    public ResponseModel<String> deleteLoginByIds(@RequestBody @NotEmpty(message = "请选择数据") List<String> ids) {
         sysLoginLogService.deleteByIds(ids);
         return success();
     }
@@ -135,7 +135,7 @@ public class SysLogController extends ApiResponseController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @DeleteMapping("login/clear")
     @Log(description = "清空登录日志", type = LogTypeEnum.DELETE)
-    public ApiResponseModel<String> clearLoginLog() {
+    public ResponseModel<String> clearLoginLog() {
         sysLoginLogService.clearLog();
         return success();
     }

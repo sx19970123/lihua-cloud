@@ -2,7 +2,7 @@ package com.lihua.client.client;
 
 import com.lihua.client.annotation.RemoteClient;
 import com.lihua.client.model.RegisterUserModel;
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,17 +19,17 @@ public interface SysUserAuthClient {
      * 查询登录的用户信息
      */
     @GetExchange("loginSelect/{username}")
-    ApiResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username);
+    ResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username);
 
     /**
      * 查询登录用户信息（携带请求体，必须 POST：GET+body 仅靠当前 HC5/Tomcat 栈容忍，换客户端/介入代理即断）
      */
     @PostExchange("queryLoginUserProfile")
-    ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession);
+    ResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession);
 
     /**
      * 用户注册
      */
     @PostExchange("register")
-    ApiResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel);
+    ResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel);
 }

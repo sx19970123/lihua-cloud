@@ -1,6 +1,6 @@
 package com.lihua.auth.service;
 
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.auth.model.dto.SysLoginUserDTO;
 import com.lihua.security.model.LoginUserSession;
 
@@ -28,7 +28,7 @@ public interface SysAuthenticationService {
     /**
      * 用户注册
      */
-    ApiResponseModel<String> register(String username, String password);
+    ResponseModel<String> register(String username, String password);
 
     /**
      * 检查是否配置了同账号最大同时登录数，超出数量后首先登录的用户会被踢下线

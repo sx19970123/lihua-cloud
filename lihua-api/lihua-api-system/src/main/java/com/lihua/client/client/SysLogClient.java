@@ -2,7 +2,7 @@ package com.lihua.client.client;
 
 import com.lihua.client.annotation.RemoteClient;
 import com.lihua.client.enums.ExecutionModeEnum;
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.log.model.LogModel;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -17,11 +17,11 @@ public interface SysLogClient {
      * 保存操作日志
      */
     @PostExchange("operate/insert")
-    Mono<ApiResponseModel<String>> insertOperate(@RequestBody LogModel logModel);
+    Mono<ResponseModel<String>> insertOperate(@RequestBody LogModel logModel);
 
     /**
      * 保存登录日志
      */
     @PostExchange("login/insert")
-    Mono<ApiResponseModel<String>> insertLogin(@RequestBody LogModel logModel);
+    Mono<ResponseModel<String>> insertLogin(@RequestBody LogModel logModel);
 }

@@ -1,6 +1,6 @@
 package com.lihua.system.loader;
 
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.log.client.LogClient;
 import com.lihua.log.model.LogModel;
 import com.lihua.system.service.SysLogService;
@@ -26,13 +26,13 @@ public class LogClientLocalImpl implements LogClient {
     private SysLogService sysLoginLogService;
 
     @Override
-    public Mono<ApiResponseModel<String>> insertOperate(LogModel logModel) {
+    public Mono<ResponseModel<String>> insertOperate(LogModel logModel) {
         sysOperateLogService.insert(logModel);
         return Mono.empty();
     }
 
     @Override
-    public Mono<ApiResponseModel<String>> insertLogin(LogModel logModel) {
+    public Mono<ResponseModel<String>> insertLogin(LogModel logModel) {
         sysLoginLogService.insert(logModel);
         return Mono.empty();
     }

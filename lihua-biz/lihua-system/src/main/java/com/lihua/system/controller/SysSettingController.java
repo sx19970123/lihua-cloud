@@ -1,7 +1,7 @@
 package com.lihua.system.controller;
 
 import com.lihua.system.controller.base.BaseSysSettingController;
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.system.entity.SysSetting;
 import com.lihua.log.annotation.Log;
 import com.lihua.log.enums.LogTypeEnum;
@@ -20,39 +20,39 @@ public class SysSettingController extends BaseSysSettingController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @PostMapping
     @Log(description = "保存系统设置", type = LogTypeEnum.SAVE)
-    public ApiResponseModel<String> insert(@RequestBody SysSetting sysSetting) {
+    public ResponseModel<String> insert(@RequestBody SysSetting sysSetting) {
         return success(sysSettingService.saveSetting(sysSetting));
     }
 
     @Operation(summary = "根据key获取系统设置")
     @GetMapping("{key}")
-    public ApiResponseModel<SysSetting> getSysSettingByKey(@PathVariable("key") String key) {
+    public ResponseModel<SysSetting> getSysSettingByKey(@PathVariable("key") String key) {
         return success(sysSettingService.getSysSettingByKey(key));
     }
 
     @Operation(summary = "获取默认密码")
     @GetMapping("defaultPassword")
-    public ApiResponseModel<String> getDefaultPassword() {
+    public ResponseModel<String> getDefaultPassword() {
         return success(sysSettingService.getDefaultPassword());
     }
 
     @Operation(summary = "获取是否开启灰色模式")
     @GetMapping("base/enableGrayMode")
-    public ApiResponseModel<Boolean> enableGrayMode() {
+    public ResponseModel<Boolean> enableGrayMode() {
         return success(sysSettingService.enableGrayMode());
     }
 
     @Operation(summary = "获取最大同时登录数量")
     @GetMapping("base/getMaxConcurrentLogins")
     @InternalOnly
-    public ApiResponseModel<Integer> getMaxConcurrentLogins() {
+    public ResponseModel<Integer> getMaxConcurrentLogins() {
         return success(sysSettingService.getMaxConcurrentLogins());
     }
 
     @Operation(summary = "缓存ip黑名单")
     @PostMapping("cacheIpBlack")
     @InternalOnly
-    public ApiResponseModel<String> cacheIpBlack() {
+    public ResponseModel<String> cacheIpBlack() {
         sysSettingService.cacheIpBlackList();
         return success();
     }

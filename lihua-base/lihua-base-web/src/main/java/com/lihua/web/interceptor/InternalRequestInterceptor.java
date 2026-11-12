@@ -2,7 +2,7 @@ package com.lihua.web.interceptor;
 
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.enums.ResultCodeEnum;
-import com.lihua.common.model.response.response.StrResponse;
+import com.lihua.common.model.response.Responses;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.web.utils.WebUtils;
 import com.lihua.web.annotation.InternalOnly;
@@ -47,7 +47,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         String timestampStr = request.getHeader(CustomHttpHeader.TIMESTAMP.getValue());
         if (timestampStr == null) {
             log.warn("内部RPC签名校验拒绝（缺时间戳头）: {} {}", request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
+            WebUtils.renderJson(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
         }
 
@@ -56,7 +56,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             timestamp = Long.parseLong(timestampStr);
         } catch (Exception e) {
             log.warn("内部RPC签名校验拒绝（时间戳格式非法）: {} {}", request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
+            WebUtils.renderJson(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
         }
 
@@ -74,7 +74,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         if (sign == null || !MessageDigest.isEqual(confirmSign.getBytes(StandardCharsets.UTF_8), sign.getBytes(StandardCharsets.UTF_8))) {
             log.warn("内部RPC签名校验拒绝（签名不匹配，疑实例间signKey不一致）: {} {}",
                     request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(StrResponse.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名错误"));
+            WebUtils.renderJson(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名错误"));
             return false;
         }
 

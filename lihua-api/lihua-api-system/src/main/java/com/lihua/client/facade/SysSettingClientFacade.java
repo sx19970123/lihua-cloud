@@ -2,8 +2,8 @@ package com.lihua.client.facade;
 
 import com.lihua.client.client.SysSettingClient;
 import com.lihua.common.enums.ResultCodeEnum;
-import com.lihua.common.model.response.ApiResponseModel;
-import com.lihua.common.model.response.response.ApiResponse;
+import com.lihua.common.model.response.ResponseModel;
+import com.lihua.common.model.response.Responses;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -23,20 +23,20 @@ public class SysSettingClientFacade {
      * 缓存ip黑名单
      */
     @CircuitBreaker(name = "sysSetting", fallbackMethod = "cacheIpBlackFallback")
-    public ApiResponseModel<String> cacheIpBlack() {
+    public ResponseModel<String> cacheIpBlack() {
         return sysSettingClient.cacheIpBlack();
     }
 
-    public ApiResponseModel<String> cacheIpBlackFallback(Throwable throwable) {
+    public ResponseModel<String> cacheIpBlackFallback(Throwable throwable) {
         log.error("远程调用异常", throwable);
-        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
+        return Responses.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 
     /**
      * 查询同账号最大登录数
      */
     @CircuitBreaker(name = "sysSetting")
-    public ApiResponseModel<Integer> getMaxConcurrentLogins() {
+    public ResponseModel<Integer> getMaxConcurrentLogins() {
         return sysSettingClient.getMaxConcurrentLogins();
     }
 
@@ -44,13 +44,13 @@ public class SysSettingClientFacade {
      * 是否启用验证码
      */
     @CircuitBreaker(name = "sysSetting", fallbackMethod = "captchaFallback")
-    public ApiResponseModel<Boolean> enableCaptcha() {
+    public ResponseModel<Boolean> enableCaptcha() {
         return sysSettingClient.enableCaptcha();
     }
 
-    public ApiResponseModel<Boolean> captchaFallback(Throwable throwable) {
+    public ResponseModel<Boolean> captchaFallback(Throwable throwable) {
         log.error("远程调用异常", throwable);
-        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
+        return Responses.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 
 }

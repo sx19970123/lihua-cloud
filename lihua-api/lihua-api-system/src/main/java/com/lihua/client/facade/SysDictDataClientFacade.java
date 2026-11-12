@@ -3,7 +3,7 @@ package com.lihua.client.facade;
 import com.lihua.client.client.SysDictDataClient;
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.exception.ServiceException;
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.dict.loader.DictDataLoader;
 import com.lihua.dict.model.DictDataModel;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -29,7 +29,7 @@ public class SysDictDataClientFacade implements DictDataLoader {
     @Override
     @CircuitBreaker(name = "sysDictData")
     public List<DictDataModel> queryByDictTypeCode(List<String> dictTypeCodeList) {
-        ApiResponseModel<List<DictDataModel>> responseModel = sysDictDataClient.queryByDictTypeCode(dictTypeCodeList);
+        ResponseModel<List<DictDataModel>> responseModel = sysDictDataClient.queryByDictTypeCode(dictTypeCodeList);
         if (!ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode())) {
             throw new ServiceException("字典数据查询失败：" + responseModel.getMsg());
         }

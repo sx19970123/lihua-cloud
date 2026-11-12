@@ -2,7 +2,7 @@ package com.lihua.gateway.handle;
 
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.exception.BaseException;
-import com.lihua.common.model.response.response.StrResponse;
+import com.lihua.common.model.response.Responses;
 import com.lihua.gateway.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
@@ -32,11 +32,10 @@ public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
         // 触发继承BaseException异常后取出
         if (ex instanceof BaseException baseException) {
-            String respJson = StrResponse.error(baseException.getResultCodeEnum(), baseException.getMessage(), baseException.getData());
-            return WebUtils.renderJson(respJson, response);
+            return WebUtils.renderJson(Responses.error(baseException.getResultCodeEnum(), baseException.getMessage(), baseException.getData()), response);
         } else {
             // 网关异常最后兜底
-            return WebUtils.renderJson(HttpStatus.BAD_GATEWAY, StrResponse.error(ResultCodeEnum.BAD_GATEWAY_ERROR), response);
+            return WebUtils.renderJson(HttpStatus.BAD_GATEWAY, Responses.error(ResultCodeEnum.BAD_GATEWAY_ERROR), response);
         }
     }
 }

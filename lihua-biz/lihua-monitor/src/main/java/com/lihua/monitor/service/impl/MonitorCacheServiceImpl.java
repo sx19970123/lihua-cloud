@@ -3,7 +3,7 @@ package com.lihua.monitor.service.impl;
 import com.lihua.client.facade.SysSettingClientFacade;
 import com.lihua.common.enums.ResultCodeEnum;
 import com.lihua.common.exception.ServiceException;
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.common.utils.json.JsonUtils;
 import com.lihua.monitor.model.CacheMonitor;
 import com.lihua.cache.manager.RedisCacheManager;
@@ -97,7 +97,7 @@ public class MonitorCacheServiceImpl implements MonitorCacheService {
 
         // 黑名单走远程全量重建（重建侧先算后写，失败时旧名单保留），不本地预删
         if (keyPrefix.startsWith(SYSTEM_IP_BLACKLIST_REDIS_PREFIX.getValue())) {
-            ApiResponseModel<String> responseModel = sysSettingClientFacade.cacheIpBlack();
+            ResponseModel<String> responseModel = sysSettingClientFacade.cacheIpBlack();
             if (!ResultCodeEnum.SUCCESS.getCode().equals(responseModel.getCode())) {
                 throw new ServiceException("IP 黑名单缓存刷新失败，请重试");
             }

@@ -30,7 +30,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 
 1. **代码落位决策树**：①新增业务 → 在 `lihua-biz` 下新建服务模块（同步 `lihua-biz/pom.xml` 的 `<modules>` 与根 dependencyManagement；接入点见「微服务边界与二开」）；②偏公共、需要单独引入某个依赖实现一类能力的组件（如工作流、消息队列）→ 在 `lihua-base` 下新建对应子项目，向外部暴露接口供业务调用（新增 base 模块同步父工程 dependencyManagement 与消费方依赖）；③简单公共实现（如通用字符串校验）→ 在 `lihua-base-common` 的 `utils` 包中添加，或在现有类基础上扩展；④轻量级工具方法**先查 base 有无对应实现**——没有先补齐公共方法再使用，有则直接调用，勿在服务内手搓 base 已有能力。
 2. 服务归属：系统管理/RBAC/字典/配置进 `lihua-system`；文件、附件、上传下载进 `lihua-file`；认证登录、注册、刷新登录态进 `lihua-auth`（如需读取用户资料，通过 `lihua-api` 调用系统服务）；Gateway 只处理路由、鉴权前置、IP/Token 过滤、fallback 和网关异常，不承载普通业务逻辑。
-3. JSON API 继承 `ApiResponseController` 返回 `ApiResponseModel<T>`（正常 `success(...)`、错误 `error(ResultCodeEnum, msg)`），配 `@Tag`/`@Operation`；校验用 `@Validated`/`@Valid` 并沿用现有校验分组。
+3. JSON API 继承 `ResponseController` 返回 `ResponseModel<T>`（正常 `success(...)`、错误 `error(ResultCodeEnum, msg)`），配 `@Tag`/`@Operation`；校验用 `@Validated`/`@Valid` 并沿用现有校验分组。
 4. 管理端写操作一律 `@PreAuthorize`（现有口径 `hasRole('ROLE_admin')` 粗粒度；细粒度 authorities 通道保留但不消费）+ `@Log(description=..., type=LogTypeEnum.*)`，密码等敏感参数排除；操作日志用 base-log 注解能力。
 5. App 专用接口放 `controller/app`，路径 `app/...` 前缀；已有更窄 App 接口的领域不让 App 复用管理端接口。
 6. 持久化用 MyBatis-Plus：分页 `POST /page` + `@Validated(MaxPageSizeLimit.class)` + BaseDTO（pageNum/pageSize 上限 999999/100），Service 返回 `IPage<VO>`/`IPage<Entity>`；简单 CRUD 用 Wrapper，复杂查询才加 XML（XML 名与 Mapper 同名同层）；base 模块已处理的能力不在 Service 重复设置。
@@ -68,7 +68,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 
 ## 通用契约（双仓同基线；微服务差异加粗标注）
 
-- **响应码比较必须 equals**：`ResultCodeEnum.code` 与 `ApiResponseModel.code` 均为 Integer——字面量 `200 == resp.getCode()` 走拆箱值比较合法，但换成枚举常量 `SUCCESS.getCode() == ...` 后变为引用比较（200 超出 Integer 缓存 −128~127 必不相等，编译器不报错、运行期静默判否）——**远程响应码判断一律 `ResultCodeEnum.SUCCESS.getCode().equals(resp.getCode())`（微服务下 facade 消费 RPC 响应码是高发场景，先例 auth 5 处）**。
+- **响应码比较必须 equals**：`ResultCodeEnum.code` 与 `ResponseModel.code` 均为 Integer——字面量 `200 == resp.getCode()` 走拆箱值比较合法，但换成枚举常量 `SUCCESS.getCode() == ...` 后变为引用比较（200 超出 Integer 缓存 −128~127 必不相等，编译器不报错、运行期静默判否）——**远程响应码判断一律 `ResultCodeEnum.SUCCESS.getCode().equals(resp.getCode())`（微服务下 facade 消费 RPC 响应码是高发场景，先例 auth 5 处）**。
 - **校验链下沉 Service 判据**：控制器 `error(ResultCodeEnum.ERROR, msg)` 改抛 `ServiceException(msg)` 的前提是全局异常处理器（`GlobalExceptionHandle` 的 BaseException 通道，base-web，双仓一致）返回同构响应（HTTP 200 + 业务码 + msg），前端 `resp.code !== 200` 分支行为等价；副作用为业务失败多记一条 error 日志（全库既有模式，可接受）。
 - **save 接口 Entity 直收 body 是全库既定口径**（dict/post/dept/role/menu/setting + @Validated/分组校验），BaseEntity 字段（delFlag/审计字段）经 body 可注入的面已接受为已知口径——后续体检不再提议收窄 DTO；notice/profile/log/user/attachment 的 DTO 形态是各自模块历史定稿，非全库规范。
 - **双版本控制器去重**：管理版与 App 版（`controller/app`）方法体逐行相同时，共有端点收抽象基类（无 @RestController/@RequestMapping/@Tag，`@Resource protected` 注入 Service，方法注解随方法留基类，Spring 继承扫描自动注册路由；**基类统一落 `controller/base` 子包**）。子类只挂各自 `@RequestMapping` 前缀与 `@Tag` 分组；管理版独有端点族由管理版子类声明、App 子类可为空壳；**对外行为双版本一致是去重前提**。推广判据：仅 `@Operation` summary 措辞差异视为可抽；端侧逻辑差异端点一律留子类、不引入钩子方法；注解差异经拍板统一=接受行为对齐；**同路径 HTTP 动词分叉不可抽**；子类/基类跨包必须显式 import。cloud 现存 6 个基类（见仓库结构），auth 基类按仓库现状注入 `SysSettingClientFacade`（RPC 从严降级版 checkCaptcha 两子类本就一致）。
@@ -121,7 +121,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 ## 熔断降级
 
 - 跨服务 facade 方法优先使用 Resilience4j `@CircuitBreaker`，不要把熔断逻辑直接堆在 Controller 中；熔断名称按业务或目标资源稳定命名（如 `sysUser`、`sysSetting`、`sysLog`），并与 Nacos resilience 配置保持可追踪。
-- 有明确可降级结果的方法提供 `fallbackMethod`：fallback 参数必须与原方法一致并在末尾追加 `Throwable`；fallback 中记录异常和关键请求参数；同步接口返回统一 `ApiResponseModel` 错误，异步接口按现有模式返回 `Mono.error(...)` 或与原返回类型一致的降级结果。
+- 有明确可降级结果的方法提供 `fallbackMethod`：fallback 参数必须与原方法一致并在末尾追加 `Throwable`；fallback 中记录异常和关键请求参数；同步接口返回统一 `ResponseModel` 错误，异步接口按现有模式返回 `Mono.error(...)` 或与原返回类型一致的降级结果。
 - 如果只是允许默认异常传播，也要确认调用方能正确处理失败响应，不要吞掉远程调用错误。
 - 修改熔断窗口、失败率阈值、OPEN 等待时间、超时时间等策略时，优先维护 Nacos 配置种子 `lihua-resilience/lihua-resilience.yaml` 或目标部署环境配置（各服务经 `nacos:lihua-resilience.yaml?group=lihua-resilience` 引入）。
 - Gateway 使用 Reactor Resilience4j 处理网关层降级（路由的 CircuitBreaker filter → FallbackController）；服务间远程调用使用 API facade 上的 Resilience4j 注解——两者职责不同，不要把网关 fallback 当作服务间调用的唯一保护。
@@ -154,7 +154,7 @@ description: 指导 lihua-cloud 仓（Maven 多模块 Spring Cloud 微服务后�
 **一体感：照先例写代码**
 
 - 落笔前先在仓内找同类先例（最接近的 Controller/Service/Mapper/facade 与前端页面），照其结构写——不引入第二套风格（自造返回包装、自拼分页、绕过 base-client 手写远程调用都是破窗）。
-- 横切能力一律用平台现成实现，新增写端点配三件套（`@Tag`/`@Operation` 文档 + `@PreAuthorize` 权限 + `@Log` 操作日志）：统一返回 `ApiResponseController`、全局异常 `ServiceException` → `GlobalExceptionHandle`、参数校验 `@Validated` + 分组、分页 BaseDTO + `MaxPageSizeLimit`、登录态 `LoginUserContext`、字典 `DictEnum` + `DictUtils`、附件 base-attachment 全家（file 服务）、实时通知 `WebSocketPushUtils` + `TransactionSendUtils.runAfterCommit`（见「WebSocket」节）、防重提交 `@PreventDuplicateSubmit`、排序归一化 `SortUtils`、IP 归属地 `WebUtils`、跨服务 RPC `lihua-api` facade + `@CircuitBreaker`。
+- 横切能力一律用平台现成实现，新增写端点配三件套（`@Tag`/`@Operation` 文档 + `@PreAuthorize` 权限 + `@Log` 操作日志）：统一返回 `ResponseController`、全局异常 `ServiceException` → `GlobalExceptionHandle`、参数校验 `@Validated` + 分组、分页 BaseDTO + `MaxPageSizeLimit`、登录态 `LoginUserContext`、字典 `DictEnum` + `DictUtils`、附件 base-attachment 全家（file 服务）、实时通知 `WebSocketPushUtils` + `TransactionSendUtils.runAfterCommit`（见「WebSocket」节）、防重提交 `@PreventDuplicateSubmit`、排序归一化 `SortUtils`、IP 归属地 `WebUtils`、跨服务 RPC `lihua-api` facade + `@CircuitBreaker`。
 - 表命名边界：平台表前缀 `sys_`；二开业务表用业务域自己的前缀，勿冒用 `sys_`。
 
 ## 红线与已否决方案

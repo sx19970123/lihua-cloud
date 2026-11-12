@@ -1,8 +1,8 @@
 package com.lihua.system.controller;
 
 import com.lihua.client.model.RegisterUserModel;
-import com.lihua.common.model.response.ApiResponseModel;
-import com.lihua.common.model.response.basecontroller.ApiResponseController;
+import com.lihua.common.model.response.ResponseModel;
+import com.lihua.common.model.response.ResponseController;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import com.lihua.system.service.SysUserAuthService;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("system/user/auth")
 @Slf4j
-public class SysUserAuthController extends ApiResponseController {
+public class SysUserAuthController extends ResponseController {
 
     @Resource
     private SysUserAuthService sysUserAuthService;
@@ -25,7 +25,7 @@ public class SysUserAuthController extends ApiResponseController {
     @Operation(summary = "查询登录用户信息")
     @GetMapping("loginSelect/{username}")
     @InternalOnly
-    public ApiResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username) {
+    public ResponseModel<CurrentUser> loginSelect(@PathVariable("username") String username) {
         return success(sysUserAuthService.loginSelect(username));
     }
 
@@ -33,14 +33,14 @@ public class SysUserAuthController extends ApiResponseController {
     // 携带请求体必须 POST（GET+body 靠栈容忍不可依赖）；客户端 @PostExchange 同步，签名材料含 HTTP method 双端一致
     @PostMapping("queryLoginUserProfile")
     @InternalOnly
-    public ApiResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession) {
+    public ResponseModel<LoginUserSession> queryLoginUserProfile(@RequestBody LoginUserSession loginUserSession) {
         return success(sysUserAuthService.queryLoginUserProfile(loginUserSession));
     }
 
     @Operation(summary = "用户注册")
     @PostMapping("register")
     @InternalOnly
-    ApiResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel) {
+    ResponseModel<String> register(@RequestBody RegisterUserModel registerUserModel) {
         return success(sysUserAuthService.register(registerUserModel));
     }
 

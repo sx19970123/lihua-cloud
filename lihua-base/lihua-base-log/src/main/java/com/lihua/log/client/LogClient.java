@@ -1,6 +1,6 @@
 package com.lihua.log.client;
 
-import com.lihua.common.model.response.ApiResponseModel;
+import com.lihua.common.model.response.ResponseModel;
 import com.lihua.log.model.LogModel;
 import reactor.core.publisher.Mono;
 
@@ -12,10 +12,10 @@ public interface LogClient {
     /**
      * 保存操作日志
      */
-    Mono<ApiResponseModel<String>> insertOperate(LogModel logModel);
+    Mono<ResponseModel<String>> insertOperate(LogModel logModel);
 
     /**
      * 保存登录日志
      */
-    Mono<ApiResponseModel<String>> insertLogin(LogModel logModel);
+    Mono<ResponseModel<String>> insertLogin(LogModel logModel);
 }

@@ -34,6 +34,6 @@ spring:
     resources:
       add-mappings: false
   # api响应时全局忽略null，
-  # 如不需要可将此配置删除（适用于controller 返回 ApiResponseModel 的情况）
+  # 如不需要可将此配置删除（适用于controller 返回 ResponseModel 的情况）
   jackson:
     default-property-inclusion: non_null

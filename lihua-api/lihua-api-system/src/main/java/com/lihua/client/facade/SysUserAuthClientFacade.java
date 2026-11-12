@@ -3,8 +3,8 @@ package com.lihua.client.facade;
 import com.lihua.client.client.SysUserAuthClient;
 import com.lihua.client.model.RegisterUserModel;
 import com.lihua.common.enums.ResultCodeEnum;
-import com.lihua.common.model.response.ApiResponseModel;
-import com.lihua.common.model.response.response.ApiResponse;
+import com.lihua.common.model.response.ResponseModel;
+import com.lihua.common.model.response.Responses;
 import com.lihua.security.model.CurrentUser;
 import com.lihua.security.model.LoginUserSession;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -24,7 +24,7 @@ public class SysUserAuthClientFacade {
      * 登录
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "loginFallback")
-    public ApiResponseModel<CurrentUser> loginSelect(String username) {
+    public ResponseModel<CurrentUser> loginSelect(String username) {
         return sysUserAuthClient.loginSelect(username);
     }
 
@@ -32,7 +32,7 @@ public class SysUserAuthClientFacade {
      * 获取登录用户全部信息
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "queryLoginUserProfileFallback")
-    public ApiResponseModel<LoginUserSession> queryLoginUserProfile(LoginUserSession loginUserSession) {
+    public ResponseModel<LoginUserSession> queryLoginUserProfile(LoginUserSession loginUserSession) {
         return sysUserAuthClient.queryLoginUserProfile(loginUserSession);
     }
 
@@ -40,7 +40,7 @@ public class SysUserAuthClientFacade {
      * 用户注册
      */
     @CircuitBreaker(name = "sysUser", fallbackMethod = "registerFallback")
-    public ApiResponseModel<String> register(RegisterUserModel registerUserModel) {
+    public ResponseModel<String> register(RegisterUserModel registerUserModel) {
         return sysUserAuthClient.register(registerUserModel);
     }
 
@@ -52,17 +52,17 @@ public class SysUserAuthClientFacade {
      * UsernameNotFoundException，经防枚举机制掩盖成 BadCredentials（503 伪装成 401 误导排障）。
      * 留痕在 GlobalExceptionHandle 的终结 handler（勿在此打日志，防双条）
      */
-    public ApiResponseModel<CurrentUser> loginFallback(String username, Throwable throwable) {
+    public ResponseModel<CurrentUser> loginFallback(String username, Throwable throwable) {
         throw new InternalAuthenticationServiceException(ResultCodeEnum.SERVER_BAD_ERROR.getDefaultMsg(), throwable);
     }
 
-    public ApiResponseModel<LoginUserSession> queryLoginUserProfileFallback(LoginUserSession loginUserSession, Throwable throwable) {
+    public ResponseModel<LoginUserSession> queryLoginUserProfileFallback(LoginUserSession loginUserSession, Throwable throwable) {
         log.error("远程调用异常, 请求参数{}", loginUserSession, throwable);
-        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
+        return Responses.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 
-    public ApiResponseModel<CurrentUser> registerFallback(RegisterUserModel registerUserModel, Throwable throwable) {
+    public ResponseModel<CurrentUser> registerFallback(RegisterUserModel registerUserModel, Throwable throwable) {
         log.error("远程调用异常, 请求参数{}", registerUserModel, throwable);
-        return ApiResponse.error(ResultCodeEnum.SERVER_BAD_ERROR);
+        return Responses.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }
 }
