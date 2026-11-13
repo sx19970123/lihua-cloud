@@ -9,6 +9,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 系统设置相关远程调用
  */
@@ -49,6 +51,19 @@ public class SysSettingClientFacade {
     }
 
     public ResponseModel<Boolean> captchaFallback(Throwable throwable) {
+        log.error("远程调用异常", throwable);
+        return Responses.error(ResultCodeEnum.SERVER_BAD_ERROR);
+    }
+
+    /**
+     * 获取当前请求端验证码随机类型池
+     */
+    @CircuitBreaker(name = "sysSetting", fallbackMethod = "captchaTypesFallback")
+    public ResponseModel<List<String>> getCaptchaTypes() {
+        return sysSettingClient.getCaptchaTypes();
+    }
+
+    public ResponseModel<List<String>> captchaTypesFallback(Throwable throwable) {
         log.error("远程调用异常", throwable);
         return Responses.error(ResultCodeEnum.SERVER_BAD_ERROR);
     }

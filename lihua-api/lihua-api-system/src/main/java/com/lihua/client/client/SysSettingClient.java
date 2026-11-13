@@ -6,6 +6,8 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
+import java.util.List;
+
 @RemoteClient(serverName = "lihua-system")
 @HttpExchange("system/setting")
 public interface SysSettingClient {
@@ -27,5 +29,11 @@ public interface SysSettingClient {
      */
     @GetExchange("base/enableCaptcha")
     ResponseModel<Boolean> enableCaptcha();
+
+    /**
+     * 获取当前请求端验证码随机类型池
+     */
+    @GetExchange("base/getCaptchaTypes")
+    ResponseModel<List<String>> getCaptchaTypes();
 
 }

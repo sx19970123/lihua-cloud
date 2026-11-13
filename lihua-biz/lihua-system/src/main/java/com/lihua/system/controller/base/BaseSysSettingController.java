@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 /**
  * 系统设置控制器基类：承载管理版与 App 版共有端点（对外行为双版本一致，差异仅在路由前缀与文档分组）；
  * 设置的保存与读取类端点仅管理版提供，由管理版子类自行声明
@@ -20,6 +22,12 @@ public abstract class BaseSysSettingController extends ResponseController {
     @GetMapping("base/enableCaptcha")
     public ResponseModel<Boolean> enableCaptcha() {
         return success(sysSettingService.enableCaptcha());
+    }
+
+    @Operation(summary = "获取验证码随机类型池")
+    @GetMapping("base/getCaptchaTypes")
+    public ResponseModel<List<String>> getCaptchaTypes() {
+        return success(sysSettingService.getCaptchaTypes());
     }
 
     @Operation(summary = "获取是否开启自助注册")
