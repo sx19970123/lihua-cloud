@@ -36,7 +36,7 @@ public class RequestTokenFilter implements GlobalFilter {
             return chain.filter(exchange);
         }
 
-        String token = targetHeaders.get(0);
+        String token = targetHeaders.getFirst();
 
         try {
             JwtUtils.verify(token.replace(TokenEnum.TOKEN_PREFIX.getValue(), ""), tokenSecret);

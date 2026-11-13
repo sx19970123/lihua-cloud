@@ -2,6 +2,7 @@ package com.lihua.gateway.filter;
 
 import com.lihua.common.enums.CustomHttpHeader;
 import com.lihua.common.utils.trace.TraceIdUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono;
 public class TraceIdFilter implements GlobalFilter {
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    public @NonNull Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String traceId = TraceIdUtils.generateTraceId();
         exchange.getResponse().getHeaders().set(CustomHttpHeader.TRACE_ID.getValue(), traceId);
         ServerWebExchange newExchange = exchange.mutate()
