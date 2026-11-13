@@ -6,6 +6,7 @@ import com.lihua.common.model.response.Responses;
 import com.lihua.common.utils.crypt.HmacUtils;
 import com.lihua.web.utils.WebUtils;
 import com.lihua.web.annotation.InternalOnly;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
@@ -30,7 +32,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
     private String internalSignKey;
 
     @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws IOException, ServletException {
 
         if (!(handler instanceof HandlerMethod method)) {
             return true;
@@ -47,7 +49,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         String timestampStr = request.getHeader(CustomHttpHeader.TIMESTAMP.getValue());
         if (timestampStr == null) {
             log.warn("内部RPC签名校验拒绝（缺时间戳头）: {} {}", request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
+            WebUtils.renderResponse(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
         }
 
@@ -56,7 +58,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
             timestamp = Long.parseLong(timestampStr);
         } catch (Exception e) {
             log.warn("内部RPC签名校验拒绝（时间戳格式非法）: {} {}", request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
+            WebUtils.renderResponse(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "参数错误"));
             return false;
         }
 
@@ -74,7 +76,7 @@ public class InternalRequestInterceptor implements HandlerInterceptor {
         if (sign == null || !MessageDigest.isEqual(confirmSign.getBytes(StandardCharsets.UTF_8), sign.getBytes(StandardCharsets.UTF_8))) {
             log.warn("内部RPC签名校验拒绝（签名不匹配，疑实例间signKey不一致）: {} {}",
                     request.getMethod(), request.getRequestURI());
-            WebUtils.renderJson(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名错误"));
+            WebUtils.renderResponse(Responses.error(ResultCodeEnum.AUTHENTICATION_EXPIRED, "签名错误"));
             return false;
         }
 
